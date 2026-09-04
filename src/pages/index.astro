@@ -1,0 +1,25 @@
+---
+import '../styles/global.css';
+import { InventoryApp } from '../components/InventoryApp';
+---
+
+<!usr/bin/env html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- SEO Meta Tags -->
+    <title>Sistema de Inventario | Tienda de Accesorios</title>
+    <meta name="description" content="Gestión inteligente de inventario para tienda de accesorios de celular. Control de stock, listas dinámicas y formularios interactivos." />
+  </head>
+  <body>
+    <!-- Subtle Gradient Background FX -->
+    <div class="app-bg-glow"></div>
+
+    <!-- React Island Component loaded interactively with client:load -->
+    <InventoryApp client:load />
+  </body>
+</html>
