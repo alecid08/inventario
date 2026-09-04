@@ -37,18 +37,18 @@ import Layout from '../layouts/Layout.astro';
           </div>
           <div class="flex flex-col sm:flex-row items-center gap-space-md">
             <div class="relative w-28 h-28 shrink-0 rounded-xl overflow-hidden bg-surface-container-low group">
-              <img alt="Fotografía del producto" title="Fotografía del producto" class="w-full h-full object-cover" id="editProdImg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww"/>
+              <img width="112" height="112" loading="lazy" style="aspect-ratio: 1/1;" alt="Fotografía del producto" title="Fotografía del producto" class="w-full h-full object-cover" id="editProdImg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww"/>
               <div class="absolute inset-0 bg-inverse-surface/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                 <span class="material-symbols-outlined text-on-primary text-headline-md">zoom_in</span>
               </div>
             </div>
             <div class="flex-1 flex flex-col justify-center space-y-space-xs w-full">
               <div class="flex flex-wrap gap-space-2xs">
-                <button class="h-10 px-space-md rounded-xl bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center gap-1.5 shadow-sm active:opacity-90 transition-opacity cursor-pointer" id="btnTakePhoto" type="button">
+                <button class="h-11 px-space-md rounded-xl bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center gap-1.5 shadow-sm active:opacity-90 transition-opacity cursor-pointer" id="btnTakePhoto" type="button">
                   <span class="material-symbols-outlined text-label-lg">photo_camera</span>
                   Tomar foto
                 </button>
-                <button class="h-10 px-space-sm rounded-xl bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center gap-1 active:bg-surface-container-high transition-colors cursor-pointer" id="btnUploadPhoto" type="button">
+                <button class="h-11 px-space-md rounded-xl bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center gap-1 active:bg-surface-container-high transition-colors cursor-pointer" id="btnUploadPhoto" type="button">
                   <span class="material-symbols-outlined text-label-lg">upload_file</span>
                   Subir
                 </button>
@@ -68,7 +68,7 @@ import Layout from '../layouts/Layout.astro';
                 <span class="material-symbols-outlined text-secondary">qr_code_scanner</span>
                 <span class="font-sku-code text-sku-code tracking-wider text-on-surface font-semibold" id="displaySkuText">SKU-092</span>
               </div>
-              <button aria-label="Copiar código" class="text-primary hover:text-primary-container active:scale-95 transition-transform flex items-center cursor-pointer" id="copySkuBtn" type="button">
+              <button aria-label="Copiar código" class="w-11 h-11 rounded-xl text-primary hover:text-primary-container active:scale-95 transition-transform flex items-center justify-center cursor-pointer" id="copySkuBtn" type="button">
                 <span class="material-symbols-outlined text-label-lg">content_copy</span>
               </button>
             </div>

@@ -2,24 +2,25 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Stock Móvil - Inventario de Piso">
+<Layout title="Tu Cell Expres - Control de Inventario de Piso">
   <header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-sm">
     <div class="h-16 px-gutter-mobile flex items-center justify-between">
       <div class="flex items-center gap-space-sm min-w-0">
-        <div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-low flex items-center justify-center flex-shrink-0 shadow-sm">
-          <img alt="Logo de Marca" title="Logo de Marca" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1WnIL8J1nkSAuADgPhfbUlLwgFXz8vZdoJPPpWXJLY2_mYTAD5yQfM6Qs1zSTarkAR05ibks32eBcxAm0ShFgfAtbtI1WjwSL-gsbiOnjSm6TIPGRgFdiVaDGN-IkCEHH7IvkGQNu6ebrvTZOxlnXQI_N-5eOpes7RPMyQgwmdv8_BP957lTZUKNroTwD_pCgkM_9GTIomaHwCPGFUPMOjX-djCYO7BrdYZZaBZi13edGMitYflmLK1zRnj"/>
+        <div class="w-10 h-10 rounded-full overflow-hidden bg-primary-container text-on-primary flex items-center justify-center flex-shrink-0 shadow-sm font-bold text-lg">
+          TC
         </div>
         <div class="flex flex-col min-w-0">
-          <span class="font-label-md text-label-md text-on-surface truncate leading-tight">Stock Móvil</span>
+          <span class="font-label-md text-label-md text-on-surface truncate leading-tight font-bold">Tu Cell Expres</span>
           <span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 truncate">
             <span class="w-1.5 h-1.5 rounded-full bg-tertiary flex-shrink-0"></span>
-            <span class="truncate">Sucursal Central · Tienda #102</span>
+            <span class="truncate">Tienda de Accesorios · Piso &amp; Vitrinas</span>
           </span>
         </div>
       </div>
       <div class="flex items-center gap-space-xs">
-        <button aria-label="Escanear código de barras" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-low active:bg-surface-container transition-colors" id="btnScanHeader" title="Escanear producto" type="button">
-          <span class="material-symbols-outlined text-[24px]">barcode_scanner</span>
+        <button aria-label="Añadir producto" class="h-10 px-space-sm bg-primary-container text-on-primary rounded-xl font-label-sm text-label-sm flex items-center gap-1 shadow-sm hover:opacity-95 active:scale-95 transition-all" id="btnHeaderAddProd" type="button">
+          <span class="material-symbols-outlined text-[18px]">add</span>
+          <span>Nuevo</span>
         </button>
       </div>
     </div>
@@ -27,13 +28,13 @@ import Layout from '../layouts/Layout.astro';
 
   <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile pt-16 pb-20">
     <div class="flex flex-col w-full pb-24">
-      <!-- Interactive Stock Quick Adjust Modal -->
+      <!-- Quick Stock Adjust Modal -->
       <div class="hidden fixed inset-0 z-50 flex items-end justify-center bg-on-surface/40 backdrop-blur-sm transition-all duration-200" id="quickAdjustModal">
         <div class="w-full max-w-lg bg-surface-container-lowest rounded-t-2xl p-space-lg shadow-2xl flex flex-col gap-space-md animate-in slide-in-from-bottom duration-200">
           <div class="w-10 h-1.5 bg-outline-variant/60 rounded-full self-center mb-1"></div>
           <div class="flex items-center justify-between">
             <div>
-              <span class="font-label-sm text-label-sm text-primary uppercase tracking-wider">Conteo de Mostrador</span>
+              <span class="font-label-sm text-label-sm text-primary uppercase tracking-wider">Conteo de Vitrina</span>
               <h3 class="font-headline-sm text-headline-sm text-on-surface" id="modalProductName">Nombre del Producto</h3>
               <p class="font-body-sm text-body-sm text-on-surface-variant" id="modalProductSku">SKU-000</p>
             </div>
@@ -59,7 +60,32 @@ import Layout from '../layouts/Layout.astro';
             </button>
             <button class="flex-1 h-touch-min rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-md flex items-center justify-center gap-1.5" id="saveModalBtn" type="button">
               <span class="material-symbols-outlined text-[20px]">check</span>
-              Confirmar Conteo
+              <span>Confirmar Conteo</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Product Confirmation Modal -->
+      <div class="hidden fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40 backdrop-blur-sm p-4" id="deleteProductModal">
+        <div class="w-full max-w-sm bg-surface-container-lowest rounded-2xl p-space-lg shadow-2xl flex flex-col gap-space-md border border-error-container">
+          <div class="w-12 h-12 rounded-full bg-error-container text-error flex items-center justify-center self-center">
+            <span class="material-symbols-outlined text-[28px]">delete_forever</span>
+          </div>
+          <div class="text-center">
+            <h3 class="font-headline-sm text-headline-sm text-on-surface" id="deleteModalProductName">¿Eliminar producto?</h3>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mt-1" id="deleteModalProductSku">SKU-000</p>
+            <p class="font-body-sm text-body-sm text-error bg-error-container/40 p-2.5 rounded-xl mt-3 text-left">
+              <strong>Nota:</strong> Se removerá del estante activo, pero su historial de ventas quedará guardado de forma permanente en la base de datos de reportes.
+            </p>
+          </div>
+          <div class="flex gap-space-sm pt-2">
+            <button class="flex-1 h-11 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md" id="cancelDeleteBtn" type="button">
+              Cancelar
+            </button>
+            <button class="flex-1 h-11 rounded-xl bg-error text-on-error font-label-md text-label-md shadow-md flex items-center justify-center gap-1" id="confirmDeleteBtn" type="button">
+              <span class="material-symbols-outlined text-[18px]">delete</span>
+              <span>Eliminar</span>
             </button>
           </div>
         </div>
@@ -73,7 +99,7 @@ import Layout from '../layouts/Layout.astro';
               <div class="w-9 h-9 rounded-xl bg-primary-container text-on-primary flex items-center justify-center">
                 <span class="material-symbols-outlined text-[20px]">add_box</span>
               </div>
-              <h3 class="font-headline-sm text-headline-sm text-on-surface">Añadir Accesorio a Estante</h3>
+              <h3 class="font-headline-sm text-headline-sm text-on-surface">Añadir Accesorio a Tu Cell Expres</h3>
             </div>
             <button class="w-9 h-9 flex items-center justify-center rounded-full text-secondary hover:bg-surface-container transition-colors" id="closeNewModalBtn" type="button">
               <span class="material-symbols-outlined">close</span>
@@ -123,76 +149,72 @@ import Layout from '../layouts/Layout.astro';
         </div>
       </div>
 
-      <!-- Search & Barcode Quick Access Bar -->
-      <div class="flex flex-col gap-space-sm mb-space-md">
+      <!-- Search & Filter Bar -->
+      <div class="flex flex-col gap-space-sm mb-space-md mt-2">
         <div class="flex items-center gap-space-xs">
           <div class="relative flex-1 flex items-center">
             <span class="material-symbols-outlined absolute left-3.5 text-secondary text-[22px] pointer-events-none">search</span>
-            <input class="w-full h-touch-min pl-11 pr-10 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-md text-body-md shadow-sm focus:outline-none focus:bg-surface-container-low transition-all" id="inventorySearchInput" placeholder="Buscar por accesorio, modelo o SKU..." type="text"/>
-            <button class="hidden absolute right-3 w-7 h-7 flex items-center justify-center rounded-full text-secondary hover:bg-surface-container" id="clearSearchBtn" type="button">
-              <span class="material-symbols-outlined text-[18px]">cancel</span>
-            </button>
+            <input class="w-full h-touch-min pl-11 pr-10 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-md text-body-md shadow-sm focus:outline-none focus:bg-surface-container-low transition-all" id="inventorySearchInput" placeholder="Buscar accesorio o SKU..." type="text"/>
           </div>
-          <button class="h-touch-min w-touch-min flex-shrink-0 flex items-center justify-center rounded-xl bg-surface-container-lowest text-secondary shadow-sm active:bg-surface-container transition-colors" id="btnFilterToggle" title="Filtros avanzados" type="button">
-            <span class="material-symbols-outlined text-[22px]">tune</span>
-          </button>
         </div>
         <!-- Category Filter Chips -->
-        <div class="flex items-center gap-space-2xs overflow-x-auto no-scrollbar py-0.5" id="categoryChips">
-          <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-on-surface text-surface-container-lowest shadow-sm flex items-center gap-1 flex-shrink-0 transition-colors" data-category="all" type="button">
+        <div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-1" id="categoryChips">
+          <button class="chip-btn px-4 min-h-[44px] rounded-full font-label-sm text-label-sm bg-on-surface text-surface-container-lowest shadow-sm flex items-center gap-1.5 flex-shrink-0 transition-colors active:scale-95" data-category="all" type="button">
             <span>Todos</span>
-            <span class="px-1.5 py-0.2 rounded-full bg-surface-container-lowest/20 text-[11px]" id="badgeCountAll">8</span>
+            <span class="px-2 py-0.5 rounded-full bg-surface-container-lowest/20 text-[11px]" id="badgeCountAll">0</span>
           </button>
-          <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors" data-category="Fundas" type="button">
+          <button class="chip-btn px-4 min-h-[44px] rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors active:scale-95" data-category="Fundas" type="button">
             <span>Fundas</span>
           </button>
-          <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors" data-category="Cargas" type="button">
+          <button class="chip-btn px-4 min-h-[44px] rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors active:scale-95" data-category="Cargas" type="button">
             <span>Cargas &amp; Cables</span>
           </button>
-          <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors" data-category="Micas" type="button">
+          <button class="chip-btn px-4 min-h-[44px] rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors active:scale-95" data-category="Micas" type="button">
             <span>Micas 9D</span>
           </button>
-          <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors" data-category="Audio" type="button">
+          <button class="chip-btn px-4 min-h-[44px] rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors active:scale-95" data-category="Audio" type="button">
             <span>Audio</span>
           </button>
-          <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors" data-category="Auto" type="button">
+          <button class="chip-btn px-4 min-h-[44px] rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors active:scale-95" data-category="Auto" type="button">
             <span>Auto</span>
           </button>
         </div>
       </div>
 
-      <!-- Operational Metrics & Count Summary -->
+      <!-- Operational Metrics Summary -->
       <div class="bg-surface-container-low rounded-xl p-space-sm mb-space-md flex items-center justify-between shadow-sm">
         <div class="flex items-center gap-space-xs">
           <div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
             <span class="material-symbols-outlined text-[20px]">layers</span>
           </div>
           <div class="flex flex-col">
-            <span class="font-label-md text-label-md text-on-surface leading-snug">Stock de Piso</span>
-            <span class="font-body-sm text-body-sm text-on-surface-variant" id="productCountSubtitle">Mostrando 8 productos · 3 en estado revisable</span>
+            <span class="font-label-md text-label-md text-on-surface leading-snug">Estantes de Tu Cell Expres</span>
+            <span class="font-body-sm text-body-sm text-on-surface-variant" id="productCountSubtitle">Cargando inventario...</span>
           </div>
         </div>
         <span class="px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-error-container text-on-error-container font-semibold flex items-center gap-1 shadow-sm" id="topAlertPill">
           <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-          <span id="topAlertText">3 Alertas</span>
+          <span id="topAlertText">0 Alertas</span>
         </span>
       </div>
 
       <!-- Inventory Items List -->
       <div class="flex flex-col gap-space-sm" id="inventoryList">
-        <!-- Rendered dynamically or initialized via script -->
-      </div>
-
-      <!-- Empty Search State -->
-      <div class="hidden flex-col items-center justify-center py-space-2xl text-center" id="emptyInventoryState">
-        <div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center text-secondary mb-space-sm">
-          <span class="material-symbols-outlined text-[32px]">inventory_2</span>
+        <!-- Skeleton Loaders placeholder before JS load -->
+        <div class="inventory-card bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex items-center gap-space-sm">
+          <div class="w-14 h-14 rounded-xl skeleton-box shrink-0"></div>
+          <div class="flex-1 space-y-2">
+            <div class="h-4 w-3/4 skeleton-box rounded"></div>
+            <div class="h-3 w-1/2 skeleton-box rounded"></div>
+          </div>
         </div>
-        <h4 class="font-headline-sm text-headline-sm text-on-surface mb-1">Sin coincidencias</h4>
-        <p class="font-body-sm text-body-sm text-on-surface-variant max-w-[240px]">No se encontraron accesorios que coincidan con la búsqueda actual.</p>
-        <button class="mt-space-md px-4 py-2 bg-primary text-on-primary rounded-xl font-label-sm text-label-sm shadow-sm" id="resetFiltersBtn" type="button">
-          Restablecer lista
-        </button>
+        <div class="inventory-card bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex items-center gap-space-sm">
+          <div class="w-14 h-14 rounded-xl skeleton-box shrink-0"></div>
+          <div class="flex-1 space-y-2">
+            <div class="h-4 w-2/3 skeleton-box rounded"></div>
+            <div class="h-3 w-1/3 skeleton-box rounded"></div>
+          </div>
+        </div>
       </div>
 
       <!-- Floating Action Button (FAB) -->
@@ -212,6 +234,7 @@ import Layout from '../layouts/Layout.astro';
 
   <script is:inline>
     const STORE_KEY = 'stock_movil_inventory_v1';
+    const DB_LEDGER_KEY = 'tu_cell_expres_db_v1';
 
     const defaultItems = [
       { id: 'sku-520', sku: 'SKU-520', name: 'Soporte Magnético para Auto', category: 'Auto', stock: 1, minStock: 5, maxStock: 10, location: 'Vitrina A-1', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCoO16TT-tR-wlBrTApCGHxTpxWYKIILFh-fa-B9ONyuxDC7S0ZXI1xdRds3NS2MAjynS8X2uxtjbBTZFQOx3cu80HN_IChP6er-zID8eNdtHMdl2IaINz3QBd6WqP7XAeWK_-CkFA6KuSLUQ3uYW8aLVdzLA0HU-wJ4SV3_opoxIxnm0ropW05_gKwnufdKjkZCa6ege8rRfS1fIRvvjUVG7PXm7gqADoptCJ87melL-SZW9KfqE8rfw' },
@@ -230,12 +253,7 @@ import Layout from '../layouts/Layout.astro';
         localStorage.setItem(STORE_KEY, JSON.stringify(defaultItems));
         return defaultItems;
       }
-      try {
-        return JSON.parse(raw);
-      } catch (e) {
-        localStorage.setItem(STORE_KEY, JSON.stringify(defaultItems));
-        return defaultItems;
-      }
+      try { return JSON.parse(raw); } catch (e) { return defaultItems; }
     }
 
     function saveInventory(items) {
@@ -243,10 +261,25 @@ import Layout from '../layouts/Layout.astro';
       window.dispatchEvent(new CustomEvent('inventory-updated', { detail: items }));
     }
 
+    function logToDatabase(tx) {
+      const raw = localStorage.getItem(DB_LEDGER_KEY);
+      let ledger = [];
+      try { ledger = raw ? JSON.parse(raw) : []; } catch (e) { ledger = []; }
+      const now = new Date();
+      const entry = {
+        id: 'tx-' + Date.now(),
+        timestamp: now.toISOString(),
+        dateStr: now.toISOString().split('T')[0],
+        ...tx
+      };
+      ledger.unshift(entry);
+      localStorage.setItem(DB_LEDGER_KEY, JSON.stringify(ledger));
+    }
+
     let inventory = loadInventory();
     let activeCardSku = null;
     let currentModalStock = 0;
-    let currentCategory = 'all';
+    let deleteTargetSku = null;
 
     function showToast(text) {
       const toast = document.getElementById('stockToast');
@@ -254,9 +287,7 @@ import Layout from '../layouts/Layout.astro';
       if (!toast || !toastText) return;
       toastText.textContent = text;
       toast.classList.remove('opacity-0', 'pointer-events-none');
-      setTimeout(() => {
-        toast.classList.add('opacity-0', 'pointer-events-none');
-      }, 2200);
+      setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none'), 2200);
     }
 
     function renderInventoryList() {
@@ -264,30 +295,37 @@ import Layout from '../layouts/Layout.astro';
       if (!container) return;
       container.innerHTML = '';
 
+      let lowCount = 0;
       inventory.forEach(item => {
         const isLow = item.stock < (item.minStock || 5);
+        if (isLow) lowCount++;
+
         const card = document.createElement('div');
         card.className = 'inventory-card bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col gap-space-xs relative overflow-hidden transition-all duration-150 active:scale-[0.99]';
         card.setAttribute('data-id', item.id);
         card.setAttribute('data-sku', item.sku);
         card.setAttribute('data-name', item.name);
         card.setAttribute('data-category', item.category);
-        card.setAttribute('data-stock', item.stock);
 
         card.innerHTML = `
           <div class="absolute top-0 left-0 bottom-0 w-1.5 ${isLow ? 'bg-error' : 'bg-tertiary'}"></div>
           <div class="flex items-center gap-space-sm pl-2">
             <div class="w-14 h-14 rounded-xl bg-surface-container-low overflow-hidden flex-shrink-0 flex items-center justify-center shadow-inner">
-              <img alt="${item.name}" title="${item.name}" class="w-full h-full object-cover" src="${item.img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'}"/>
+              <img width="56" height="56" loading="lazy" style="aspect-ratio: 1/1;" alt="${item.name}" title="${item.name}" class="w-full h-full object-cover" src="${item.img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'}"/>
             </div>
             <div class="flex-1 min-w-0 flex flex-col">
               <div class="flex items-start justify-between gap-1">
-                <h4 class="font-label-md text-label-md text-on-surface truncate">${item.name}</h4>
-                <span class="status-badge px-2 py-0.5 rounded-full font-label-sm text-label-sm ${isLow ? 'bg-error-container text-on-error-container' : 'bg-tertiary-fixed text-on-tertiary-fixed'} font-bold flex-shrink-0">
-                  ${isLow ? 'Revisable' : 'OK'}
-                </span>
+                <h4 class="font-label-md text-label-md text-on-surface truncate font-semibold">${item.name}</h4>
+                <div class="flex items-center gap-1 shrink-0">
+                  <span class="status-badge px-2 py-0.5 rounded-full font-label-sm text-label-sm ${isLow ? 'bg-error-container text-on-error-container' : 'bg-tertiary-fixed text-on-tertiary-fixed'} font-bold">
+                    ${isLow ? 'Revisable' : 'OK'}
+                  </span>
+                  <button class="btn-delete-prod w-11 h-11 rounded-xl text-error hover:bg-error-container/40 flex items-center justify-center transition-colors" data-sku="${item.sku}" data-name="${item.name}" title="Eliminar de estante" type="button">
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
+                </div>
               </div>
-              <span class="font-body-sm text-body-sm text-on-surface-variant truncate mt-0.5">${item.category} · ${item.sku}</span>
+              <span class="font-body-sm text-body-sm text-on-surface-variant truncate mt-0.5">${item.category} · ${item.sku} · ${item.location || 'Estante Principal'}</span>
               <div class="flex items-center justify-between mt-2 gap-2 flex-wrap sm:flex-nowrap">
                 <div class="flex items-center gap-2">
                   <span class="stock-text font-sku-code text-sku-code ${isLow ? 'text-error font-bold' : 'text-on-surface font-semibold'}">${item.stock} / ${item.maxStock || 10}</span>
@@ -295,15 +333,15 @@ import Layout from '../layouts/Layout.astro';
                     <div class="stock-bar h-full ${isLow ? 'bg-error' : 'bg-tertiary'} rounded-full" style="width: ${Math.min(100, item.stock * 10)}%"></div>
                   </div>
                 </div>
-                <div class="flex items-center gap-1 shrink-0">
-                  <button class="btn-card-dec w-8 h-8 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high flex items-center justify-center active:scale-95 transition-all" data-sku="${item.sku}" title="Descontar 1 unidad" type="button">
-                    <span class="material-symbols-outlined text-[16px]">remove</span>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button class="btn-card-dec w-11 h-11 rounded-xl bg-surface-container text-on-surface hover:bg-surface-container-high flex items-center justify-center active:scale-95 transition-all" data-sku="${item.sku}" title="Venta (-1)" type="button">
+                    <span class="material-symbols-outlined text-[18px]">remove</span>
                   </button>
-                  <button class="btn-card-inc w-8 h-8 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high flex items-center justify-center active:scale-95 transition-all" data-sku="${item.sku}" title="Sumar 1 unidad" type="button">
-                    <span class="material-symbols-outlined text-[16px]">add</span>
+                  <button class="btn-card-inc w-11 h-11 rounded-xl bg-surface-container text-on-surface hover:bg-surface-container-high flex items-center justify-center active:scale-95 transition-all" data-sku="${item.sku}" title="Ingreso (+1)" type="button">
+                    <span class="material-symbols-outlined text-[18px]">add</span>
                   </button>
-                  <button class="btn-adjust px-2.5 py-1 rounded-lg bg-surface-container-low text-primary hover:bg-surface-container font-label-sm text-label-sm flex items-center gap-1 active:bg-primary active:text-on-primary transition-colors" data-sku="${item.sku}" type="button">
-                    <span class="material-symbols-outlined text-[16px]">edit</span>
+                  <button class="btn-adjust h-11 px-3 rounded-xl bg-surface-container-low text-primary hover:bg-surface-container font-label-sm text-label-sm flex items-center gap-1 active:bg-primary active:text-on-primary transition-colors" data-sku="${item.sku}" type="button">
+                    <span class="material-symbols-outlined text-[18px]">edit</span>
                     <span>Ajustar</span>
                   </button>
                 </div>
@@ -314,8 +352,16 @@ import Layout from '../layouts/Layout.astro';
         container.appendChild(card);
       });
 
+      const subtitle = document.getElementById('productCountSubtitle');
+      if (subtitle) subtitle.textContent = `Mostrando ${inventory.length} productos en estante · ${lowCount} en estado revisable`;
+
+      const topAlertText = document.getElementById('topAlertText');
+      if (topAlertText) topAlertText.textContent = `${lowCount} Alertas`;
+
+      const badgeCountAll = document.getElementById('badgeCountAll');
+      if (badgeCountAll) badgeCountAll.textContent = inventory.length;
+
       attachCardEventListeners();
-      applyFilters();
     }
 
     function attachCardEventListeners() {
@@ -332,6 +378,19 @@ import Layout from '../layouts/Layout.astro';
           e.stopPropagation();
           const sku = btn.getAttribute('data-sku');
           updateProductStock(sku, -1);
+        });
+      });
+
+      document.querySelectorAll('.btn-delete-prod').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const sku = btn.getAttribute('data-sku');
+          const name = btn.getAttribute('data-name');
+          deleteTargetSku = sku;
+          
+          document.getElementById('deleteModalProductName').textContent = `¿Eliminar "${name}"?`;
+          document.getElementById('deleteModalProductSku').textContent = `SKU: ${sku}`;
+          document.getElementById('deleteProductModal')?.classList.remove('hidden');
         });
       });
 
@@ -354,23 +413,115 @@ import Layout from '../layouts/Layout.astro';
       });
     }
 
+    // Delete Modal Actions
+    document.getElementById('cancelDeleteBtn')?.addEventListener('click', () => {
+      document.getElementById('deleteProductModal')?.classList.add('hidden');
+      deleteTargetSku = null;
+    });
+
+    document.getElementById('confirmDeleteBtn')?.addEventListener('click', () => {
+      if (!deleteTargetSku) return;
+      const targetItem = inventory.find(i => i.sku === deleteTargetSku);
+      if (targetItem) {
+        // Log BAJA_PRODUCTO to permanent DB ledger before removing from shelf
+        logToDatabase({
+          sku: targetItem.sku,
+          productName: targetItem.name,
+          type: 'BAJA_PRODUCTO',
+          quantity: -targetItem.stock,
+          notes: 'Producto retirado de estantes activos'
+        });
+
+        inventory = inventory.filter(i => i.sku !== deleteTargetSku);
+        saveInventory(inventory);
+        renderInventoryList();
+        showToast(`"${targetItem.name}" retirado de estante (Historial conservado en reportes).`);
+      }
+      document.getElementById('deleteProductModal')?.classList.add('hidden');
+      deleteTargetSku = null;
+    });
+
     function updateProductStock(sku, delta) {
       const item = inventory.find(i => i.sku === sku);
       if (!item) return;
       let newStock = item.stock + delta;
       newStock = Math.max(0, Math.min(10, newStock));
+      
+      const changeType = delta < 0 ? 'VENTA' : 'ENTRADA';
+      logToDatabase({
+        sku: item.sku,
+        productName: item.name,
+        type: changeType,
+        quantity: delta,
+        notes: delta < 0 ? 'Despacho rápido por venta en la app' : 'Reabastecimiento rápido de estante'
+      });
+
       item.stock = newStock;
       saveInventory(inventory);
       renderInventoryList();
-      showToast(`${item.name}: Stock actualizado a ${newStock} unid.`);
+      showToast(`${item.name}: Conteo actualizado a ${newStock} unid.`);
     }
 
-    // Adjust Modal logic
+    // Modal Add & Adjust handlers
+    const fabBtn = document.getElementById('fabBtn');
+    const btnHeaderAddProd = document.getElementById('btnHeaderAddProd');
+    const newProductModal = document.getElementById('newProductModal');
+    const closeNewModalBtn = document.getElementById('closeNewModalBtn');
+    const cancelNewModalBtn = document.getElementById('cancelNewModalBtn');
+    const newProductForm = document.getElementById('newProductForm');
+
+    function openNewModal() { newProductModal?.classList.remove('hidden'); }
+    function closeNewModal() { newProductModal?.classList.add('hidden'); newProductForm?.reset(); }
+
+    fabBtn?.addEventListener('click', openNewModal);
+    btnHeaderAddProd?.addEventListener('click', openNewModal);
+    closeNewModalBtn?.addEventListener('click', closeNewModal);
+    cancelNewModalBtn?.addEventListener('click', closeNewModal);
+
+    newProductForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('newProdName')?.value.trim();
+      let sku = document.getElementById('newProdSku')?.value.trim();
+      const category = document.getElementById('newProdCat')?.value;
+      const stock = parseInt(document.getElementById('newProdStock')?.value || '10', 10);
+      const location = document.getElementById('newProdLoc')?.value.trim() || 'Estante Principal';
+
+      if (!name) return;
+      if (!sku) { sku = 'SKU-' + Math.floor(100 + Math.random() * 900); }
+
+      const newItem = {
+        id: 'sku-' + Date.now(),
+        sku: sku.toUpperCase(),
+        name: name,
+        category: category,
+        stock: Math.max(0, Math.min(10, stock)),
+        minStock: 5,
+        maxStock: 10,
+        location: location,
+        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'
+      };
+
+      // Log ALTA_PRODUCTO in DB ledger
+      logToDatabase({
+        sku: newItem.sku,
+        productName: newItem.name,
+        type: 'ALTA_PRODUCTO',
+        quantity: newItem.stock,
+        notes: `Registrado en ${newItem.location}`
+      });
+
+      inventory.unshift(newItem);
+      saveInventory(inventory);
+      renderInventoryList();
+      closeNewModal();
+      showToast(`¡"${name}" añadido exitosamente a Tu Cell Expres!`);
+    });
+
+    // Quick Adjust Modal
     function closeModal() {
       document.getElementById('quickAdjustModal')?.classList.add('hidden');
       activeCardSku = null;
     }
-
     document.getElementById('closeModalBtn')?.addEventListener('click', closeModal);
     document.getElementById('cancelModalBtn')?.addEventListener('click', closeModal);
 
@@ -392,183 +543,26 @@ import Layout from '../layouts/Layout.astro';
       if (!activeCardSku) return;
       const item = inventory.find(i => i.sku === activeCardSku);
       if (item) {
+        const delta = currentModalStock - item.stock;
         item.stock = currentModalStock;
         saveInventory(inventory);
+
+        if (delta !== 0) {
+          logToDatabase({
+            sku: item.sku,
+            productName: item.name,
+            type: 'AJUSTE',
+            quantity: delta,
+            notes: 'Ajuste manual de conteo en vitrina'
+          });
+        }
         renderInventoryList();
         showToast(`${item.name}: Conteo confirmado a ${currentModalStock} unid.`);
       }
       closeModal();
     });
 
-    // New Product Modal FAB
-    const fabBtn = document.getElementById('fabBtn');
-    const newProductModal = document.getElementById('newProductModal');
-    const closeNewModalBtn = document.getElementById('closeNewModalBtn');
-    const cancelNewModalBtn = document.getElementById('cancelNewModalBtn');
-    const newProductForm = document.getElementById('newProductForm');
-
-    fabBtn?.addEventListener('click', () => {
-      newProductModal?.classList.remove('hidden');
-    });
-
-    function closeNewModal() {
-      newProductModal?.classList.add('hidden');
-      newProductForm?.reset();
-    }
-
-    closeNewModalBtn?.addEventListener('click', closeNewModal);
-    cancelNewModalBtn?.addEventListener('click', closeNewModal);
-
-    newProductForm?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = document.getElementById('newProdName')?.value.trim();
-      let sku = document.getElementById('newProdSku')?.value.trim();
-      const category = document.getElementById('newProdCat')?.value;
-      const stock = parseInt(document.getElementById('newProdStock')?.value || '10', 10);
-      const location = document.getElementById('newProdLoc')?.value.trim() || 'Estante Principal';
-
-      if (!name) return;
-
-      if (!sku) {
-        sku = 'SKU-' + Math.floor(100 + Math.random() * 900);
-      }
-
-      const newItem = {
-        id: 'sku-' + Date.now(),
-        sku: sku.toUpperCase(),
-        name: name,
-        category: category,
-        stock: Math.max(0, Math.min(10, stock)),
-        minStock: 5,
-        maxStock: 10,
-        location: location,
-        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'
-      };
-
-      inventory.unshift(newItem);
-      saveInventory(inventory);
-      closeNewModal();
-      renderInventoryList();
-      showToast(`¡Accesorio ${newItem.sku} añadido al estante exitosamente!`);
-    });
-
-    // Filtering & Summary
-    function applyFilters() {
-      const query = (document.getElementById('inventorySearchInput')?.value || '').toLowerCase().trim();
-      const cards = document.querySelectorAll('.inventory-card');
-
-      let visibleCount = 0;
-      let revisableCount = 0;
-
-      cards.forEach(card => {
-        const name = (card.getAttribute('data-name') || '').toLowerCase();
-        const sku = (card.getAttribute('data-sku') || '').toLowerCase();
-        const category = card.getAttribute('data-category') || '';
-        const stock = parseInt(card.getAttribute('data-stock') || '0', 10);
-
-        const matchesCat = (currentCategory === 'all') || (category === currentCategory);
-        const matchesSearch = !query || name.includes(query) || sku.includes(query);
-
-        if (matchesCat && matchesSearch) {
-          card.classList.remove('hidden');
-          visibleCount++;
-          if (stock < 5) revisableCount++;
-        } else {
-          card.classList.add('hidden');
-        }
-      });
-
-      // Update subtitle and alert badges
-      const subtitle = document.getElementById('productCountSubtitle');
-      if (subtitle) {
-        subtitle.textContent = `Mostrando ${visibleCount} productos · ${revisableCount} en estado revisable`;
-      }
-
-      const totalAlerts = inventory.filter(i => i.stock < 5).length;
-      const topAlertText = document.getElementById('topAlertText');
-      if (topAlertText) topAlertText.textContent = `${totalAlerts} Alertas`;
-
-      const badgeCountAll = document.getElementById('badgeCountAll');
-      if (badgeCountAll) badgeCountAll.textContent = inventory.length;
-
-      const emptyState = document.getElementById('emptyInventoryState');
-      if (emptyState) {
-        if (visibleCount === 0) {
-          emptyState.classList.remove('hidden');
-          emptyState.classList.add('flex');
-        } else {
-          emptyState.classList.add('hidden');
-          emptyState.classList.remove('flex');
-        }
-      }
-    }
-
-    document.querySelectorAll('#categoryChips .chip-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const target = e.currentTarget;
-        currentCategory = target.getAttribute('data-category') || 'all';
-
-        document.querySelectorAll('#categoryChips .chip-btn').forEach(b => {
-          b.className = 'chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors';
-        });
-        target.className = 'chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-on-surface text-surface-container-lowest shadow-sm flex items-center gap-1 flex-shrink-0 transition-colors';
-
-        applyFilters();
-      });
-    });
-
-    const searchInput = document.getElementById('inventorySearchInput');
-    const clearBtn = document.getElementById('clearSearchBtn');
-
-    searchInput?.addEventListener('input', (e) => {
-      if (clearBtn) {
-        if (e.target.value.length > 0) {
-          clearBtn.classList.remove('hidden');
-        } else {
-          clearBtn.classList.add('hidden');
-        }
-      }
-      applyFilters();
-    });
-
-    clearBtn?.addEventListener('click', () => {
-      if (searchInput) {
-        searchInput.value = '';
-        clearBtn.classList.add('hidden');
-        applyFilters();
-      }
-    });
-
-    document.getElementById('resetFiltersBtn')?.addEventListener('click', () => {
-      if (searchInput) {
-        searchInput.value = '';
-        clearBtn?.classList.add('hidden');
-      }
-      const allBtn = document.querySelector('#categoryChips button');
-      if (allBtn) {
-        allBtn.click();
-      } else {
-        applyFilters();
-      }
-    });
-
-    document.getElementById('btnScanHeader')?.addEventListener('click', () => {
-      const sampleSKUs = ['SKU-520', 'SKU-092', 'SKU-104', 'SKU-141'];
-      const scanned = sampleSKUs[Math.floor(Math.random() * sampleSKUs.length)];
-      if (searchInput) {
-        searchInput.value = scanned;
-        clearBtn?.classList.remove('hidden');
-        applyFilters();
-        showToast(`Escáner: Código ${scanned} detectado`);
-      }
-    });
-
-    window.addEventListener('inventory-updated', () => {
-      inventory = loadInventory();
-      renderInventoryList();
-    });
-
-    // Initialize list on load
+    // Initial render
     renderInventoryList();
   </script>
 </Layout>

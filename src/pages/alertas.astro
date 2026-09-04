@@ -227,30 +227,37 @@ import Layout from '../layouts/Layout.astro';
             </div>
             <div class="w-full h-2.5 bg-surface-container-highest rounded-full overflow-hidden flex">
               <div class="h-full bg-error rounded-full transition-all duration-500" style="width: ${item.stock * 10}%"></div>
-            </div>
-            <div class="flex justify-between text-body-sm font-body-sm text-secondary pt-0.5">
-              <span>Actual: <strong>${item.stock} unid.</strong></span>
-              <span>Meta base: ${item.maxStock || 10} unid.</span>
-            </div>
-          </div>
+                </div>
+                <span class="font-body-sm text-body-sm text-on-surface-variant truncate block mt-0.5">${item.category} · ${item.sku} · ${item.location || 'Estante Vitrina'}</span>
+                
+                <div class="flex items-center justify-between mt-2 gap-2 flex-wrap sm:flex-nowrap">
+                  <div class="flex items-center gap-2">
+                    <span class="font-sku-code text-sku-code ${isCritical ? 'text-error font-bold' : 'text-on-surface font-semibold'}">${item.stock} / ${item.minStock || 5} min.</span>
+                    <div class="w-16 h-1.5 bg-surface-container rounded-full overflow-hidden">
+                      <div class="h-full ${isCritical ? 'bg-error' : 'bg-tertiary'} rounded-full" style="width: ${Math.min(100, (item.stock / (item.minStock || 5)) * 100)}%"></div>
+                    </div>
+                  </div>
 
-          <div class="flex items-center justify-between gap-2 pt-1">
-            <div class="flex items-center space-x-1">
-              <button aria-label="Restar" class="btn-dec-sku w-9 h-9 rounded-lg bg-surface-container text-on-surface flex items-center justify-center active:scale-95 transition-transform cursor-pointer" data-sku="${item.sku}" type="button">
-                <span class="material-symbols-outlined text-base">remove</span>
-              </button>
-              <span class="w-9 text-center font-data-tabular text-data-tabular text-on-surface font-bold" id="qty-${item.sku}">${currentAddQty}</span>
-              <button aria-label="Aumentar" class="btn-inc-sku w-9 h-9 rounded-lg bg-surface-container text-on-surface flex items-center justify-center active:scale-95 transition-transform cursor-pointer" data-sku="${item.sku}" type="button">
-                <span class="material-symbols-outlined text-base">add</span>
-              </button>
+                  <div class="flex items-center gap-1.5 shrink-0">
+                    <div class="flex items-center bg-surface-container-low rounded-xl p-0.5">
+                      <button class="btn-step-dec w-11 h-11 rounded-lg hover:bg-surface-container text-on-surface flex items-center justify-center active:scale-95 transition-all" data-sku="${item.sku}" title="Disminuir lote" type="button">
+                        <span class="material-symbols-outlined text-[18px]">remove</span>
+                      </button>
+                      <span class="px-2 font-data-tabular text-data-tabular font-bold text-on-surface text-label-md" id="step-val-${item.sku}">+${currentAddQty}</span>
+                      <button class="btn-step-inc w-11 h-11 rounded-lg hover:bg-surface-container text-on-surface flex items-center justify-center active:scale-95 transition-all" data-sku="${item.sku}" title="Aumentar lote" type="button">
+                        <span class="material-symbols-outlined text-[18px]">add</span>
+                      </button>
+                    </div>
+                    <button class="btn-restock-one h-11 px-3.5 rounded-xl bg-tertiary text-on-tertiary hover:opacity-95 font-label-sm text-label-sm font-semibold flex items-center gap-1 active:scale-95 transition-all shadow-sm" data-sku="${item.sku}" data-name="${item.name}" type="button">
+                      <span class="material-symbols-outlined text-[18px]">domain_verification</span>
+                      <span>Reponer</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
-            <button class="btn-reorder flex-1 h-10 px-4 rounded-xl bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center space-x-1.5 active:scale-95 transition-all shadow-sm cursor-pointer" data-name="${item.name}" data-sku="${item.sku}" type="button">
-              <span class="material-symbols-outlined text-lg">add_box</span>
-              <span class="reorder-label" id="label-${item.sku}">+ Reponer ${currentAddQty} unid.</span>
-            </button>
-          </div>
         `;
-        container.appendChild(article);
+        container.appendChild(card);
       });
 
       if (totalUnitsPill) totalUnitsPill.textContent = `+${grandTotalNeeded} unid.`;

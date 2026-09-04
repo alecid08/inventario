@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Stock Móvil - Registrar Movimiento">
+<Layout title="Tu Cell Expres - Registrar Movimiento">
   <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile">
     <div class="flex flex-col w-full pb-24 space-y-space-md">
       <!-- Header / Barra Superior Contextual -->
@@ -13,21 +13,21 @@ import Layout from '../layouts/Layout.astro';
           </a>
           <div class="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-surface-container text-on-secondary-container text-label-sm font-label-sm">
             <span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">storefront</span>
-            <span>Sucursal Centro #102</span>
+            <span>Tienda Tu Cell Expres</span>
           </div>
         </div>
         <div class="pt-1">
           <h1 class="font-headline-lg text-headline-lg text-on-surface">Registrar Movimiento</h1>
-          <p class="font-body-sm text-body-sm text-secondary">Control de entradas, salidas y ajustes de stock en tiempo real</p>
+          <p class="font-body-sm text-body-sm text-secondary">Control de entradas, salidas por ventas y mermas en tiempo real</p>
         </div>
       </header>
 
       <!-- SECCIÓN 1: Selector de Producto -->
       <section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-sm">
         <div class="flex items-center justify-between">
-          <span class="font-label-md text-label-md text-on-surface flex items-center gap-1.5">
+          <span class="font-label-md text-label-md text-on-surface flex items-center gap-1.5 font-semibold">
             <span class="w-2 h-2 rounded-full bg-primary"></span>
-            1. Seleccionar Producto <span class="text-error">*</span>
+            1. Seleccionar Accesorio <span class="text-error">*</span>
           </span>
           <button class="text-primary font-label-sm text-label-sm hover:underline flex items-center gap-0.5" id="btnToggleSelectModal" type="button">
             Cambiar Accesorio
@@ -46,7 +46,7 @@ import Layout from '../layouts/Layout.astro';
         <div class="relative bg-surface-container-low rounded-xl p-3 flex gap-3 items-center overflow-hidden" id="selectedProductCard">
           <div class="absolute left-0 top-0 bottom-0 w-1 bg-tertiary" id="selectedCardBorder"></div>
           <div class="w-16 h-16 rounded-lg bg-surface-container-highest flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
-            <img alt="Producto Seleccionado" title="Producto Seleccionado" class="w-full h-full object-cover" id="selectedCardImg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww"/>
+            <img width="64" height="64" loading="lazy" style="aspect-ratio: 1/1;" alt="Producto Seleccionado" title="Producto Seleccionado" class="w-full h-full object-cover" id="selectedCardImg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww"/>
           </div>
           <div class="flex-1 min-w-0 space-y-1">
             <div class="flex items-center justify-between gap-1">
@@ -67,29 +67,29 @@ import Layout from '../layouts/Layout.astro';
       <!-- SECCIÓN 2: Tipo de Movimiento -->
       <section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-sm">
         <div class="flex items-center justify-between">
-          <span class="font-label-md text-label-md text-on-surface flex items-center gap-1.5">
+          <span class="font-label-md text-label-md text-on-surface flex items-center gap-1.5 font-semibold">
             <span class="w-2 h-2 rounded-full bg-primary"></span>
             2. Tipo de Movimiento <span class="text-error">*</span>
           </span>
           <span class="text-label-sm font-label-sm text-error bg-error-container px-2 py-0.5 rounded-full" id="badge-tipo-resumen">
-            Salida (-)
+            Salida por Venta (-)
           </span>
         </div>
         <!-- Opciones en Grid -->
         <div class="grid grid-cols-1 gap-2" id="movement-type-group">
-          <!-- 1. Despacho -->
-          <label class="movement-card flex items-center justify-between p-3.5 rounded-xl cursor-pointer bg-primary-fixed text-on-primary-fixed shadow-sm transition-all" data-factor="-1" data-type="out">
+          <!-- 1. Venta / Despacho -->
+          <label class="movement-card min-h-[56px] flex items-center justify-between p-3.5 rounded-xl cursor-pointer bg-primary-fixed text-on-primary-fixed shadow-sm transition-all" data-factor="-1" data-type="out">
             <div class="flex items-center gap-3 min-w-0">
               <div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-[20px]">output</span>
+                <span class="material-symbols-outlined text-[20px]">shopping_cart_checkout</span>
               </div>
               <div class="min-w-0">
-                <p class="font-label-lg text-label-lg font-semibold">Salida / Despacho de Piso</p>
-                <p class="font-body-sm text-body-sm opacity-80 truncate">Entrega a cliente o traslado de vitrina</p>
+                <p class="font-label-lg text-label-lg font-semibold">Salida por Venta en Mostrador</p>
+                <p class="font-body-sm text-body-sm opacity-80 truncate">Entrega física de producto a cliente</p>
               </div>
             </div>
             <div class="flex items-center gap-2 shrink-0">
-              <span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container font-semibold">- Salida</span>
+              <span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container font-semibold">- Venta</span>
               <div class="radio-indicator w-5 h-5 rounded-full bg-primary text-on-primary flex items-center justify-center">
                 <span class="material-symbols-outlined text-[14px]">check</span>
               </div>
@@ -97,14 +97,14 @@ import Layout from '../layouts/Layout.astro';
           </label>
 
           <!-- 2. Reposición de Bodega -->
-          <label class="movement-card flex items-center justify-between p-3.5 rounded-xl cursor-pointer bg-surface-container-low text-on-surface hover:bg-surface-container transition-all" data-factor="1" data-type="in">
+          <label class="movement-card min-h-[56px] flex items-center justify-between p-3.5 rounded-xl cursor-pointer bg-surface-container-low text-on-surface hover:bg-surface-container transition-all" data-factor="1" data-type="in">
             <div class="flex items-center gap-3 min-w-0">
-              <div class="w-10 h-10 rounded-full bg-surface-container-highest text-primary flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-[20px]">input</span>
+              <div class="w-10 h-10 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-[20px]">add_box</span>
               </div>
               <div class="min-w-0">
-                <p class="font-label-lg text-label-lg font-semibold">Entrada / Recepción de Stock</p>
-                <p class="font-body-sm text-body-sm text-secondary truncate">Ingreso de accesorios a la vitrina de piso</p>
+                <p class="font-label-lg text-label-lg font-semibold">Entrada / Reabastecimiento</p>
+                <p class="font-body-sm text-body-sm text-secondary truncate">Ingreso de lote a vitrina o estante</p>
               </div>
             </div>
             <div class="flex items-center gap-2 shrink-0">
@@ -115,19 +115,19 @@ import Layout from '../layouts/Layout.astro';
             </div>
           </label>
 
-          <!-- 3. Ajuste por conteo -->
-          <label class="movement-card flex items-center justify-between p-3.5 rounded-xl cursor-pointer bg-surface-container-low text-on-surface hover:bg-surface-container transition-all" data-factor="0" data-type="adjust">
+          <!-- 3. Merma o Daño -->
+          <label class="movement-card min-h-[56px] flex items-center justify-between p-3.5 rounded-xl cursor-pointer bg-surface-container-low text-on-surface hover:bg-surface-container transition-all" data-factor="-1" data-type="merma">
             <div class="flex items-center gap-3 min-w-0">
-              <div class="w-10 h-10 rounded-full bg-surface-container-highest text-secondary flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-[20px]">tune</span>
+              <div class="w-10 h-10 rounded-full bg-error-container text-error flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-[20px]">delete_sweep</span>
               </div>
               <div class="min-w-0">
-                <p class="font-label-lg text-label-lg font-semibold">Ajuste Directo por Conteo Físico</p>
-                <p class="font-body-sm text-body-sm text-secondary truncate">Fijar exactamente el número de existencias reales</p>
+                <p class="font-label-lg text-label-lg font-semibold">Merma / Empaque Dañado</p>
+                <p class="font-body-sm text-body-sm text-secondary truncate">Retiro por defecto o falla de exhibición</p>
               </div>
             </div>
             <div class="flex items-center gap-2 shrink-0">
-              <span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-secondary-container text-on-secondary-container font-semibold">Ajuste</span>
+              <span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-error font-semibold">- Merma</span>
               <div class="radio-indicator w-5 h-5 rounded-full bg-surface-container-highest text-transparent flex items-center justify-center">
                 <span class="material-symbols-outlined text-[14px]">check</span>
               </div>
@@ -136,87 +136,70 @@ import Layout from '../layouts/Layout.astro';
         </div>
       </section>
 
-      <!-- SECCIÓN 3: Cantidad de Unidades -->
+      <!-- SECCIÓN 3: Cantidad Físicamente Movilizada -->
       <section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-md">
         <div class="flex items-center justify-between">
-          <span class="font-label-md text-label-md text-on-surface flex items-center gap-1.5">
+          <span class="font-label-md text-label-md text-on-surface flex items-center gap-1.5 font-semibold">
             <span class="w-2 h-2 rounded-full bg-primary"></span>
-            3. Cantidad de Unidades <span class="text-error">*</span>
+            3. Cantidad a Registrar <span class="text-error">*</span>
           </span>
-          <span class="font-label-sm text-label-sm text-secondary">Acción Rápida</span>
+          <span class="font-sku-code text-sku-code text-secondary text-[12px]">Stock Máx: 10</span>
         </div>
-        <!-- Stepper -->
-        <div class="flex items-center justify-between bg-surface-container-low rounded-2xl p-2 shadow-inner">
-          <button class="w-14 h-14 rounded-xl bg-surface-container-lowest text-on-surface hover:bg-surface-container-high active:scale-95 flex items-center justify-center transition-all shadow-sm" id="btn-dec" type="button">
-            <span class="material-symbols-outlined text-[28px]">remove</span>
+
+        <div class="flex items-center justify-center gap-4 py-2">
+          <button class="w-12 h-12 rounded-xl bg-surface-container text-on-surface hover:bg-surface-container-high flex items-center justify-center active:scale-95 transition-transform" id="btnDecQty" type="button">
+            <span class="material-symbols-outlined text-[24px]">remove</span>
           </button>
-          <div class="flex flex-col items-center justify-center">
-            <input class="w-24 text-center font-display text-display bg-transparent text-primary font-bold focus:outline-none" id="input-qty" max="999" min="1" type="number" value="1"/>
-            <span class="font-label-sm text-label-sm text-secondary -mt-1">unidad(es)</span>
+          
+          <div class="flex flex-col items-center">
+            <input class="w-24 text-center font-display text-[32px] font-bold text-on-surface bg-transparent focus:outline-none focus:ring-1 focus:ring-primary rounded-lg" id="inputQty" min="1" type="number" value="1"/>
+            <span class="font-label-sm text-label-sm text-secondary">unidades físicas</span>
           </div>
-          <button class="w-14 h-14 rounded-xl bg-primary text-on-primary hover:opacity-90 active:scale-95 flex items-center justify-center transition-all shadow-sm" id="btn-inc" type="button">
-            <span class="material-symbols-outlined text-[28px]">add</span>
+
+          <button class="w-12 h-12 rounded-xl bg-primary text-on-primary hover:opacity-95 flex items-center justify-center active:scale-95 transition-transform shadow-sm" id="btnIncQty" type="button">
+            <span class="material-symbols-outlined text-[24px]">add</span>
           </button>
         </div>
-        <!-- Pills de Incremento Rápido -->
-        <div class="grid grid-cols-4 gap-2">
-          <button class="btn-quick-add py-2.5 rounded-lg bg-surface-container-low text-on-surface font-label-md text-label-md hover:bg-surface-container active:scale-95 transition-all shadow-sm" data-val="1" type="button">+1</button>
-          <button class="btn-quick-add py-2.5 rounded-lg bg-surface-container-low text-on-surface font-label-md text-label-md hover:bg-surface-container active:scale-95 transition-all shadow-sm" data-val="5" type="button">+5</button>
-          <button class="btn-quick-add py-2.5 rounded-lg bg-surface-container-low text-on-surface font-label-md text-label-md hover:bg-surface-container active:scale-95 transition-all shadow-sm" data-val="10" type="button">+10</button>
-          <button class="btn-quick-add py-2.5 rounded-lg bg-surface-container-low text-on-surface font-label-md text-label-md hover:bg-surface-container active:scale-95 transition-all shadow-sm" data-val="20" type="button">+20</button>
+
+        <!-- Quick Add Pills -->
+        <div class="flex items-center justify-center gap-2 pt-1 flex-wrap">
+          <button class="quick-add-btn px-4 min-h-[44px] rounded-full bg-surface-container-low text-on-surface font-label-sm text-label-sm hover:bg-surface-container transition-colors active:scale-95" data-val="1" type="button">+1</button>
+          <button class="quick-add-btn px-4 min-h-[44px] rounded-full bg-surface-container-low text-on-surface font-label-sm text-label-sm hover:bg-surface-container transition-colors active:scale-95" data-val="3" type="button">+3</button>
+          <button class="quick-add-btn px-4 min-h-[44px] rounded-full bg-surface-container-low text-on-surface font-label-sm text-label-sm hover:bg-surface-container transition-colors active:scale-95" data-val="5" type="button">+5</button>
+          <button class="quick-add-btn px-4 min-h-[44px] rounded-full bg-surface-container-low text-on-surface font-label-sm text-label-sm hover:bg-surface-container transition-colors active:scale-95" data-val="10" type="button">+10 (Max)</button>
         </div>
-        <!-- Resumen Dinámico Proyectado -->
-        <div class="p-3 bg-surface-container rounded-xl flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-[20px] text-primary">calculate</span>
-            <span class="font-body-sm text-body-sm text-on-surface font-medium">Resultado Proyectado:</span>
-          </div>
-          <div class="font-data-tabular text-data-tabular font-bold text-on-surface" id="stock-calc-preview">
-            <!-- Computed dynamically -->
-          </div>
+
+        <!-- Live Stock Preview Calculation -->
+        <div class="p-3 bg-surface-container-low rounded-xl text-center font-body-md text-body-md text-on-surface border border-surface-container" id="calcPreview">
+          Cargando cálculo proyectado...
         </div>
       </section>
 
-      <!-- SECCIÓN 4: Nota u Observación -->
-      <section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-sm">
+      <!-- SECCIÓN 4: Motivo u Observación -->
+      <section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-xs">
         <div class="flex items-center justify-between">
-          <span class="font-label-md text-label-md text-on-surface flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-secondary"></span>
-            4. Nota u Observación (Opcional)
-          </span>
-          <span class="font-label-sm text-label-sm text-secondary" id="char-count">0 / 250</span>
+          <label class="font-label-md text-label-md text-on-surface flex items-center gap-1.5 font-semibold" for="notesTextarea">
+            <span class="w-2 h-2 rounded-full bg-primary"></span>
+            4. Observación (Opcional)
+          </label>
+          <span class="font-sku-code text-sku-code text-secondary text-[11px]" id="charCounter">0 / 250</span>
         </div>
-        <div class="relative">
-          <textarea class="w-full bg-surface-container-low text-on-surface rounded-xl p-3 font-body-md text-body-md placeholder:text-secondary focus:outline-none focus:bg-surface-container-lowest focus:ring-0 shadow-sm transition-all" id="text-notes" maxlength="250" placeholder="Ej. Conteo inicial en estante A, reposición matutina o producto retirado por fallas..." rows="3"></textarea>
-        </div>
-        <!-- Chips de Motivos Predefinidos -->
-        <div class="space-y-1.5 pt-1">
-          <p class="font-label-sm text-label-sm text-secondary">Sugerencias rápidas:</p>
-          <div class="flex flex-wrap gap-1.5">
-            <button class="btn-preset-chip px-2.5 py-1 rounded-full bg-surface-container-low text-secondary hover:text-on-surface hover:bg-surface-container active:scale-95 font-label-sm text-label-sm transition-colors" type="button">
-              Despacho cliente
-            </button>
-            <button class="btn-preset-chip px-2.5 py-1 rounded-full bg-surface-container-low text-secondary hover:text-on-surface hover:bg-surface-container active:scale-95 font-label-sm text-label-sm transition-colors" type="button">
-              Conteo matutino
-            </button>
-            <button class="btn-preset-chip px-2.5 py-1 rounded-full bg-surface-container-low text-secondary hover:text-on-surface hover:bg-surface-container active:scale-95 font-label-sm text-label-sm transition-colors" type="button">
-              Ajuste de vitrina
-            </button>
-            <button class="btn-preset-chip px-2.5 py-1 rounded-full bg-surface-container-low text-secondary hover:text-on-surface hover:bg-surface-container active:scale-95 font-label-sm text-label-sm transition-colors" type="button">
-              Producto dañado
-            </button>
-          </div>
+
+        <textarea class="w-full h-20 p-3 rounded-xl bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all resize-none" id="notesTextarea" maxlength="250" placeholder="Ej. Venta en mostrador turno tarde / Empaque rayado en vitrina..."></textarea>
+
+        <!-- Presets -->
+        <div class="flex flex-wrap gap-1.5 pt-1">
+          <button class="preset-chip px-3 min-h-[44px] rounded-xl bg-surface-container-low text-secondary text-[12px] hover:text-on-surface flex items-center transition-colors active:scale-95" type="button">Venta en Mostrador</button>
+          <button class="preset-chip px-3 min-h-[44px] rounded-xl bg-surface-container-low text-secondary text-[12px] hover:text-on-surface flex items-center transition-colors active:scale-95" type="button">Reabastecimiento Semanal</button>
+          <button class="preset-chip px-3 min-h-[44px] rounded-xl bg-surface-container-low text-secondary text-[12px] hover:text-on-surface flex items-center transition-colors active:scale-95" type="button">Empaque Maltratado</button>
         </div>
       </section>
 
-      <!-- SECCIÓN 5: Acciones Inferiores -->
-      <div class="fixed bottom-0 left-0 right-0 p-4 bg-surface-container-lowest/90 backdrop-blur-md shadow-2xl flex items-center justify-between gap-3 max-w-lg mx-auto z-40">
-        <a href="/" class="h-12 px-5 rounded-xl bg-surface-container text-on-secondary-container hover:bg-surface-container-high font-label-lg text-label-lg active:scale-95 transition-all flex items-center justify-center">
-          Cancelar
-        </a>
-        <button class="flex-1 h-12 px-6 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg font-semibold flex items-center justify-center gap-2 hover:opacity-95 active:scale-95 transition-all shadow-md" id="btn-submit" type="button">
-          <span class="material-symbols-outlined text-[20px]">check_circle</span>
-          <span>Registrar Movimiento</span>
+      <!-- Submit Action Floating Bar -->
+      <div class="pt-2">
+        <button class="w-full h-14 rounded-xl bg-primary text-on-primary font-headline-sm text-headline-sm font-bold shadow-lg hover:opacity-95 active:scale-[0.99] transition-all flex items-center justify-center gap-2" id="btnSubmitMovement" type="button">
+          <span class="material-symbols-outlined text-[24px]">save</span>
+          <span>Registrar en Base de Datos</span>
         </button>
       </div>
     </div>
@@ -224,18 +207,23 @@ import Layout from '../layouts/Layout.astro';
 
   <script is:inline>
     const STORE_KEY = 'stock_movil_inventory_v1';
+    const DB_LEDGER_KEY = 'tu_cell_expres_db_v1';
 
     const defaultItems = [
       { id: 'sku-520', sku: 'SKU-520', name: 'Soporte Magnético para Auto', category: 'Auto', stock: 1, minStock: 5, maxStock: 10, location: 'Vitrina A-1', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCoO16TT-tR-wlBrTApCGHxTpxWYKIILFh-fa-B9ONyuxDC7S0ZXI1xdRds3NS2MAjynS8X2uxtjbBTZFQOx3cu80HN_IChP6er-zID8eNdtHMdl2IaINz3QBd6WqP7XAeWK_-CkFA6KuSLUQ3uYW8aLVdzLA0HU-wJ4SV3_opoxIxnm0ropW05_gKwnufdKjkZCa6ege8rRfS1fIRvvjUVG7PXm7gqADoptCJ87melL-SZW9KfqE8rfw' },
       { id: 'sku-092', sku: 'SKU-092', name: 'Funda Silicona Case iPhone 15 Pro', category: 'Fundas', stock: 3, minStock: 5, maxStock: 10, location: 'Vitrina F-2', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww' },
       { id: 'sku-104', sku: 'SKU-104', name: 'Mica Vidrio Templado 9D iPhone', category: 'Micas', stock: 3, minStock: 5, maxStock: 10, location: 'Estante M-3', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDArc9PQMZMX60YZdL2HuhroEsYV6UgzSH87z-kJS4ARnnmSqmNSHgA9qBp7g6F6dHgZFFqTSVgq2gdJp58wHONkBxTxsO8hE0qtwatBHzLpB31H6chYL2O8S5CJSDi-z88o0vFq5sZcG3tsWBWISuppZf-tVqo03v5gno6pOC0TkrrhFGhyhCHAt7jP4NM9ZHobv-4beNobhEKe-UBtNC0__DBtmC90qfTOgVDh-SgPW_fPqxi2Q1q1g' },
       { id: 'sku-319', sku: 'SKU-319', name: 'Adaptador Lightning a Jack 3.5mm', category: 'Audio', stock: 4, minStock: 5, maxStock: 10, location: 'Cajón A-4', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBEddAYibZMjqLmVbQYfK77Qtk_GR18aEIxR3iZD-Z2oh2vBwMBHO4f5rmtUUOpsECq0Ki6-5kKq2rrbOwb5qTeegm3mwiaDth6G9WXs1pYgShhoy9AIo62Yi2tPtSAwuB9NT8Xg1cpDcF-6cJyQ2S_WpLWIWQIu2INbGpBjXUA7YtOlsTuVV3M7ipH2vBUeAEuuoP8SCLpb0_EussBUxFkyspxVV1X9GEiyd9dr9O0HJLNk35vxy8HOA' },
-      { id: 'sku-141', sku: 'SKU-141', name: 'Cargador Rápido 30W USB-C GaN', category: 'Cargas', stock: 8, minStock: 5, maxStock: 10, location: 'Estante C-1', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBrfDhd7aPs8GoEZkbA-xzj03A0JGJv23NKGhczYuRs8EJYYf_q4gvPULwdu7W8msYzasXSZ5CRFCaiereQb0MBGmy_2rZyX803yRgihTlaUjdsvBhZ43BV5z9VhWzAtBp5NCT6sMqRZH17UfXJqbpvnnAVKBFI_dqtFRl2c6VUhREY7ilvtDMv5-2DsAZhazqG9qhIVZnFgDAxPizJb5ovXT5omGmRTXTgZYwc5QvkWW6J76B2YiQrvw' }
+      { id: 'sku-141', sku: 'SKU-141', name: 'Cargador Rápido 30W USB-C GaN', category: 'Cargas', stock: 8, minStock: 5, maxStock: 10, location: 'Estante C-1', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBrfDhd7aPs8GoEZkbA-xzj03A0JGJv23NKGhczYuRs8EJYYf_q4gvPULwdu7W8msYzasXSZ5CRFCaiereQb0MBGmy_2rZyX803yRgihTlaUjdsvBhZ43BV5z9VhWzAtBp5NCT6sMqRZH17UfXJqbpvnnAVKBFI_dqtFRl2c6VUhREY7ilvtDMv5-2DsAZhazqG9qhIVZnFgDAxPizJb5ovXT5omGmRTXTgZYwc5QvkWW6J76B2YiQrvw' },
+      { id: 'sku-077', sku: 'SKU-077', name: 'Cable MagSafe Trenzado 1.5m', category: 'Cargas', stock: 9, minStock: 5, maxStock: 10, location: 'Estante C-2', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDwBW1Tnz4ox8TJimQ2nNWfY6o33DXFVI_9hnHGKzzl3XJhpYMd92sEX1p-M2182e_5P1T9-E8ueXBhioGF4oy264i2UoGbNDW_wFjgwrSNzAJjJhAlRcLwnmRjbP3lOMSy1dM0qSLvxcPA4Wzeciz7TUTmcvBPhWTMLu9gKEJNK5yXbrAMIG8EdaCNX49rw4X2MbQ7za9LNvHHrL-orE8zBLnoZbp1y9YNu2Jb_lniNxeofy9PERKBGA' }
     ];
 
-    function getStoredInventory() {
+    function loadInventory() {
       const raw = localStorage.getItem(STORE_KEY);
-      if (!raw) return defaultItems;
+      if (!raw) {
+        localStorage.setItem(STORE_KEY, JSON.stringify(defaultItems));
+        return defaultItems;
+      }
       try { return JSON.parse(raw); } catch (e) { return defaultItems; }
     }
 
@@ -244,23 +232,39 @@ import Layout from '../layouts/Layout.astro';
       window.dispatchEvent(new CustomEvent('inventory-updated', { detail: items }));
     }
 
-    let inventory = getStoredInventory();
-    let selectedSku = inventory[0]?.sku || 'SKU-092';
-    let currentFactor = -1;
+    function logToDatabase(tx) {
+      const raw = localStorage.getItem(DB_LEDGER_KEY);
+      let ledger = [];
+      try { ledger = raw ? JSON.parse(raw) : []; } catch (e) { ledger = []; }
+      const now = new Date();
+      const entry = {
+        id: 'tx-' + Date.now(),
+        timestamp: now.toISOString(),
+        dateStr: now.toISOString().split('T')[0],
+        ...tx
+      };
+      ledger.unshift(entry);
+      localStorage.setItem(DB_LEDGER_KEY, JSON.stringify(ledger));
+    }
+
+    let inventory = loadInventory();
+    let selectedSku = inventory[0]?.sku || 'SKU-141';
+    let currentFactor = -1; // Default: Salida/Venta (-1)
+    let currentType = 'out';
     let selectedQty = 1;
 
     const dropdown = document.getElementById('productSelectDropdown');
-    const inputQty = document.getElementById('input-qty');
-    const btnInc = document.getElementById('btn-inc');
-    const btnDec = document.getElementById('btn-dec');
-    const quickAddBtns = document.querySelectorAll('.btn-quick-add');
-    const movementCards = document.querySelectorAll('.movement-card');
-    const calcPreview = document.getElementById('stock-calc-preview');
+    const inputQty = document.getElementById('inputQty');
+    const btnInc = document.getElementById('btnIncQty');
+    const btnDec = document.getElementById('btnDecQty');
+    const calcPreview = document.getElementById('calcPreview');
     const badgeResumen = document.getElementById('badge-tipo-resumen');
-    const notesTextarea = document.getElementById('text-notes');
-    const charCounter = document.getElementById('char-count');
-    const presetChips = document.querySelectorAll('.btn-preset-chip');
-    const btnSubmit = document.getElementById('btn-submit');
+    const movementCards = document.querySelectorAll('.movement-card');
+    const quickAddBtns = document.querySelectorAll('.quick-add-btn');
+    const notesTextarea = document.getElementById('notesTextarea');
+    const charCounter = document.getElementById('charCounter');
+    const presetChips = document.querySelectorAll('.preset-chip');
+    const btnSubmit = document.getElementById('btnSubmitMovement');
 
     function populateDropdown() {
       if (!dropdown) return;
@@ -268,37 +272,37 @@ import Layout from '../layouts/Layout.astro';
       inventory.forEach(item => {
         const opt = document.createElement('option');
         opt.value = item.sku;
-        opt.textContent = `${item.name} (${item.sku}) - ${item.stock} unid.`;
+        opt.textContent = `${item.name} (${item.sku}) · Stock: ${item.stock}`;
+        if (item.sku === selectedSku) opt.selected = true;
         dropdown.appendChild(opt);
       });
-      dropdown.value = selectedSku;
     }
 
     function updateSelectedCardDisplay() {
       const item = inventory.find(i => i.sku === selectedSku);
       if (!item) return;
 
-      const title = document.getElementById('selectedCardTitle');
-      const category = document.getElementById('selectedCardCategory');
-      const sku = document.getElementById('selectedCardSku');
-      const stock = document.getElementById('selectedCardStock');
-      const status = document.getElementById('selectedCardStatus');
-      const img = document.getElementById('selectedCardImg');
-      const border = document.getElementById('selectedCardBorder');
-
-      if (title) title.textContent = item.name;
-      if (category) category.textContent = item.category;
-      if (sku) sku.textContent = item.sku;
-      if (stock) stock.textContent = `${item.stock} disp.`;
-      if (img && item.img) img.src = item.img;
-
       const isLow = item.stock < (item.minStock || 5);
-      if (status) {
-        status.textContent = isLow ? 'Stock Crítico' : 'OK';
-        status.className = `px-2 py-0.5 rounded-full ${isLow ? 'bg-error-container text-on-error-container' : 'bg-tertiary-fixed text-on-tertiary-fixed'} text-[11px] font-label-sm font-semibold shrink-0`;
+      const cardTitle = document.getElementById('selectedCardTitle');
+      const cardSku = document.getElementById('selectedCardSku');
+      const cardStock = document.getElementById('selectedCardStock');
+      const cardCat = document.getElementById('selectedCardCategory');
+      const cardStatus = document.getElementById('selectedCardStatus');
+      const cardImg = document.getElementById('selectedCardImg');
+      const cardBorder = document.getElementById('selectedCardBorder');
+
+      if (cardTitle) cardTitle.textContent = item.name;
+      if (cardSku) cardSku.textContent = item.sku;
+      if (cardStock) cardStock.textContent = `${item.stock} / ${item.maxStock || 10} disp.`;
+      if (cardCat) cardCat.textContent = `${item.category} · ${item.location || 'Estante Principal'}`;
+      if (cardImg) cardImg.src = item.img || '';
+
+      if (cardStatus) {
+        cardStatus.textContent = isLow ? 'Revisable' : 'OK';
+        cardStatus.className = `px-2 py-0.5 rounded-full ${isLow ? 'bg-error-container text-on-error-container' : 'bg-tertiary-fixed text-on-tertiary-fixed'} text-[11px] font-label-sm font-semibold shrink-0`;
       }
-      if (border) {
-        border.className = `absolute left-0 top-0 bottom-0 w-1 ${isLow ? 'bg-error' : 'bg-tertiary'}`;
+      if (cardBorder) {
+        cardBorder.className = `absolute left-0 top-0 bottom-0 w-1 ${isLow ? 'bg-error' : 'bg-tertiary'}`;
       }
 
       updateStockCalculation();
@@ -306,22 +310,20 @@ import Layout from '../layouts/Layout.astro';
 
     function updateStockCalculation() {
       const item = inventory.find(i => i.sku === selectedSku);
-      if (!item || !inputQty || !calcPreview) return;
+      if (!item || !calcPreview) return;
 
-      selectedQty = Math.max(1, parseInt(inputQty.value) || 1);
-      inputQty.value = selectedQty;
+      selectedQty = parseInt(inputQty?.value || '1', 10);
+      if (selectedQty < 1) selectedQty = 1;
+
       const currentStock = item.stock;
-
       let resultText = '';
+
       if (currentFactor === -1) {
-        const finalStock = currentStock - selectedQty;
-        const colorClass = finalStock < 0 ? 'text-error font-extrabold' : 'text-primary font-extrabold';
-        resultText = `${currentStock} - ${selectedQty} = <span class="${colorClass} text-headline-sm">${finalStock} unidades</span>`;
+        const finalStock = Math.max(0, currentStock - selectedQty);
+        resultText = `${currentStock} - ${selectedQty} = <span class="text-error font-extrabold text-headline-sm">${finalStock} unidades restantes</span>`;
       } else if (currentFactor === 1) {
-        const finalStock = currentStock + selectedQty;
-        resultText = `${currentStock} + ${selectedQty} = <span class="text-tertiary font-extrabold text-headline-sm">${finalStock} unidades</span>`;
-      } else {
-        resultText = `Fijar stock en: <span class="text-primary font-extrabold text-headline-sm">${selectedQty} unidades</span>`;
+        const finalStock = Math.min(10, currentStock + selectedQty);
+        resultText = `${currentStock} + ${selectedQty} = <span class="text-tertiary font-extrabold text-headline-sm">${finalStock} unidades totales</span>`;
       }
       calcPreview.innerHTML = resultText;
     }
@@ -373,18 +375,18 @@ import Layout from '../layouts/Layout.astro';
         radio?.classList.add('bg-primary', 'text-on-primary');
 
         currentFactor = parseInt(card.getAttribute('data-factor') || '-1');
-        const type = card.getAttribute('data-type');
+        currentType = card.getAttribute('data-type');
 
         if (badgeResumen) {
-          if (type === 'out') {
-            badgeResumen.textContent = 'Salida (-)';
+          if (currentType === 'out') {
+            badgeResumen.textContent = 'Salida por Venta (-)';
             badgeResumen.className = 'text-label-sm font-label-sm text-error bg-error-container px-2 py-0.5 rounded-full';
-          } else if (type === 'in') {
+          } else if (currentType === 'in') {
             badgeResumen.textContent = 'Entrada (+)';
             badgeResumen.className = 'text-label-sm font-label-sm text-tertiary bg-tertiary-fixed px-2 py-0.5 rounded-full';
           } else {
-            badgeResumen.textContent = 'Ajuste (=)';
-            badgeResumen.className = 'text-label-sm font-label-sm text-secondary bg-secondary-container px-2 py-0.5 rounded-full';
+            badgeResumen.textContent = 'Merma / Retiro (-)';
+            badgeResumen.className = 'text-label-sm font-label-sm text-error bg-error-container px-2 py-0.5 rounded-full';
           }
         }
 
@@ -415,17 +417,31 @@ import Layout from '../layouts/Layout.astro';
       if (!item) return;
 
       const originalHtml = btnSubmit.innerHTML;
-      btnSubmit.innerHTML = `<span class="material-symbols-outlined animate-spin text-[20px]">progress_activity</span><span>Guardando...</span>`;
+      btnSubmit.innerHTML = `<span class="material-symbols-outlined animate-spin text-[20px]">progress_activity</span><span>Guardando en BD...</span>`;
       btnSubmit.setAttribute('disabled', 'true');
 
       let newStock = item.stock;
-      if (currentFactor === -1) {
+      let txType = 'VENTA';
+
+      if (currentType === 'out') {
+        txType = 'VENTA';
         newStock = Math.max(0, item.stock - selectedQty);
-      } else if (currentFactor === 1) {
+      } else if (currentType === 'in') {
+        txType = 'ENTRADA';
         newStock = Math.min(10, item.stock + selectedQty);
       } else {
-        newStock = Math.max(0, Math.min(10, selectedQty));
+        txType = 'MERMA';
+        newStock = Math.max(0, item.stock - selectedQty);
       }
+
+      // Log transaction into permanent DB ledger
+      logToDatabase({
+        sku: item.sku,
+        productName: item.name,
+        type: txType,
+        quantity: currentType === 'in' ? selectedQty : -selectedQty,
+        notes: notesTextarea?.value.trim() || (txType === 'VENTA' ? 'Salida por venta en mostrador' : 'Reabastecimiento de vitrina')
+      });
 
       item.stock = newStock;
       saveInventory(inventory);
@@ -433,8 +449,9 @@ import Layout from '../layouts/Layout.astro';
       setTimeout(() => {
         btnSubmit.classList.remove('bg-primary');
         btnSubmit.classList.add('bg-tertiary');
-        btnSubmit.innerHTML = `<span class="material-symbols-outlined text-[20px]">done_all</span><span>¡Registrado a ${newStock} unid.!</span>`;
+        btnSubmit.innerHTML = `<span class="material-symbols-outlined text-[20px]">done_all</span><span>¡Registrado en BD (${newStock} unid)!</span>`;
         updateSelectedCardDisplay();
+        populateDropdown();
         setTimeout(() => {
           btnSubmit.classList.remove('bg-tertiary');
           btnSubmit.classList.add('bg-primary');

@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Stock Móvil - Reporte Semanal de Movimiento y Rotación">
+<Layout title="Tu Cell Expres - Consulta Histórica y Reporte de Base de Datos">
   <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile">
     <div class="flex flex-col w-full pb-24">
       <!-- Header Section -->
@@ -13,10 +13,10 @@ import Layout from '../layouts/Layout.astro';
           </a>
           <div>
             <div class="flex items-center gap-space-2xs">
-              <h1 class="font-headline-sm text-headline-sm text-on-surface">Reporte Semanal de Movimiento</h1>
-              <span class="bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm px-space-xs py-0.5 rounded-full">Rotación &amp; Reabastecimiento</span>
+              <h1 class="font-headline-sm text-headline-sm text-on-surface">Base de Datos &amp; Reportes</h1>
+              <span class="bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm px-space-xs py-0.5 rounded-full">Histórico Inmutable</span>
             </div>
-            <p class="font-body-sm text-body-sm text-on-surface-variant">Despachos por ventas, mermas extraídas y reposición extra por alta demanda</p>
+            <p class="font-body-sm text-body-sm text-on-surface-variant">Consulta por fechas de ventas, entradas y salidas de Tu Cell Expres</p>
           </div>
         </div>
         <button class="flex items-center gap-space-2xs h-10 px-space-md bg-surface-container-lowest text-primary rounded-xl shadow-sm hover:bg-surface-container-low transition-all active:scale-95 cursor-pointer" id="btn-export-csv" type="button">
@@ -25,260 +25,135 @@ import Layout from '../layouts/Layout.astro';
         </button>
       </header>
 
-      <!-- Week & Branch Selector Bar -->
-      <section class="w-full bg-surface-container-lowest rounded-xl p-space-sm mb-space-md shadow-sm">
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-space-sm">
-          <div class="flex items-center justify-between w-full sm:w-auto gap-space-2xs bg-surface-container-low px-space-xs py-1 rounded-lg">
-            <button aria-label="Semana anterior" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container text-on-surface active:scale-90 transition-transform cursor-pointer" id="prev-week-btn" type="button">
-              <span class="material-symbols-outlined text-[18px]">chevron_left</span>
-            </button>
-            <div class="flex items-center gap-space-2xs px-space-xs">
-              <span class="material-symbols-outlined text-primary text-[18px]">calendar_today</span>
-              <span class="font-label-md text-label-md text-on-surface tracking-tight" id="week-label">Semana Actual · Control de Rotación</span>
-            </div>
-            <button aria-label="Semana siguiente" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container text-on-surface active:scale-90 transition-transform cursor-pointer" id="next-week-btn" type="button">
-              <span class="material-symbols-outlined text-[18px]">chevron_right</span>
-            </button>
+      <!-- Date Query & Branch Selector Bar -->
+      <section class="w-full bg-surface-container-lowest rounded-xl p-space-md mb-space-md shadow-sm border border-surface-container">
+        <div class="flex flex-col gap-space-sm">
+          <div class="flex items-center justify-between">
+            <span class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-primary text-[20px]">calendar_today</span>
+              <span>Consulta de Base de Datos por Fecha</span>
+            </span>
+            <span class="font-body-sm text-body-sm text-on-surface-variant bg-surface-container-low px-3 py-1 rounded-lg">
+              Tienda Tu Cell Expres
+            </span>
           </div>
-          <div class="flex items-center gap-space-2xs w-full sm:w-auto justify-end">
-            <div class="flex items-center gap-1.5 px-space-sm py-1.5 bg-surface-container-low rounded-lg text-on-surface-variant font-label-sm text-label-sm">
-              <span class="material-symbols-outlined text-[16px] text-tertiary">storefront</span>
-              <span class="font-medium text-on-surface">Sucursal Centro #102</span>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-space-xs">
+            <div>
+              <label class="block font-label-sm text-label-sm text-on-surface-variant mb-1" for="datePicker">Filtrar por Día Específico</label>
+              <input class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-primary" id="datePicker" type="date"/>
+            </div>
+
+            <div class="sm:col-span-2 flex items-end gap-2">
+              <button class="flex-1 h-11 rounded-xl bg-primary text-on-primary font-label-sm text-label-sm font-semibold shadow-sm hover:opacity-95 transition-all" id="btnFilterToday" type="button">
+                Registros de Hoy
+              </button>
+              <button class="flex-1 h-11 rounded-xl bg-surface-container text-on-surface font-label-sm text-label-sm font-semibold hover:bg-surface-container-high transition-all" id="btnFilter7Days" type="button">
+                Últimos 7 Días
+              </button>
+              <button class="flex-1 h-11 rounded-xl bg-surface-container-low text-secondary font-label-sm text-label-sm hover:text-on-surface transition-all" id="btnFilterAll" type="button">
+                Ver Todo el Histórico
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- KPI Physical Cards -->
+      <!-- KPI Database Totals -->
       <section class="w-full grid grid-cols-3 gap-space-2xs sm:gap-space-sm mb-space-md">
-        <!-- Sustraídas / Despachadas por Ventas -->
+        <!-- Despachos por Ventas -->
         <div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col justify-between relative overflow-hidden">
           <div class="flex items-center justify-between mb-1">
-            <span class="font-label-sm text-label-sm text-on-surface-variant">Despacho Ventas</span>
+            <span class="font-label-sm text-label-sm text-on-surface-variant">Unidades Despachadas</span>
             <span class="w-6 h-6 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
               <span class="material-symbols-outlined text-[16px]">shopping_cart_checkout</span>
             </span>
           </div>
           <div class="flex items-baseline gap-1">
-            <span class="font-display text-headline-lg text-primary font-bold">52</span>
+            <span class="font-display text-headline-lg text-primary font-bold" id="kpiSalesUnits">0</span>
             <span class="font-body-sm text-body-sm text-on-surface-variant">unid.</span>
           </div>
-          <span class="text-[11px] font-label-sm text-secondary mt-1">Salidas en mostrador</span>
+          <span class="text-[11px] font-label-sm text-secondary mt-1">Salidas por venta registradas</span>
         </div>
 
-        <!-- Extraídas por Mermas / Daños -->
+        <!-- Entradas de Reabastecimiento -->
         <div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col justify-between relative overflow-hidden">
           <div class="flex items-center justify-between mb-1">
-            <span class="font-label-sm text-label-sm text-on-surface-variant">Extraídas / Mermas</span>
+            <span class="font-label-sm text-label-sm text-on-surface-variant">Reabastecimiento</span>
+            <span class="w-6 h-6 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed">
+              <span class="material-symbols-outlined text-[16px]">add_task</span>
+            </span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="font-display text-headline-lg text-tertiary font-bold" id="kpiEntryUnits">+0</span>
+            <span class="font-body-sm text-body-sm text-tertiary">unid.</span>
+          </div>
+          <span class="text-[11px] font-label-sm text-tertiary mt-1">Ingresos a piso</span>
+        </div>
+
+        <!-- Mermas y Ajustes -->
+        <div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col justify-between relative overflow-hidden">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-label-sm text-label-sm text-on-surface-variant">Mermas / Bajas</span>
             <span class="w-6 h-6 rounded-full bg-error-container flex items-center justify-center text-error">
               <span class="material-symbols-outlined text-[16px]">delete_sweep</span>
             </span>
           </div>
           <div class="flex items-baseline gap-1">
-            <span class="font-display text-headline-lg text-error font-bold">3</span>
+            <span class="font-display text-headline-lg text-error font-bold" id="kpiMermasUnits">0</span>
             <span class="font-body-sm text-body-sm text-error">unid.</span>
           </div>
-          <span class="text-[11px] font-label-sm text-error mt-1">Retiradas por falla/daño</span>
-        </div>
-
-        <!-- Reposición Extra por Altas Ventas -->
-        <div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col justify-between relative overflow-hidden">
-          <div class="flex items-center justify-between mb-1">
-            <span class="font-label-sm text-label-sm text-on-surface-variant">Extras Reabastecidos</span>
-            <span class="w-6 h-6 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed">
-              <span class="material-symbols-outlined text-[16px]">local_fire_department</span>
-            </span>
-          </div>
-          <div class="flex items-baseline gap-1">
-            <span class="font-display text-headline-lg text-tertiary font-bold">+15</span>
-            <span class="font-body-sm text-body-sm text-tertiary">unid.</span>
-          </div>
-          <span class="text-[11px] font-label-sm text-tertiary font-medium mt-1">Por encima base de 10</span>
+          <span class="text-[11px] font-label-sm text-error mt-1">Retiros y ajustes de piso</span>
         </div>
       </section>
 
-      <!-- Sub-bar Explicativa de la Base Semanal -->
-      <div class="w-full bg-surface-container-low rounded-xl p-3 mb-space-sm flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary text-[20px]">info</span>
-          <p class="font-body-sm text-body-sm text-on-surface-variant">
-            Capacidad base estándar por estante: <strong class="text-on-surface">10 unidades semanales</strong>. Los extras indican reposiciones adicionales requeridas durante la semana por alta rotación de ventas.
-          </p>
+      <!-- Sub-bar Summary -->
+      <div class="w-full flex items-center justify-between mb-space-xs px-1">
+        <div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm">
+          <span class="material-symbols-outlined text-[18px]">storage</span>
+          <span id="recordCountText">Cargando base de datos...</span>
+        </div>
+        <div class="flex items-center gap-space-2xs text-tertiary font-label-sm text-label-sm font-medium">
+          <span class="w-2 h-2 rounded-full bg-tertiary"></span>
+          <span>BD Inmutable Activa</span>
         </div>
       </div>
 
-      <!-- Tabla Principal de Movimiento Físico Semanal por Producto -->
-      <div class="w-full bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden mb-space-md">
+      <!-- Main Database Log Table -->
+      <div class="w-full bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden mb-space-md border border-surface-container">
         <div class="overflow-x-auto w-full">
-          <table class="w-full min-w-[720px] border-collapse text-left" id="reportsTable">
+          <table class="w-full min-w-[680px] border-collapse text-left" id="reportsTable">
             <thead>
               <tr class="bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant tracking-wider">
-                <th class="py-space-sm px-space-md w-[220px]">ACCESORIO / SKU</th>
-                <th class="py-space-sm px-space-xs text-center">DESPACHADAS (VENTAS)</th>
-                <th class="py-space-sm px-space-xs text-center">EXTRAÍDAS (MERMAS)</th>
-                <th class="py-space-sm px-space-xs text-center">BASE SEMANAL</th>
-                <th class="py-space-sm px-space-xs text-center font-semibold text-on-surface bg-surface-container">REPOSICIÓN EXTRA</th>
-                <th class="py-space-sm px-space-md text-right">ESTADO DE ROTACIÓN</th>
+                <th class="py-space-sm px-space-md">FECHA Y HORA</th>
+                <th class="py-space-sm px-space-md">PRODUCTO / SKU</th>
+                <th class="py-space-sm px-space-xs text-center">TIPO DE OPERACIÓN</th>
+                <th class="py-space-sm px-space-xs text-center font-semibold text-on-surface bg-surface-container">CANTIDAD</th>
+                <th class="py-space-sm px-space-md text-right">OBSERVACIÓN / ESTADO</th>
               </tr>
             </thead>
             <tbody class="font-body-md text-body-md text-on-surface" id="reportsTableBody">
-              <!-- Producto 1: Alta Rotación -->
-              <tr class="hover:bg-surface-container-low/40 transition-colors">
-                <td class="py-space-sm px-space-md flex items-center gap-space-xs">
-                  <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary flex-shrink-0">
-                    <span class="material-symbols-outlined text-[20px]">phone_iphone</span>
+              <!-- Skeleton loading state before JS populates table -->
+              <tr>
+                <td colspan="5" class="p-space-md">
+                  <div class="flex flex-col gap-2">
+                    <div class="h-6 w-full skeleton-box rounded-lg"></div>
+                    <div class="h-6 w-full skeleton-box rounded-lg"></div>
+                    <div class="h-6 w-3/4 skeleton-box rounded-lg"></div>
                   </div>
-                  <div class="min-w-0 flex flex-col">
-                    <span class="font-label-md text-label-md text-on-surface truncate">Funda Silicone Case iPhone 15 Pro</span>
-                    <span class="font-sku-code text-sku-code text-on-surface-variant uppercase">SKU-092 · Fundas</span>
-                  </div>
-                </td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular font-bold text-primary">17 unid.</td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular text-secondary">0 unid.</td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular text-on-surface-variant">10 unid.</td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular bg-tertiary-fixed/30 font-bold text-tertiary">
-                  +7 unid. EXTRA
-                </td>
-                <td class="py-space-sm px-space-md text-right">
-                  <span class="inline-flex items-center gap-1 bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm px-space-xs py-0.5 rounded-full font-bold">
-                    <span class="material-symbols-outlined text-[14px]">local_fire_department</span> Alta Ventas
-                  </span>
-                </td>
-              </tr>
-
-              <!-- Producto 2: Merma Registrada + Ventas -->
-              <tr class="bg-error-container/10 hover:bg-error-container/20 transition-colors">
-                <td class="py-space-sm px-space-md flex items-center gap-space-xs">
-                  <div class="w-10 h-10 rounded-lg bg-error-container/60 flex items-center justify-center text-error flex-shrink-0">
-                    <span class="material-symbols-outlined text-[20px]">shield</span>
-                  </div>
-                  <div class="min-w-0 flex flex-col">
-                    <span class="font-label-md text-label-md text-on-surface truncate">Mica Vidrio Templado 9D</span>
-                    <span class="font-sku-code text-sku-code text-on-surface-variant uppercase">SKU-104 · Micas</span>
-                  </div>
-                </td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular font-bold text-primary">22 unid.</td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular font-bold text-error">2 unid. extraídas</td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular text-on-surface-variant">10 unid.</td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular bg-tertiary-fixed/30 font-bold text-tertiary">
-                  +14 unid. EXTRA
-                </td>
-                <td class="py-space-sm px-space-md text-right">
-                  <span class="inline-flex items-center gap-1 bg-error-container text-on-error-container font-label-sm text-label-sm px-space-xs py-0.5 rounded-full font-semibold">
-                    <span class="material-symbols-outlined text-[14px]">delete_sweep</span> Merma + Alta Venta
-                  </span>
-                </td>
-              </tr>
-
-              <!-- Producto 3: Rotación Normal -->
-              <tr class="hover:bg-surface-container-low/40 transition-colors">
-                <td class="py-space-sm px-space-md flex items-center gap-space-xs">
-                  <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary flex-shrink-0">
-                    <span class="material-symbols-outlined text-[20px]">directions_car</span>
-                  </div>
-                  <div class="min-w-0 flex flex-col">
-                    <span class="font-label-md text-label-md text-on-surface truncate">Soporte Magnético para Auto</span>
-                    <span class="font-sku-code text-sku-code text-on-surface-variant uppercase">SKU-520 · Auto</span>
-                  </div>
-                </td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular font-semibold text-on-surface">5 unid.</td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular text-secondary">0 unid.</td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular text-on-surface-variant">10 unid.</td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular bg-surface-container-low text-secondary font-medium">
-                  0 (En cuota)
-                </td>
-                <td class="py-space-sm px-space-md text-right">
-                  <span class="inline-flex items-center gap-1 bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm px-space-xs py-0.5 rounded-full">
-                    <span class="material-symbols-outlined text-[14px]">check_circle</span> Normal
-                  </span>
-                </td>
-              </tr>
-
-              <!-- Producto 4: Reabastecimiento Estándar -->
-              <tr class="hover:bg-surface-container-low/40 transition-colors">
-                <td class="py-space-sm px-space-md flex items-center gap-space-xs">
-                  <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary flex-shrink-0">
-                    <span class="material-symbols-outlined text-[20px]">bolt</span>
-                  </div>
-                  <div class="min-w-0 flex flex-col">
-                    <span class="font-label-md text-label-md text-on-surface truncate">Cargador Rápido 30W USB-C</span>
-                    <span class="font-sku-code text-sku-code text-on-surface-variant uppercase">SKU-141 · Cargas</span>
-                  </div>
-                </td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular font-bold text-primary">8 unid.</td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular text-secondary">0 unid.</td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular text-on-surface-variant">10 unid.</td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular bg-surface-container-low text-secondary font-medium">
-                  0 (En cuota)
-                </td>
-                <td class="py-space-sm px-space-md text-right">
-                  <span class="inline-flex items-center gap-1 bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-space-xs py-0.5 rounded-full font-medium">
-                    <span class="material-symbols-outlined text-[14px]">trending_up</span> Buena Rotación
-                  </span>
-                </td>
-              </tr>
-
-              <!-- Producto 5: Adaptadores -->
-              <tr class="hover:bg-surface-container-low/40 transition-colors">
-                <td class="py-space-sm px-space-md flex items-center gap-space-xs">
-                  <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary flex-shrink-0">
-                    <span class="material-symbols-outlined text-[20px]">headphones</span>
-                  </div>
-                  <div class="min-w-0 flex flex-col">
-                    <span class="font-label-md text-label-md text-on-surface truncate">Adaptador Lightning a 3.5mm</span>
-                    <span class="font-sku-code text-sku-code text-on-surface-variant uppercase">SKU-319 · Audio</span>
-                  </div>
-                </td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular font-bold text-primary">6 unid.</td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular font-bold text-error">1 unid. extraída</td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular text-on-surface-variant">10 unid.</td>
-                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular bg-surface-container-low text-secondary font-medium">
-                  0 (En cuota)
-                </td>
-                <td class="py-space-sm px-space-md text-right">
-                  <span class="inline-flex items-center gap-1 bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm px-space-xs py-0.5 rounded-full">
-                    <span class="material-symbols-outlined text-[14px]">check_circle</span> Normal
-                  </span>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
         <div class="p-space-sm bg-surface-container-low/60 flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm">
-          <span>Resumen Físico: Muestreo de unidades sustraídas por ventas vs extraídas por merma/daño</span>
+          <span>Base de datos persistente: Los productos retirados conservan su historial de ventas.</span>
           <div class="flex items-center gap-1 text-primary">
-            <span class="material-symbols-outlined text-[16px]">info</span>
-            <span>Auditoría de rotación semanal</span>
+            <span class="material-symbols-outlined text-[16px]">verified_user</span>
+            <span>Tu Cell Expres Ledger</span>
           </div>
         </div>
       </div>
-
-      <!-- Bottom Audit Summary -->
-      <section class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm mb-space-lg">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-md">
-          <div class="flex items-start gap-space-sm">
-            <div class="w-10 h-10 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center flex-shrink-0 mt-0.5" id="auditIconBox">
-              <span class="material-symbols-outlined text-[24px]">local_fire_department</span>
-            </div>
-            <div>
-              <h2 class="font-headline-sm text-headline-sm text-on-surface">Resumen de Reposición Extra</h2>
-              <p class="font-body-md text-body-md text-on-surface-variant" id="auditDescText">
-                Debido a altas ventas en la semana, <strong class="text-on-surface">Fundas iPhone 15 Pro</strong> (+7 unid.) y <strong class="text-on-surface">Micas 9D</strong> (+14 unid.) superaron su cuota base de 10 unidades y requirieron reabastecimiento urgente de piso.
-              </p>
-            </div>
-          </div>
-          <div class="flex items-center gap-space-xs w-full sm:w-auto">
-            <button class="flex-1 sm:flex-none h-touch-min px-space-md rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer" id="btn-ajustar" type="button">
-              <span class="material-symbols-outlined text-[20px]">tune</span>
-              <span>Reajustar Base (10 unid)</span>
-            </button>
-            <button class="flex-1 sm:flex-none h-touch-min px-space-lg rounded-xl bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center gap-1.5 shadow-md hover:opacity-95 transition-all active:scale-95 cursor-pointer" id="btn-confirmar-cierre" type="button">
-              <span class="material-symbols-outlined text-[20px]">check</span>
-              <span>Aprobar Cierre Semanal</span>
-            </button>
-          </div>
-        </div>
-      </section>
 
       <!-- Feedback Toast -->
       <div class="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-on-surface text-surface px-4 py-2.5 rounded-full shadow-lg font-label-sm text-label-sm flex items-center gap-2 opacity-0 pointer-events-none transition-opacity duration-200" id="reportToast">
@@ -289,6 +164,44 @@ import Layout from '../layouts/Layout.astro';
   </main>
 
   <script is:inline>
+    const STORE_KEY = 'stock_movil_inventory_v1';
+    const DB_LEDGER_KEY = 'tu_cell_expres_db_v1';
+
+    const defaultLedger = [
+      { id: 'tx-101', timestamp: new Date(Date.now() - 86400000 * 4).toISOString(), dateStr: new Date(Date.now() - 86400000 * 4).toISOString().split('T')[0], sku: 'SKU-092', productName: 'Funda Silicona Case iPhone 15 Pro', type: 'VENTA', quantity: -5, notes: 'Despacho por venta en mostrador' },
+      { id: 'tx-102', timestamp: new Date(Date.now() - 86400000 * 3).toISOString(), dateStr: new Date(Date.now() - 86400000 * 3).toISOString().split('T')[0], sku: 'SKU-104', productName: 'Mica Vidrio Templado 9D iPhone', type: 'VENTA', quantity: -12, notes: 'Venta masiva en mostrador' },
+      { id: 'tx-103', timestamp: new Date(Date.now() - 86400000 * 3).toISOString(), dateStr: new Date(Date.now() - 86400000 * 3).toISOString().split('T')[0], sku: 'SKU-104', productName: 'Mica Vidrio Templado 9D iPhone', type: 'MERMA', quantity: -2, notes: 'Empaque dañado en exhibición' },
+      { id: 'tx-104', timestamp: new Date(Date.now() - 86400000 * 2).toISOString(), dateStr: new Date(Date.now() - 86400000 * 2).toISOString().split('T')[0], sku: 'SKU-141', productName: 'Cargador Rápido 30W USB-C GaN', type: 'ENTRADA', quantity: 10, notes: 'Reabastecimiento semanal a estante' },
+      { id: 'tx-105', timestamp: new Date(Date.now() - 86400000 * 1).toISOString(), dateStr: new Date(Date.now() - 86400000 * 1).toISOString().split('T')[0], sku: 'SKU-520', productName: 'Soporte Magnético para Auto', type: 'VENTA', quantity: -4, notes: 'Despacho en mostrador' },
+      { id: 'tx-106', timestamp: new Date().toISOString(), dateStr: new Date().toISOString().split('T')[0], sku: 'SKU-077', productName: 'Cable MagSafe Trenzado 1.5m', type: 'ENTRADA', quantity: 5, notes: 'Reabastecimiento de vitrina' }
+    ];
+
+    function getActiveInventorySKUs() {
+      const raw = localStorage.getItem(STORE_KEY);
+      if (!raw) return [];
+      try {
+        const items = JSON.parse(raw);
+        return items.map(i => i.sku);
+      } catch (e) { return []; }
+    }
+
+    function loadDatabaseLedger() {
+      const raw = localStorage.getItem(DB_LEDGER_KEY);
+      if (!raw) {
+        localStorage.setItem(DB_LEDGER_KEY, JSON.stringify(defaultLedger));
+        return defaultLedger;
+      }
+      try {
+        return JSON.parse(raw);
+      } catch (e) {
+        localStorage.setItem(DB_LEDGER_KEY, JSON.stringify(defaultLedger));
+        return defaultLedger;
+      }
+    }
+
+    let fullLedger = loadDatabaseLedger();
+    let filteredLedger = [...fullLedger];
+
     const toast = document.getElementById('reportToast');
     const toastText = document.getElementById('reportToastText');
     const toastIcon = document.getElementById('reportToastIcon');
@@ -301,70 +214,158 @@ import Layout from '../layouts/Layout.astro';
       setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none'), 2200);
     }
 
-    // Export Physical Movement CSV (No money)
+    function renderDatabaseTable(records) {
+      const tbody = document.getElementById('reportsTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const activeSKUs = getActiveInventorySKUs();
+      let salesSum = 0;
+      let entrySum = 0;
+      let mermasSum = 0;
+
+      if (records.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="py-space-xl text-center text-on-surface-variant font-body-md">
+              <span class="material-symbols-outlined text-[32px] text-secondary block mb-1">search_off</span>
+              No hay registros guardados en la base de datos para el filtro seleccionado.
+            </td>
+          </tr>
+        `;
+      } else {
+        records.forEach(item => {
+          const isDeletedProduct = !activeSKUs.includes(item.sku);
+          const dateObj = new Date(item.timestamp);
+          const formattedDate = dateObj.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + dateObj.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+          if (item.type === 'VENTA') salesSum += Math.abs(item.quantity);
+          if (item.type === 'ENTRADA') entrySum += Math.abs(item.quantity);
+          if (item.type === 'MERMA' || item.type === 'BAJA_PRODUCTO') mermasSum += Math.abs(item.quantity);
+
+          let badgeClass = 'bg-primary-fixed text-on-primary-fixed';
+          let badgeText = item.type;
+          if (item.type === 'VENTA') { badgeClass = 'bg-primary-container text-on-primary'; badgeText = 'Ventas Mostrador'; }
+          else if (item.type === 'ENTRADA') { badgeClass = 'bg-tertiary-fixed text-on-tertiary-fixed'; badgeText = 'Reabastecimiento'; }
+          else if (item.type === 'MERMA') { badgeClass = 'bg-error-container text-on-error-container'; badgeText = 'Merma Extraída'; }
+          else if (item.type === 'ALTA_PRODUCTO') { badgeClass = 'bg-surface-container-high text-on-surface'; badgeText = 'Nuevo Producto'; }
+          else if (item.type === 'BAJA_PRODUCTO') { badgeClass = 'bg-error text-on-error'; badgeText = 'Eliminado de Vitrina'; }
+
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-surface-container-low/40 transition-colors border-b border-surface-container-low';
+          tr.innerHTML = `
+            <td class="py-space-sm px-space-md font-sku-code text-sku-code text-secondary whitespace-nowrap">${formattedDate}</td>
+            <td class="py-space-sm px-space-md">
+              <div class="flex flex-col min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <span class="font-label-md text-label-md text-on-surface font-semibold truncate">${item.productName}</span>
+                  ${isDeletedProduct ? '<span class="px-1.5 py-0.2 rounded bg-error-container text-error text-[10px] font-bold">Retirado de Vitrina</span>' : ''}
+                </div>
+                <span class="font-sku-code text-sku-code text-on-surface-variant uppercase">${item.sku}</span>
+              </div>
+            </td>
+            <td class="py-space-sm px-space-xs text-center">
+              <span class="px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold inline-block ${badgeClass}">
+                ${badgeText}
+              </span>
+            </td>
+            <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular font-bold bg-surface-container-low">
+              ${item.quantity > 0 ? '+' + item.quantity : item.quantity} unid.
+            </td>
+            <td class="py-space-sm px-space-md text-right font-body-sm text-body-sm text-on-surface-variant">
+              ${item.notes || 'Registro automatizado'}
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      const kpiSales = document.getElementById('kpiSalesUnits');
+      const kpiEntry = document.getElementById('kpiEntryUnits');
+      const kpiMermas = document.getElementById('kpiMermasUnits');
+      const recordCountText = document.getElementById('recordCountText');
+
+      if (kpiSales) kpiSales.textContent = salesSum;
+      if (kpiEntry) kpiEntry.textContent = '+' + entrySum;
+      if (kpiMermas) kpiMermas.textContent = mermasSum;
+      if (recordCountText) recordCountText.textContent = `Mostrando ${records.length} transacciones guardadas`;
+    }
+
+    // Date Filter Logic
+    const datePicker = document.getElementById('datePicker');
+    
+    datePicker?.addEventListener('change', (e) => {
+      const chosenDateStr = e.target.value;
+      if (!chosenDateStr) return;
+      filteredLedger = fullLedger.filter(item => item.dateStr === chosenDateStr);
+      renderDatabaseTable(filteredLedger);
+      showToast(`Mostrando registros de fecha: ${chosenDateStr}`, 'calendar_today');
+    });
+
+    document.getElementById('btnFilterToday')?.addEventListener('click', () => {
+      const todayStr = new Date().toISOString().split('T')[0];
+      if (datePicker) datePicker.value = todayStr;
+      filteredLedger = fullLedger.filter(item => item.dateStr === todayStr);
+      renderDatabaseTable(filteredLedger);
+      showToast('Mostrando transacciones de HOY', 'today');
+    });
+
+    document.getElementById('btnFilter7Days')?.addEventListener('click', () => {
+      if (datePicker) datePicker.value = '';
+      const sevenDaysAgoMs = Date.now() - (86400000 * 7);
+      filteredLedger = fullLedger.filter(item => new Date(item.timestamp).getTime() >= sevenDaysAgoMs);
+      renderDatabaseTable(filteredLedger);
+      showToast('Mostrando transacciones de los últimos 7 días', 'date_range');
+    });
+
+    document.getElementById('btnFilterAll')?.addEventListener('click', () => {
+      if (datePicker) datePicker.value = '';
+      filteredLedger = [...fullLedger];
+      renderDatabaseTable(filteredLedger);
+      showToast('Mostrando todo el historial de la base de datos', 'storage');
+    });
+
+    // CSV Download Functionality
     document.getElementById('btn-export-csv')?.addEventListener('click', function() {
       const btn = this;
       const originalText = btn.innerHTML;
       btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[20px]">sync</span><span class="font-label-md text-label-md">Generando...</span>';
 
       const csvRows = [
-        ['SKU', 'Producto', 'Despachadas por Venta (Unid)', 'Extraidas por Merma (Unid)', 'Base Semanal (Unid)', 'Reposicion Extra por Ventas (Unid)', 'Estado Rotacion'],
-        ['SKU-092', 'Funda Silicone Case iPhone 15 Pro', '17', '0', '10', '+7 EXTRA', 'Alta Ventas'],
-        ['SKU-104', 'Mica Vidrio Templado 9D', '22', '2', '10', '+14 EXTRA', 'Merma + Alta Venta'],
-        ['SKU-520', 'Soporte Magnetico para Auto', '5', '0', '10', '0', 'Normal'],
-        ['SKU-141', 'Cargador Rapido 30W USB-C', '8', '0', '10', '0', 'Buena Rotacion'],
-        ['SKU-319', 'Adaptador Lightning a 3.5mm', '6', '1', '10', '0', 'Normal']
+        ['ID Transaccion', 'Fecha y Hora', 'SKU', 'Producto', 'Tipo Operacion', 'Cantidad (Unid)', 'Observaciones']
       ];
+
+      filteredLedger.forEach(item => {
+        csvRows.push([
+          item.id,
+          item.timestamp,
+          item.sku,
+          item.productName.replace(/,/g, ''),
+          item.type,
+          item.quantity,
+          (item.notes || '').replace(/,/g, '')
+        ]);
+      });
 
       const csvContent = 'data:text/csv;charset=utf-8,' + csvRows.map(e => e.join(',')).join('\n');
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement('a');
       link.setAttribute('href', encodedUri);
-      link.setAttribute('download', 'Reporte_Semanal_Rotacion_y_Extras.csv');
+      link.setAttribute('download', 'Tu_Cell_Expres_Reporte_BD.csv');
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
       setTimeout(() => {
         btn.innerHTML = '<span class="material-symbols-outlined text-[20px] text-tertiary">check_circle</span><span class="font-label-md text-label-md">¡Descargado!</span>';
-        showToast('Reporte de rotación física descargado en CSV', 'download');
+        showToast('Base de datos exportada en CSV', 'download');
         setTimeout(() => {
           btn.innerHTML = originalText;
         }, 2000);
       }, 700);
     });
 
-    const weekLabel = document.getElementById('week-label');
-    let currentWeekNum = 42;
-
-    document.getElementById('prev-week-btn')?.addEventListener('click', () => {
-      currentWeekNum--;
-      if (weekLabel) weekLabel.textContent = `Semana ${currentWeekNum} · Historial de Rotación`;
-      showToast(`Cargando reporte de Semana ${currentWeekNum}`, 'calendar_today');
-    });
-
-    document.getElementById('next-week-btn')?.addEventListener('click', () => {
-      currentWeekNum++;
-      if (weekLabel) weekLabel.textContent = `Semana ${currentWeekNum} · Control de Rotación`;
-      showToast(`Cargando reporte de Semana ${currentWeekNum}`, 'calendar_today');
-    });
-
-    document.getElementById('btn-confirmar-cierre')?.addEventListener('click', function() {
-      const btn = this;
-      btn.classList.remove('bg-primary-container');
-      btn.classList.add('bg-tertiary');
-      btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">task_alt</span><span>Aprobado</span>';
-      btn.setAttribute('disabled', 'true');
-
-      const descText = document.getElementById('auditDescText');
-      if (descText) {
-        descText.innerHTML = 'El reporte de rotación y reposición extra ha sido aprobado exitosamente.';
-      }
-      showToast('¡Cierre de rotación registrado exitosamente!', 'task_alt');
-    });
-
-    document.getElementById('btn-ajustar')?.addEventListener('click', () => {
-      showToast('Estantes reajustados a la cuota base de 10 unidades', 'tune');
-    });
+    // Initial render
+    renderDatabaseTable(fullLedger);
   </script>
 </Layout>

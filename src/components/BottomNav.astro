@@ -8,40 +8,40 @@ const isReportes = pathname === '/reportes';
 const isEditar = pathname === '/editar';
 ---
 
-<nav class="fixed bottom-0 left-0 right-0 bg-surface-container-lowest shadow-lg px-4 py-2 flex justify-around items-center z-40 border-none">
+<nav class="fixed bottom-0 left-0 right-0 max-w-lg mx-auto bg-surface-container-lowest shadow-lg px-2 py-1.5 flex justify-around items-center z-40 border-t border-surface-container">
   <!-- Inventario -->
-  <a href="/" class={`flex flex-col items-center justify-center py-1 px-3 rounded-lg transition-colors ${isInventario ? 'text-primary' : 'text-secondary hover:text-on-surface'}`}>
+  <a href="/" class={`flex flex-col items-center justify-center min-h-[48px] min-w-[48px] px-2 rounded-xl transition-colors active:scale-95 ${isInventario ? 'text-primary' : 'text-secondary hover:text-on-surface'}`}>
     <span class="material-symbols-outlined text-2xl" style={isInventario ? "font-variation-settings: 'FILL' 1;" : ""}>inventory_2</span>
-    <span class={`text-label-sm font-label-sm mt-0.5 ${isInventario ? 'font-bold' : ''}`}>Inventario</span>
+    <span class={`text-[11px] font-label-sm mt-0.5 ${isInventario ? 'font-bold' : ''}`}>Inventario</span>
   </a>
 
   <!-- Movimientos -->
-  <a href="/movimientos" class={`flex flex-col items-center justify-center py-1 px-3 rounded-lg transition-colors ${isMovimientos ? 'text-primary' : 'text-secondary hover:text-on-surface'}`}>
+  <a href="/movimientos" class={`flex flex-col items-center justify-center min-h-[48px] min-w-[48px] px-2 rounded-xl transition-colors active:scale-95 ${isMovimientos ? 'text-primary' : 'text-secondary hover:text-on-surface'}`}>
     <span class="material-symbols-outlined text-2xl" style={isMovimientos ? "font-variation-settings: 'FILL' 1;" : ""}>sync_alt</span>
-    <span class={`text-label-sm font-label-sm mt-0.5 ${isMovimientos ? 'font-bold' : ''}`}>Movimientos</span>
+    <span class={`text-[11px] font-label-sm mt-0.5 ${isMovimientos ? 'font-bold' : ''}`}>Movimientos</span>
   </a>
 
   <!-- Alertas -->
-  <a href="/alertas" class={`flex flex-col items-center justify-center py-1 px-3 rounded-lg relative ${isAlertas ? 'text-primary-container' : 'text-secondary hover:text-on-surface'}`}>
+  <a href="/alertas" class={`flex flex-col items-center justify-center min-h-[48px] min-w-[48px] px-2 rounded-xl relative active:scale-95 ${isAlertas ? 'text-primary' : 'text-secondary hover:text-on-surface'}`}>
     <div class="relative">
       <span class="material-symbols-outlined text-2xl" style={isAlertas ? "font-variation-settings: 'FILL' 1;" : ""}>notifications_active</span>
       <span class="absolute -top-1 -right-2 bg-error text-on-error text-[10px] font-bold px-1.5 py-0.2 rounded-full ring-2 ring-surface-container-lowest transition-all" id="bottomNavAlertBadge">
         4
       </span>
     </div>
-    <span class={`text-label-sm font-label-sm mt-0.5 ${isAlertas ? 'font-bold' : ''}`}>Alertas</span>
+    <span class={`text-[11px] font-label-sm mt-0.5 ${isAlertas ? 'font-bold' : ''}`}>Alertas</span>
   </a>
 
   <!-- Reportes -->
-  <a href="/reportes" class={`flex flex-col items-center justify-center py-1 px-3 rounded-lg transition-colors ${isReportes ? 'text-primary' : 'text-secondary hover:text-on-surface'}`}>
+  <a href="/reportes" class={`flex flex-col items-center justify-center min-h-[48px] min-w-[48px] px-2 rounded-xl transition-colors active:scale-95 ${isReportes ? 'text-primary' : 'text-secondary hover:text-on-surface'}`}>
     <span class="material-symbols-outlined text-2xl" style={isReportes ? "font-variation-settings: 'FILL' 1;" : ""}>assessment</span>
-    <span class={`text-label-sm font-label-sm mt-0.5 ${isReportes ? 'font-bold' : ''}`}>Reportes</span>
+    <span class={`text-[11px] font-label-sm mt-0.5 ${isReportes ? 'font-bold' : ''}`}>Reportes</span>
   </a>
 
   <!-- Ajustes / Editar -->
-  <a href="/editar" class={`flex flex-col items-center justify-center py-1 px-3 rounded-lg transition-colors ${isEditar ? 'text-primary' : 'text-secondary hover:text-on-surface'}`}>
+  <a href="/editar" class={`flex flex-col items-center justify-center min-h-[48px] min-w-[48px] px-2 rounded-xl transition-colors active:scale-95 ${isEditar ? 'text-primary' : 'text-secondary hover:text-on-surface'}`}>
     <span class="material-symbols-outlined text-2xl" style={isEditar ? "font-variation-settings: 'FILL' 1;" : ""}>settings</span>
-    <span class={`text-label-sm font-label-sm mt-0.5 ${isEditar ? 'font-bold' : ''}`}>Editar</span>
+    <span class={`text-[11px] font-label-sm mt-0.5 ${isEditar ? 'font-bold' : ''}`}>Editar</span>
   </a>
 </nav>
 
