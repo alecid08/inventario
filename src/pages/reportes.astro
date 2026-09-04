@@ -1,0 +1,370 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Stock Móvil - Reporte Semanal de Movimiento y Rotación">
+  <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile">
+    <div class="flex flex-col w-full pb-24">
+      <!-- Header Section -->
+      <header class="w-full flex items-center justify-between py-space-sm mb-space-sm pt-2">
+        <div class="flex items-center gap-space-sm">
+          <a href="/" aria-label="Volver atrás" class="w-touch-min h-touch-min flex items-center justify-center rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors active:scale-95 text-on-surface">
+            <span class="material-symbols-outlined text-[22px]">arrow_back</span>
+          </a>
+          <div>
+            <div class="flex items-center gap-space-2xs">
+              <h1 class="font-headline-sm text-headline-sm text-on-surface">Reporte Semanal de Movimiento</h1>
+              <span class="bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm px-space-xs py-0.5 rounded-full">Rotación &amp; Reabastecimiento</span>
+            </div>
+            <p class="font-body-sm text-body-sm text-on-surface-variant">Despachos por ventas, mermas extraídas y reposición extra por alta demanda</p>
+          </div>
+        </div>
+        <button class="flex items-center gap-space-2xs h-10 px-space-md bg-surface-container-lowest text-primary rounded-xl shadow-sm hover:bg-surface-container-low transition-all active:scale-95 cursor-pointer" id="btn-export-csv" type="button">
+          <span class="material-symbols-outlined text-[20px]">download</span>
+          <span class="font-label-md text-label-md">Exportar CSV</span>
+        </button>
+      </header>
+
+      <!-- Week & Branch Selector Bar -->
+      <section class="w-full bg-surface-container-lowest rounded-xl p-space-sm mb-space-md shadow-sm">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-space-sm">
+          <div class="flex items-center justify-between w-full sm:w-auto gap-space-2xs bg-surface-container-low px-space-xs py-1 rounded-lg">
+            <button aria-label="Semana anterior" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container text-on-surface active:scale-90 transition-transform cursor-pointer" id="prev-week-btn" type="button">
+              <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+            </button>
+            <div class="flex items-center gap-space-2xs px-space-xs">
+              <span class="material-symbols-outlined text-primary text-[18px]">calendar_today</span>
+              <span class="font-label-md text-label-md text-on-surface tracking-tight" id="week-label">Semana Actual · Control de Rotación</span>
+            </div>
+            <button aria-label="Semana siguiente" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container text-on-surface active:scale-90 transition-transform cursor-pointer" id="next-week-btn" type="button">
+              <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+            </button>
+          </div>
+          <div class="flex items-center gap-space-2xs w-full sm:w-auto justify-end">
+            <div class="flex items-center gap-1.5 px-space-sm py-1.5 bg-surface-container-low rounded-lg text-on-surface-variant font-label-sm text-label-sm">
+              <span class="material-symbols-outlined text-[16px] text-tertiary">storefront</span>
+              <span class="font-medium text-on-surface">Sucursal Centro #102</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- KPI Physical Cards -->
+      <section class="w-full grid grid-cols-3 gap-space-2xs sm:gap-space-sm mb-space-md">
+        <!-- Sustraídas / Despachadas por Ventas -->
+        <div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col justify-between relative overflow-hidden">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-label-sm text-label-sm text-on-surface-variant">Despacho Ventas</span>
+            <span class="w-6 h-6 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
+              <span class="material-symbols-outlined text-[16px]">shopping_cart_checkout</span>
+            </span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="font-display text-headline-lg text-primary font-bold">52</span>
+            <span class="font-body-sm text-body-sm text-on-surface-variant">unid.</span>
+          </div>
+          <span class="text-[11px] font-label-sm text-secondary mt-1">Salidas en mostrador</span>
+        </div>
+
+        <!-- Extraídas por Mermas / Daños -->
+        <div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col justify-between relative overflow-hidden">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-label-sm text-label-sm text-on-surface-variant">Extraídas / Mermas</span>
+            <span class="w-6 h-6 rounded-full bg-error-container flex items-center justify-center text-error">
+              <span class="material-symbols-outlined text-[16px]">delete_sweep</span>
+            </span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="font-display text-headline-lg text-error font-bold">3</span>
+            <span class="font-body-sm text-body-sm text-error">unid.</span>
+          </div>
+          <span class="text-[11px] font-label-sm text-error mt-1">Retiradas por falla/daño</span>
+        </div>
+
+        <!-- Reposición Extra por Altas Ventas -->
+        <div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col justify-between relative overflow-hidden">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-label-sm text-label-sm text-on-surface-variant">Extras Reabastecidos</span>
+            <span class="w-6 h-6 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed">
+              <span class="material-symbols-outlined text-[16px]">local_fire_department</span>
+            </span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="font-display text-headline-lg text-tertiary font-bold">+15</span>
+            <span class="font-body-sm text-body-sm text-tertiary">unid.</span>
+          </div>
+          <span class="text-[11px] font-label-sm text-tertiary font-medium mt-1">Por encima base de 10</span>
+        </div>
+      </section>
+
+      <!-- Sub-bar Explicativa de la Base Semanal -->
+      <div class="w-full bg-surface-container-low rounded-xl p-3 mb-space-sm flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-[20px]">info</span>
+          <p class="font-body-sm text-body-sm text-on-surface-variant">
+            Capacidad base estándar por estante: <strong class="text-on-surface">10 unidades semanales</strong>. Los extras indican reposiciones adicionales requeridas durante la semana por alta rotación de ventas.
+          </p>
+        </div>
+      </div>
+
+      <!-- Tabla Principal de Movimiento Físico Semanal por Producto -->
+      <div class="w-full bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden mb-space-md">
+        <div class="overflow-x-auto w-full">
+          <table class="w-full min-w-[720px] border-collapse text-left" id="reportsTable">
+            <thead>
+              <tr class="bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant tracking-wider">
+                <th class="py-space-sm px-space-md w-[220px]">ACCESORIO / SKU</th>
+                <th class="py-space-sm px-space-xs text-center">DESPACHADAS (VENTAS)</th>
+                <th class="py-space-sm px-space-xs text-center">EXTRAÍDAS (MERMAS)</th>
+                <th class="py-space-sm px-space-xs text-center">BASE SEMANAL</th>
+                <th class="py-space-sm px-space-xs text-center font-semibold text-on-surface bg-surface-container">REPOSICIÓN EXTRA</th>
+                <th class="py-space-sm px-space-md text-right">ESTADO DE ROTACIÓN</th>
+              </tr>
+            </thead>
+            <tbody class="font-body-md text-body-md text-on-surface" id="reportsTableBody">
+              <!-- Producto 1: Alta Rotación -->
+              <tr class="hover:bg-surface-container-low/40 transition-colors">
+                <td class="py-space-sm px-space-md flex items-center gap-space-xs">
+                  <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary flex-shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">phone_iphone</span>
+                  </div>
+                  <div class="min-w-0 flex flex-col">
+                    <span class="font-label-md text-label-md text-on-surface truncate">Funda Silicone Case iPhone 15 Pro</span>
+                    <span class="font-sku-code text-sku-code text-on-surface-variant uppercase">SKU-092 · Fundas</span>
+                  </div>
+                </td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular font-bold text-primary">17 unid.</td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular text-secondary">0 unid.</td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular text-on-surface-variant">10 unid.</td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular bg-tertiary-fixed/30 font-bold text-tertiary">
+                  +7 unid. EXTRA
+                </td>
+                <td class="py-space-sm px-space-md text-right">
+                  <span class="inline-flex items-center gap-1 bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm px-space-xs py-0.5 rounded-full font-bold">
+                    <span class="material-symbols-outlined text-[14px]">local_fire_department</span> Alta Ventas
+                  </span>
+                </td>
+              </tr>
+
+              <!-- Producto 2: Merma Registrada + Ventas -->
+              <tr class="bg-error-container/10 hover:bg-error-container/20 transition-colors">
+                <td class="py-space-sm px-space-md flex items-center gap-space-xs">
+                  <div class="w-10 h-10 rounded-lg bg-error-container/60 flex items-center justify-center text-error flex-shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">shield</span>
+                  </div>
+                  <div class="min-w-0 flex flex-col">
+                    <span class="font-label-md text-label-md text-on-surface truncate">Mica Vidrio Templado 9D</span>
+                    <span class="font-sku-code text-sku-code text-on-surface-variant uppercase">SKU-104 · Micas</span>
+                  </div>
+                </td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular font-bold text-primary">22 unid.</td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular font-bold text-error">2 unid. extraídas</td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular text-on-surface-variant">10 unid.</td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular bg-tertiary-fixed/30 font-bold text-tertiary">
+                  +14 unid. EXTRA
+                </td>
+                <td class="py-space-sm px-space-md text-right">
+                  <span class="inline-flex items-center gap-1 bg-error-container text-on-error-container font-label-sm text-label-sm px-space-xs py-0.5 rounded-full font-semibold">
+                    <span class="material-symbols-outlined text-[14px]">delete_sweep</span> Merma + Alta Venta
+                  </span>
+                </td>
+              </tr>
+
+              <!-- Producto 3: Rotación Normal -->
+              <tr class="hover:bg-surface-container-low/40 transition-colors">
+                <td class="py-space-sm px-space-md flex items-center gap-space-xs">
+                  <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary flex-shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">directions_car</span>
+                  </div>
+                  <div class="min-w-0 flex flex-col">
+                    <span class="font-label-md text-label-md text-on-surface truncate">Soporte Magnético para Auto</span>
+                    <span class="font-sku-code text-sku-code text-on-surface-variant uppercase">SKU-520 · Auto</span>
+                  </div>
+                </td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular font-semibold text-on-surface">5 unid.</td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular text-secondary">0 unid.</td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular text-on-surface-variant">10 unid.</td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular bg-surface-container-low text-secondary font-medium">
+                  0 (En cuota)
+                </td>
+                <td class="py-space-sm px-space-md text-right">
+                  <span class="inline-flex items-center gap-1 bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm px-space-xs py-0.5 rounded-full">
+                    <span class="material-symbols-outlined text-[14px]">check_circle</span> Normal
+                  </span>
+                </td>
+              </tr>
+
+              <!-- Producto 4: Reabastecimiento Estándar -->
+              <tr class="hover:bg-surface-container-low/40 transition-colors">
+                <td class="py-space-sm px-space-md flex items-center gap-space-xs">
+                  <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary flex-shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">bolt</span>
+                  </div>
+                  <div class="min-w-0 flex flex-col">
+                    <span class="font-label-md text-label-md text-on-surface truncate">Cargador Rápido 30W USB-C</span>
+                    <span class="font-sku-code text-sku-code text-on-surface-variant uppercase">SKU-141 · Cargas</span>
+                  </div>
+                </td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular font-bold text-primary">8 unid.</td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular text-secondary">0 unid.</td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular text-on-surface-variant">10 unid.</td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular bg-surface-container-low text-secondary font-medium">
+                  0 (En cuota)
+                </td>
+                <td class="py-space-sm px-space-md text-right">
+                  <span class="inline-flex items-center gap-1 bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-space-xs py-0.5 rounded-full font-medium">
+                    <span class="material-symbols-outlined text-[14px]">trending_up</span> Buena Rotación
+                  </span>
+                </td>
+              </tr>
+
+              <!-- Producto 5: Adaptadores -->
+              <tr class="hover:bg-surface-container-low/40 transition-colors">
+                <td class="py-space-sm px-space-md flex items-center gap-space-xs">
+                  <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary flex-shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">headphones</span>
+                  </div>
+                  <div class="min-w-0 flex flex-col">
+                    <span class="font-label-md text-label-md text-on-surface truncate">Adaptador Lightning a 3.5mm</span>
+                    <span class="font-sku-code text-sku-code text-on-surface-variant uppercase">SKU-319 · Audio</span>
+                  </div>
+                </td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular font-bold text-primary">6 unid.</td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular font-bold text-error">1 unid. extraída</td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular text-on-surface-variant">10 unid.</td>
+                <td class="py-space-sm px-space-xs text-center font-data-tabular text-data-tabular bg-surface-container-low text-secondary font-medium">
+                  0 (En cuota)
+                </td>
+                <td class="py-space-sm px-space-md text-right">
+                  <span class="inline-flex items-center gap-1 bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm px-space-xs py-0.5 rounded-full">
+                    <span class="material-symbols-outlined text-[14px]">check_circle</span> Normal
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="p-space-sm bg-surface-container-low/60 flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm">
+          <span>Resumen Físico: Muestreo de unidades sustraídas por ventas vs extraídas por merma/daño</span>
+          <div class="flex items-center gap-1 text-primary">
+            <span class="material-symbols-outlined text-[16px]">info</span>
+            <span>Auditoría de rotación semanal</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Audit Summary -->
+      <section class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm mb-space-lg">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-md">
+          <div class="flex items-start gap-space-sm">
+            <div class="w-10 h-10 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center flex-shrink-0 mt-0.5" id="auditIconBox">
+              <span class="material-symbols-outlined text-[24px]">local_fire_department</span>
+            </div>
+            <div>
+              <h2 class="font-headline-sm text-headline-sm text-on-surface">Resumen de Reposición Extra</h2>
+              <p class="font-body-md text-body-md text-on-surface-variant" id="auditDescText">
+                Debido a altas ventas en la semana, <strong class="text-on-surface">Fundas iPhone 15 Pro</strong> (+7 unid.) y <strong class="text-on-surface">Micas 9D</strong> (+14 unid.) superaron su cuota base de 10 unidades y requirieron reabastecimiento urgente de piso.
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-space-xs w-full sm:w-auto">
+            <button class="flex-1 sm:flex-none h-touch-min px-space-md rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer" id="btn-ajustar" type="button">
+              <span class="material-symbols-outlined text-[20px]">tune</span>
+              <span>Reajustar Base (10 unid)</span>
+            </button>
+            <button class="flex-1 sm:flex-none h-touch-min px-space-lg rounded-xl bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center gap-1.5 shadow-md hover:opacity-95 transition-all active:scale-95 cursor-pointer" id="btn-confirmar-cierre" type="button">
+              <span class="material-symbols-outlined text-[20px]">check</span>
+              <span>Aprobar Cierre Semanal</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Feedback Toast -->
+      <div class="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-on-surface text-surface px-4 py-2.5 rounded-full shadow-lg font-label-sm text-label-sm flex items-center gap-2 opacity-0 pointer-events-none transition-opacity duration-200" id="reportToast">
+        <span class="material-symbols-outlined text-tertiary-fixed text-[18px]" id="reportToastIcon">check_circle</span>
+        <span id="reportToastText">Acción completada</span>
+      </div>
+    </div>
+  </main>
+
+  <script is:inline>
+    const toast = document.getElementById('reportToast');
+    const toastText = document.getElementById('reportToastText');
+    const toastIcon = document.getElementById('reportToastIcon');
+
+    function showToast(msg, icon = 'check_circle') {
+      if (!toast || !toastText) return;
+      toastText.textContent = msg;
+      if (toastIcon) toastIcon.textContent = icon;
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none'), 2200);
+    }
+
+    // Export Physical Movement CSV (No money)
+    document.getElementById('btn-export-csv')?.addEventListener('click', function() {
+      const btn = this;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[20px]">sync</span><span class="font-label-md text-label-md">Generando...</span>';
+
+      const csvRows = [
+        ['SKU', 'Producto', 'Despachadas por Venta (Unid)', 'Extraidas por Merma (Unid)', 'Base Semanal (Unid)', 'Reposicion Extra por Ventas (Unid)', 'Estado Rotacion'],
+        ['SKU-092', 'Funda Silicone Case iPhone 15 Pro', '17', '0', '10', '+7 EXTRA', 'Alta Ventas'],
+        ['SKU-104', 'Mica Vidrio Templado 9D', '22', '2', '10', '+14 EXTRA', 'Merma + Alta Venta'],
+        ['SKU-520', 'Soporte Magnetico para Auto', '5', '0', '10', '0', 'Normal'],
+        ['SKU-141', 'Cargador Rapido 30W USB-C', '8', '0', '10', '0', 'Buena Rotacion'],
+        ['SKU-319', 'Adaptador Lightning a 3.5mm', '6', '1', '10', '0', 'Normal']
+      ];
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + csvRows.map(e => e.join(',')).join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', 'Reporte_Semanal_Rotacion_y_Extras.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      setTimeout(() => {
+        btn.innerHTML = '<span class="material-symbols-outlined text-[20px] text-tertiary">check_circle</span><span class="font-label-md text-label-md">¡Descargado!</span>';
+        showToast('Reporte de rotación física descargado en CSV', 'download');
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+        }, 2000);
+      }, 700);
+    });
+
+    const weekLabel = document.getElementById('week-label');
+    let currentWeekNum = 42;
+
+    document.getElementById('prev-week-btn')?.addEventListener('click', () => {
+      currentWeekNum--;
+      if (weekLabel) weekLabel.textContent = `Semana ${currentWeekNum} · Historial de Rotación`;
+      showToast(`Cargando reporte de Semana ${currentWeekNum}`, 'calendar_today');
+    });
+
+    document.getElementById('next-week-btn')?.addEventListener('click', () => {
+      currentWeekNum++;
+      if (weekLabel) weekLabel.textContent = `Semana ${currentWeekNum} · Control de Rotación`;
+      showToast(`Cargando reporte de Semana ${currentWeekNum}`, 'calendar_today');
+    });
+
+    document.getElementById('btn-confirmar-cierre')?.addEventListener('click', function() {
+      const btn = this;
+      btn.classList.remove('bg-primary-container');
+      btn.classList.add('bg-tertiary');
+      btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">task_alt</span><span>Aprobado</span>';
+      btn.setAttribute('disabled', 'true');
+
+      const descText = document.getElementById('auditDescText');
+      if (descText) {
+        descText.innerHTML = 'El reporte de rotación y reposición extra ha sido aprobado exitosamente.';
+      }
+      showToast('¡Cierre de rotación registrado exitosamente!', 'task_alt');
+    });
+
+    document.getElementById('btn-ajustar')?.addEventListener('click', () => {
+      showToast('Estantes reajustados a la cuota base de 10 unidades', 'tune');
+    });
+  </script>
+</Layout>

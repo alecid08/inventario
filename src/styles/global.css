@@ -81,8 +81,8 @@ body {
   justify-content: space-between;
   padding: 1rem 1.5rem;
   background: var(--bg-card);
-  backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   margin-bottom: 2rem;
@@ -167,6 +167,7 @@ body {
 
 .metric-card {
   background: var(--bg-card);
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -221,6 +222,7 @@ body {
   gap: 1rem;
   margin-bottom: 1.5rem;
   background: var(--bg-card);
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -361,6 +363,7 @@ select.form-control-select option {
 /* Table Container */
 .table-card {
   background: var(--bg-card);
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -480,6 +483,7 @@ select.form-control-select option {
 /* Side Form Panel / Drawer */
 .form-panel {
   background: var(--bg-card);
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);

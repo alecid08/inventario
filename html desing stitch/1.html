@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/><title>Stock Móvil - Acceso de Personal</title><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "background": "#f8f9ff", "outline-variant": "#c3c6d7", "surface-container": "#e5eeff", "primary-fixed": "#dbe1ff", "inverse-on-surface": "#eaf1ff", "tertiary": "#006243", "on-primary-fixed-variant": "#003ea8", "on-secondary": "#ffffff", "primary-fixed-dim": "#b4c5ff", "on-error-container": "#93000a", "surface-container-high": "#dce9ff", "secondary-fixed": "#dae2fd", "tertiary-fixed-dim": "#68dba9", "primary-container": "#2563eb", "surface": "#f8f9ff", "surface-container-highest": "#d3e4fe", "error": "#ba1a1a", "surface-bright": "#f8f9ff", "secondary": "#565e74", "surface-tint": "#0053db", "inverse-primary": "#b4c5ff", "surface-container-low": "#eff4ff", "tertiary-fixed": "#85f8c4", "error-container": "#ffdad6", "on-primary-container": "#eeefff", "on-secondary-fixed-variant": "#3f465c", "on-error": "#ffffff", "on-secondary-container": "#5c647a", "surface-container-lowest": "#ffffff", "on-primary": "#ffffff", "surface-variant": "#d3e4fe", "secondary-fixed-dim": "#bec6e0", "on-secondary-fixed": "#131b2e", "tertiary-container": "#007d57", "secondary-container": "#dae2fd", "surface-dim": "#cbdbf5", "on-tertiary": "#ffffff", "on-background": "#0b1c30", "on-surface": "#0b1c30", "primary": "#004ac6", "outline": "#737686", "on-tertiary-container": "#bdffdc", "on-primary-fixed": "#00174b", "on-surface-variant": "#434655", "inverse-surface": "#213145", "on-tertiary-fixed": "#002114", "on-tertiary-fixed-variant": "#005137" }, borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, spacing: { "space-xs": "0.5rem", "space-2xs": "0.25rem", "space-md": "1rem", "space-sm": "0.75rem", "touch-min": "3rem", "space-lg": "1.25rem", "space-xl": "1.5rem", "space-2xl": "2rem", "space-3xl": "2.5rem", "gutter-tablet": "1.5rem", "gutter-mobile": "1rem" }, fontFamily: { "data-tabular": ["Inter"], "label-lg": ["Inter"], "label-sm": ["Inter"], "sku-code": ["Inter"], "body-sm": ["Inter"], "display": ["Inter"], "body-lg": ["Inter"], "headline-lg": ["Inter"], "headline-sm": ["Inter"], "label-md": ["Inter"], "body-md": ["Inter"], "headline-md": ["Inter"] }, fontSize: { "data-tabular": ["15px", { "lineHeight": "20px", "letterSpacing": "-0.01em", "fontWeight": "500" }], "label-lg": ["16px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "600" }], "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }], "sku-code": ["13px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400" }], "display": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }], "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "headline-sm": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }], "label-md": ["14px", { "lineHeight": "18px", "letterSpacing": "0.005em", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }], "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }] } } } }</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style></head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen pt-safe pb-safe"><main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile"><div class="flex flex-col w-full max-w-md mx-auto py-space-xl px-space-xs">
+<!-- Brand & Store Identity Header -->
+<header class="flex flex-col items-center text-center mb-space-2xl">
+<!-- Branch Chip -->
+<div class="inline-flex items-center gap-1.5 px-3 py-1 mb-space-lg rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-primary text-[16px]">storefront</span>
+<span>Sucursal Centro</span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span class="text-tertiary text-label-sm font-label-sm">En línea</span>
+</div>
+<!-- App Identity -->
+<div class="relative mb-space-md">
+<div class="w-16 h-16 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-center p-2.5">
+<img alt="Logo Stock Móvil" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WnIL8J1nkSAuADgPhfbUlLwgFXz8vZdoJPPpWXJLY2_mYTAD5yQfM6Qs1zSTarkAR05ibks32eBcxAm0ShFgfAtbtI1WjwSL-gsbiOnjSm6TIPGRgFdiVaDGN-IkCEHH7IvkGQNu6ebrvTZOxlnXQI_N-5eOpes7RPMyQgwmdv8_BP957lTZUKNroTwD_pCgkM_9GTIomaHwCPGFUPMOjX-djCYO7BrdYZZaBZi13edGMitYflmLK1zRnj"/>
+</div>
+<div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-[12px]">inventory_2</span>
+</div>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Stock Móvil</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5 max-w-[280px]">
+      Sistema interno de control de stock y accesorios para dispositivos
+    </p>
+</header>
+<!-- Login Form Container -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-xl">
+<form class="flex flex-col gap-space-lg" id="loginForm" novalidate="" onsubmit="event.preventDefault(); handleLoginSubmit();">
+<!-- Email Field -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface flex items-center justify-between" for="emailInput">
+<span>Correo corporativo</span>
+<span class="font-body-sm text-body-sm text-secondary text-xs">Acceso tienda</span>
+</label>
+<div class="relative flex items-center bg-surface-container-lowest rounded-lg transition-colors focus-within:ring-2 focus-within:ring-primary-container">
+<div class="absolute left-3.5 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-[20px]">alternate_email</span>
+</div>
+<input autocomplete="email" class="w-full h-touch-min pl-11 pr-4 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none focus:bg-surface-container-lowest transition-all" id="emailInput" name="email" placeholder="ejemplo@tienda.com" required="" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface flex items-center justify-between" for="passwordInput">
+<span>Contraseña</span>
+<span class="font-body-sm text-body-sm text-secondary text-xs">PIN o clave</span>
+</label>
+<div class="relative flex items-center bg-surface-container-lowest rounded-lg transition-colors focus-within:ring-2 focus-within:ring-primary-container">
+<div class="absolute left-3.5 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</div>
+<input autocomplete="current-password" class="w-full h-touch-min pl-11 pr-12 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none focus:bg-surface-container-lowest transition-all" id="passwordInput" name="password" placeholder="••••••••" required="" type="password"/>
+<button aria-label="Alternar visibilidad de contraseña" class="absolute right-1 w-10 h-10 flex items-center justify-center text-secondary hover:text-on-surface rounded-lg transition-colors active:bg-surface-container" id="togglePasswordBtn" onclick="togglePasswordVisibility()" type="button">
+<span class="material-symbols-outlined text-[20px]" id="eyeIcon">visibility</span>
+</button>
+</div>
+</div>
+<!-- Live Notification Banner (Feedback) -->
+<div class="hidden flex items-center gap-2.5 p-3 rounded-lg bg-surface-container text-on-surface-variant font-body-sm text-body-sm" id="loginFeedback">
+<span class="material-symbols-outlined text-[18px] text-primary" id="feedbackIcon">info</span>
+<span id="feedbackMsg">Validando credenciales de empleado...</span>
+</div>
+<!-- Submit Action Button -->
+<button class="w-full h-touch-min mt-space-xs flex items-center justify-center gap-2 rounded-lg bg-primary-container text-on-primary font-label-lg text-label-lg shadow-sm active:opacity-90 hover:brightness-105 transition-all cursor-pointer select-none" id="submitBtn" type="submit">
+<span class="material-symbols-outlined text-[20px]">login</span>
+<span>Iniciar sesión</span>
+</button>
+<!-- Forgot Password Link -->
+<div class="flex justify-center pt-space-2xs">
+<button class="font-label-sm text-label-sm text-primary hover:underline underline-offset-4 focus:outline-none focus:text-on-primary-fixed-variant transition-colors p-2" onclick="openRecoveryNotice()" type="button">
+          ¿Olvidaste tu contraseña?
+        </button>
+</div>
+</form>
+</div>
+<!-- Quick Store Badge / Device Category Highlights -->
+<div class="mt-space-xl grid grid-cols-3 gap-2 px-1 text-center">
+<div class="flex flex-col items-center p-2.5 rounded-lg bg-surface-container-low">
+<span class="material-symbols-outlined text-secondary text-[20px] mb-1">cases</span>
+<span class="font-label-sm text-label-sm text-on-surface">Fundas</span>
+<span class="font-body-sm text-body-sm text-secondary text-[11px]">iOs &amp; Android</span>
+</div>
+<div class="flex flex-col items-center p-2.5 rounded-lg bg-surface-container-low">
+<span class="material-symbols-outlined text-secondary text-[20px] mb-1">bolt</span>
+<span class="font-label-sm text-label-sm text-on-surface">Cargas</span>
+<span class="font-body-sm text-body-sm text-secondary text-[11px]">GaN / MagSafe</span>
+</div>
+<div class="flex flex-col items-center p-2.5 rounded-lg bg-surface-container-low">
+<span class="material-symbols-outlined text-secondary text-[20px] mb-1">screen_lock_portrait</span>
+<span class="font-label-sm text-label-sm text-on-surface">Micas 9D</span>
+<span class="font-body-sm text-body-sm text-secondary text-[11px]">Vidrio templado</span>
+</div>
+</div>
+<!-- Security & Internal Compliance Footer -->
+<footer class="mt-space-2xl text-center flex flex-col items-center gap-1.5 text-on-surface-variant font-body-sm text-body-sm">
+<div class="flex items-center gap-1 text-outline">
+<span class="material-symbols-outlined text-[16px]">verified_user</span>
+<span>Uso exclusivo para personal autorizado</span>
+</div>
+<div class="flex items-center gap-2 text-xs text-outline">
+<span>Stock Móvil Suite</span>
+<span>·</span>
+<span>v1.2.0</span>
+<span>·</span>
+<span>Terminal POS-41</span>
+</div>
+</footer>
+</div>
+<script>
+  function togglePasswordVisibility() {
+    const input = document.getElementById('passwordInput');
+    const eyeIcon = document.getElementById('eyeIcon');
+    if (!input || !eyeIcon) return;
+
+    if (input.type === 'password') {
+      input.type = 'text';
+      eyeIcon.textContent = 'visibility_off';
+    } else {
+      input.type = 'password';
+      eyeIcon.textContent = 'visibility';
+    }
+  }
+
+  function handleLoginSubmit() {
+    const email = document.getElementById('emailInput')?.value;
+    const pass = document.getElementById('passwordInput')?.value;
+    const banner = document.getElementById('loginFeedback');
+    const msg = document.getElementById('feedbackMsg');
+    const icon = document.getElementById('feedbackIcon');
+    const submitBtn = document.getElementById('submitBtn');
+
+    if (!banner || !msg || !icon) return;
+
+    if (!email || !pass) {
+      banner.classList.remove('hidden');
+      banner.classList.add('bg-error-container', 'text-on-error-container');
+      banner.classList.remove('bg-surface-container', 'text-on-surface-variant');
+      icon.classList.remove('text-primary');
+      icon.classList.add('text-error');
+      icon.textContent = 'error';
+      msg.textContent = 'Por favor completa tu correo y contraseña.';
+      return;
+    }
+
+    // Interactive progress simulation
+    banner.classList.remove('hidden', 'bg-error-container', 'text-on-error-container');
+    banner.classList.add('bg-surface-container', 'text-on-surface-variant');
+    icon.classList.remove('text-error');
+    icon.classList.add('text-primary');
+    icon.textContent = 'sync';
+    msg.textContent = 'Comprobando terminal con servidor central...';
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.7';
+
+    setTimeout(() => {
+      icon.textContent = 'check_circle';
+      icon.classList.remove('text-primary');
+      icon.classList.add('text-tertiary');
+      msg.textContent = '¡Sesión confirmada! Accediendo a inventario...';
+    }, 900);
+  }
+
+  function openRecoveryNotice() {
+    const banner = document.getElementById('loginFeedback');
+    const msg = document.getElementById('feedbackMsg');
+    const icon = document.getElementById('feedbackIcon');
+    if (!banner || !msg || !icon) return;
+
+    banner.classList.remove('hidden', 'bg-error-container', 'text-on-error-container');
+    banner.classList.add('bg-surface-container', 'text-on-surface-variant');
+    icon.textContent = 'support_agent';
+    icon.classList.remove('text-error');
+    icon.classList.add('text-primary');
+    msg.textContent = 'Contacta al Administrador de Tienda para restablecer tu PIN de acceso.';
+  }
+</script></main></body></html>

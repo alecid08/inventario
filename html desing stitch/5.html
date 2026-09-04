@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/><title>Stock Móvil - Productos por Reponer</title><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "background": "#f8f9ff", "outline-variant": "#c3c6d7", "surface-container": "#e5eeff", "primary-fixed": "#dbe1ff", "inverse-on-surface": "#eaf1ff", "tertiary": "#006243", "on-primary-fixed-variant": "#003ea8", "on-secondary": "#ffffff", "primary-fixed-dim": "#b4c5ff", "on-error-container": "#93000a", "surface-container-high": "#dce9ff", "secondary-fixed": "#dae2fd", "tertiary-fixed-dim": "#68dba9", "primary-container": "#2563eb", "surface": "#f8f9ff", "surface-container-highest": "#d3e4fe", "error": "#ba1a1a", "surface-bright": "#f8f9ff", "secondary": "#565e74", "surface-tint": "#0053db", "inverse-primary": "#b4c5ff", "surface-container-low": "#eff4ff", "tertiary-fixed": "#85f8c4", "error-container": "#ffdad6", "on-primary-container": "#eeefff", "on-secondary-fixed-variant": "#3f465c", "on-error": "#ffffff", "on-secondary-container": "#5c647a", "surface-container-lowest": "#ffffff", "on-primary": "#ffffff", "surface-variant": "#d3e4fe", "secondary-fixed-dim": "#bec6e0", "on-secondary-fixed": "#131b2e", "tertiary-container": "#007d57", "secondary-container": "#dae2fd", "surface-dim": "#cbdbf5", "on-tertiary": "#ffffff", "on-background": "#0b1c30", "on-surface": "#0b1c30", "primary": "#004ac6", "outline": "#737686", "on-tertiary-container": "#bdffdc", "on-primary-fixed": "#00174b", "on-surface-variant": "#434655", "inverse-surface": "#213145", "on-tertiary-fixed": "#002114", "on-tertiary-fixed-variant": "#005137" }, borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, spacing: { "space-xs": "0.5rem", "space-2xs": "0.25rem", "space-md": "1rem", "space-sm": "0.75rem", "touch-min": "3rem", "space-lg": "1.25rem", "space-xl": "1.5rem", "space-2xl": "2rem", "space-3xl": "2.5rem", "gutter-tablet": "1.5rem", "gutter-mobile": "1rem" }, fontFamily: { "data-tabular": ["Inter"], "label-lg": ["Inter"], "label-sm": ["Inter"], "sku-code": ["Inter"], "body-sm": ["Inter"], "display": ["Inter"], "body-lg": ["Inter"], "headline-lg": ["Inter"], "headline-sm": ["Inter"], "label-md": ["Inter"], "body-md": ["Inter"], "headline-md": ["Inter"] }, fontSize: { "data-tabular": ["15px", { "lineHeight": "20px", "letterSpacing": "-0.01em", "fontWeight": "500" }], "label-lg": ["16px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "600" }], "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }], "sku-code": ["13px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400" }], "display": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }], "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "headline-sm": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }], "label-md": ["14px", { "lineHeight": "18px", "letterSpacing": "0.005em", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }], "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }] } } } }</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style></head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen pt-safe pb-safe"><main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile"><div class="flex flex-col w-full pb-24 space-y-4">
+<!-- Header Notification & Action Bar -->
+<header class="flex flex-col space-y-3 pt-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<div class="w-9 h-9 rounded-xl bg-error-container text-on-error-container flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-on-surface leading-tight">Productos por Reponer</h1>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container mt-0.5">
+            4 artículos en nivel crítico
+          </span>
+</div>
+</div>
+<button class="h-10 px-3.5 rounded-xl bg-primary-container text-on-primary font-label-md text-label-md flex items-center space-x-1.5 shadow-sm active:scale-95 transition-transform" id="batch-order-btn" onclick="triggerBatchOrder()">
+<span class="material-symbols-outlined text-lg">playlist_add_check</span>
+<span class="hidden sm:inline">Reponer Todo</span>
+<span class="sm:hidden">Reponer</span>
+</button>
+</div>
+<!-- Context Banner -->
+<div class="bg-surface-container-low p-3.5 rounded-xl shadow-sm flex items-start space-x-3">
+<span class="material-symbols-outlined text-primary-container mt-0.5 text-xl">info</span>
+<div class="flex-1">
+<p class="text-body-sm font-body-sm text-on-surface-variant leading-snug">
+          Stock crítico (<span class="font-semibold text-error">menor a 5 unidades</span>). El cálculo automático ajusta cada referencia para completar el cupo base de <span class="font-semibold text-on-surface">10 unidades</span> por vitrina.
+        </p>
+</div>
+</div>
+</header>
+<!-- Filter & Sort Strip -->
+<section class="flex items-center justify-between gap-2 overflow-x-auto py-1">
+<div class="flex items-center space-x-2 shrink-0">
+<span class="text-label-sm font-label-sm text-secondary">Ordenar:</span>
+<button class="px-3 py-1.5 rounded-full bg-on-surface text-surface-container-lowest font-label-sm text-label-sm flex items-center space-x-1 shadow-sm">
+<span>Menor stock primero</span>
+<span class="material-symbols-outlined text-sm">arrow_downward</span>
+</button>
+<button class="px-3 py-1.5 rounded-full bg-surface-container text-secondary font-label-sm text-label-sm hover:bg-surface-container-high transition-colors">
+        Por categoría
+      </button>
+</div>
+<div class="shrink-0 flex items-center space-x-1 text-label-sm font-label-sm text-secondary">
+<span class="material-symbols-outlined text-base">storefront</span>
+<span>Local Norte</span>
+</div>
+</section>
+<!-- Items In Critical Stock List -->
+<main class="flex flex-col space-y-3">
+<!-- Item 1: Soporte Magnético (Stock 1 / 10 -> Faltan 9) -->
+<article class="bg-surface-container-lowest rounded-xl p-3.5 shadow-sm flex flex-col space-y-3 transition-all" id="card-sku-520">
+<div class="flex items-start justify-between gap-3">
+<div class="flex space-x-3 min-w-0">
+<div class="w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-surface-container-high relative flex items-center justify-center shadow-inner">
+<img alt="Compact metallic car dashboard phone mount with powerful circular magnetic plate, sleek dark gray matte texture on neutral studio surface." class="w-full h-full object-cover" title="Compact metallic car dashboard phone mount with powerful circular magnetic plate, sleek dark gray matte texture on neutral studio surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPrDp2gPayy7g-55AJ_ZnN9ino5JNtye8Aq86j-QHy4eH7pfcPbvJz12wKnKbyOcDmYUrXU6kQ9ycnWXK07bRBObtFr0uT2G77JfWhAwpWcz0hzz3Yy9kGf06b7w_FtzHasBOB99ZpylKUrW9GjJlHG2SrLLCoQBimNjtwy6jhrwe3MIr9NcFcFTWj-he0q59l2GlnD9biz5-6hmQzT1HBGjNZQN6HKwPh5FTaga8EQjaC6NtqJcTNSg"/>
+<div class="absolute top-1 left-1 w-2.5 h-2.5 rounded-full bg-error ring-2 ring-surface-container-lowest"></div>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-sku-code text-sku-code text-secondary uppercase tracking-wider">SKU-520 · Auto</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface truncate font-semibold">Soporte Magnético para Auto</h2>
+<div class="flex items-center gap-1.5 mt-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container">
+                1 / 10 unid.
+              </span>
+<span class="text-body-sm font-body-sm text-error font-medium">Urgencia crítica</span>
+</div>
+</div>
+</div>
+<button aria-label="Opciones" class="text-secondary hover:text-on-surface p-1 rounded-lg">
+<span class="material-symbols-outlined text-xl">more_vert</span>
+</button>
+</div>
+<!-- Stock Meter Card Section -->
+<div class="bg-surface-container-low rounded-lg p-2.5 flex flex-col space-y-1.5">
+<div class="flex justify-between items-center text-label-sm font-label-sm">
+<span class="text-on-surface-variant font-medium">Capacidad de exhibición</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-bold">
+            Faltan +9 para completar 10
+          </span>
+</div>
+<!-- Progress Bar (1/10 = 10%) -->
+<div class="w-full h-2.5 bg-surface-container-highest rounded-full overflow-hidden flex">
+<div class="h-full bg-error rounded-full transition-all duration-500 w-[10%]"></div>
+</div>
+<div class="flex justify-between text-body-sm font-body-sm text-secondary pt-0.5">
+<span>Actual: <strong>1 unid.</strong></span>
+<span>Meta base: 10 unid.</span>
+</div>
+</div>
+<!-- Card Action Buttons -->
+<div class="flex items-center justify-between gap-2 pt-1">
+<div class="flex items-center space-x-1">
+<button aria-label="Restar" class="w-9 h-9 rounded-lg bg-surface-container text-on-surface flex items-center justify-center active:scale-95 transition-transform" onclick="adjustCount('sku-520', -1)">
+<span class="material-symbols-outlined text-base">remove</span>
+</button>
+<span class="w-9 text-center font-data-tabular text-data-tabular text-on-surface font-bold" id="qty-sku-520">9</span>
+<button aria-label="Aumentar" class="w-9 h-9 rounded-lg bg-surface-container text-on-surface flex items-center justify-center active:scale-95 transition-transform" onclick="adjustCount('sku-520', 1)">
+<span class="material-symbols-outlined text-base">add</span>
+</button>
+</div>
+<button class="flex-1 h-10 px-4 rounded-xl bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center space-x-1.5 active:scale-95 transition-all shadow-sm" onclick="reorderSingle('sku-520', 'Soporte Magnético', 9)">
+<span class="material-symbols-outlined text-lg">add_box</span>
+<span>+ Reponer 9 unid.</span>
+</button>
+</div>
+</article>
+<!-- Item 2: Funda Silicone Case iPhone 15 Pro (Stock 2 / 10 -> Faltan 8) -->
+<article class="bg-surface-container-lowest rounded-xl p-3.5 shadow-sm flex flex-col space-y-3 transition-all" id="card-sku-842">
+<div class="flex items-start justify-between gap-3">
+<div class="flex space-x-3 min-w-0">
+<div class="w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-surface-container-high relative flex items-center justify-center shadow-inner">
+<img alt="Premium midnight blue silicone phone case for modern smartphone, soft matte texture with microfiber interior lining on clean white display background." class="w-full h-full object-cover" title="Premium midnight blue silicone phone case for modern smartphone, soft matte texture with microfiber interior lining on clean white display background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLY-srBcdxcJDgqEAiJDwwHBKRHj-nbd6dgUxnxlnQ4wCeQIZmYUWVZo9ByDa0FbdY4aq01mkRbJySuaMYFwPVr977bho3ecCAgVf0yUJqfyr9e5i3jY8LcJY4mjXgiRMV93wa3uWobDDz5qYkUCCgSMal9PiqRCmU5rPzWHJB4JLolhye7mdSNweNxDaRf4FpEJftvubMTU6xRgePrjt0_kXjrz3W9C_w7-s5mIBVI3W2GFc-0Vk-4Q"/>
+<div class="absolute top-1 left-1 w-2.5 h-2.5 rounded-full bg-error ring-2 ring-surface-container-lowest"></div>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-sku-code text-sku-code text-secondary uppercase tracking-wider">SKU-842 · Fundas</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface truncate font-semibold">Funda Silicone Case iPhone 15 Pro</h2>
+<div class="flex items-center gap-1.5 mt-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container">
+                2 / 10 unid.
+              </span>
+<span class="text-body-sm font-body-sm text-error font-medium">Bajo umbral</span>
+</div>
+</div>
+</div>
+<button aria-label="Opciones" class="text-secondary hover:text-on-surface p-1 rounded-lg">
+<span class="material-symbols-outlined text-xl">more_vert</span>
+</button>
+</div>
+<!-- Stock Meter Card Section -->
+<div class="bg-surface-container-low rounded-lg p-2.5 flex flex-col space-y-1.5">
+<div class="flex justify-between items-center text-label-sm font-label-sm">
+<span class="text-on-surface-variant font-medium">Capacidad de exhibición</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-bold">
+            Faltan +8 para completar 10
+          </span>
+</div>
+<!-- Progress Bar (2/10 = 20%) -->
+<div class="w-full h-2.5 bg-surface-container-highest rounded-full overflow-hidden flex">
+<div class="h-full bg-error rounded-full transition-all duration-500 w-[20%]"></div>
+</div>
+<div class="flex justify-between text-body-sm font-body-sm text-secondary pt-0.5">
+<span>Actual: <strong>2 unid.</strong></span>
+<span>Meta base: 10 unid.</span>
+</div>
+</div>
+<!-- Card Action Buttons -->
+<div class="flex items-center justify-between gap-2 pt-1">
+<div class="flex items-center space-x-1">
+<button aria-label="Restar" class="w-9 h-9 rounded-lg bg-surface-container text-on-surface flex items-center justify-center active:scale-95 transition-transform" onclick="adjustCount('sku-842', -1)">
+<span class="material-symbols-outlined text-base">remove</span>
+</button>
+<span class="w-9 text-center font-data-tabular text-data-tabular text-on-surface font-bold" id="qty-sku-842">8</span>
+<button aria-label="Aumentar" class="w-9 h-9 rounded-lg bg-surface-container text-on-surface flex items-center justify-center active:scale-95 transition-transform" onclick="adjustCount('sku-842', 1)">
+<span class="material-symbols-outlined text-base">add</span>
+</button>
+</div>
+<button class="flex-1 h-10 px-4 rounded-xl bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center space-x-1.5 active:scale-95 transition-all shadow-sm" onclick="reorderSingle('sku-842', 'Funda Silicone Case', 8)">
+<span class="material-symbols-outlined text-lg">add_box</span>
+<span>+ Reponer 8 unid.</span>
+</button>
+</div>
+</article>
+<!-- Item 3: Mica Vidrio Templado 9D iPhone (Stock 3 / 10 -> Faltan 7) -->
+<article class="bg-surface-container-lowest rounded-xl p-3.5 shadow-sm flex flex-col space-y-3 transition-all" id="card-sku-104">
+<div class="flex items-start justify-between gap-3">
+<div class="flex space-x-3 min-w-0">
+<div class="w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-surface-container-high relative flex items-center justify-center shadow-inner">
+<img alt="Tempered glass screen protector retail pack with crystal clear 9D protective sheet for smartphone, neat retail packaging styling on bright table." class="w-full h-full object-cover" title="Tempered glass screen protector retail pack with crystal clear 9D protective sheet for smartphone, neat retail packaging styling on bright table." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDArc9PQMZMX60YZdL2HuhroEsYV6UgzSH87z-kJS4ARnnmSqmNSHgA9qBp7g6F6dHgZFFqTSVgq2gdJp58wHONkBxTxsO8hE0qtwatBHzLpB31H6chYL2O8S5CJSDi-z88o0vFq5sZcG3tsWBWISuppZf-tVqo03v5gno6pOC0TkrrhFGhyhCHAt7jP4NM9ZHobv-4beNobhEKe-UBtNC0__DBtmC90qfTOgVDh-SgPW_fPqxi2Q1q1g"/>
+<div class="absolute top-1 left-1 w-2.5 h-2.5 rounded-full bg-secondary-fixed-dim ring-2 ring-surface-container-lowest"></div>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-sku-code text-sku-code text-secondary uppercase tracking-wider">SKU-104 · Protección</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface truncate font-semibold">Mica Vidrio Templado 9D iPhone</h2>
+<div class="flex items-center gap-1.5 mt-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-secondary-container text-on-secondary-fixed">
+                3 / 10 unid.
+              </span>
+<span class="text-body-sm font-body-sm text-secondary font-medium">Rotación rápida</span>
+</div>
+</div>
+</div>
+<button aria-label="Opciones" class="text-secondary hover:text-on-surface p-1 rounded-lg">
+<span class="material-symbols-outlined text-xl">more_vert</span>
+</button>
+</div>
+<!-- Stock Meter Card Section -->
+<div class="bg-surface-container-low rounded-lg p-2.5 flex flex-col space-y-1.5">
+<div class="flex justify-between items-center text-label-sm font-label-sm">
+<span class="text-on-surface-variant font-medium">Capacidad de exhibición</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-bold">
+            Faltan +7 para completar 10
+          </span>
+</div>
+<!-- Progress Bar (3/10 = 30%) -->
+<div class="w-full h-2.5 bg-surface-container-highest rounded-full overflow-hidden flex">
+<div class="h-full bg-secondary rounded-full transition-all duration-500 w-[30%]"></div>
+</div>
+<div class="flex justify-between text-body-sm font-body-sm text-secondary pt-0.5">
+<span>Actual: <strong>3 unid.</strong></span>
+<span>Meta base: 10 unid.</span>
+</div>
+</div>
+<!-- Card Action Buttons -->
+<div class="flex items-center justify-between gap-2 pt-1">
+<div class="flex items-center space-x-1">
+<button aria-label="Restar" class="w-9 h-9 rounded-lg bg-surface-container text-on-surface flex items-center justify-center active:scale-95 transition-transform" onclick="adjustCount('sku-104', -1)">
+<span class="material-symbols-outlined text-base">remove</span>
+</button>
+<span class="w-9 text-center font-data-tabular text-data-tabular text-on-surface font-bold" id="qty-sku-104">7</span>
+<button aria-label="Aumentar" class="w-9 h-9 rounded-lg bg-surface-container text-on-surface flex items-center justify-center active:scale-95 transition-transform" onclick="adjustCount('sku-104', 1)">
+<span class="material-symbols-outlined text-base">add</span>
+</button>
+</div>
+<button class="flex-1 h-10 px-4 rounded-xl bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center space-x-1.5 active:scale-95 transition-all shadow-sm" onclick="reorderSingle('sku-104', 'Mica Vidrio Templado', 7)">
+<span class="material-symbols-outlined text-lg">add_box</span>
+<span>+ Reponer 7 unid.</span>
+</button>
+</div>
+</article>
+<!-- Item 4: Adaptador Lightning a Jack 3.5mm (Stock 4 / 10 -> Faltan 6) -->
+<article class="bg-surface-container-lowest rounded-xl p-3.5 shadow-sm flex flex-col space-y-3 transition-all" id="card-sku-319">
+<div class="flex items-start justify-between gap-3">
+<div class="flex space-x-3 min-w-0">
+<div class="w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-surface-container-high relative flex items-center justify-center shadow-inner">
+<img alt="White Lightning to 3.5mm headphone jack adapter cable coiled neatly, crisp commercial technology product shot on clean white background." class="w-full h-full object-cover" title="White Lightning to 3.5mm headphone jack adapter cable coiled neatly, crisp commercial technology product shot on clean white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEddAYibZMjqLmVbQYfK77Qtk_GR18aEIxR3iZD-Z2oh2vBwMBHO4f5rmtUUOpsECq0Ki6-5kKq2rrbOwb5qTeegm3mwiaDth6G9WXs1pYgShhoy9AIo62Yi2tPtSAwuB9NT8Xg1cpDcF-6cJyQ2S_WpLWIWQIu2INbGpBjXUA7YtOlsTuVV3M7ipH2vBUeAEuuoP8SCLpb0_EussBUxFkyspxVV1X9GEiyd9dr9O0HJLNk35vxy8HOA"/>
+<div class="absolute top-1 left-1 w-2.5 h-2.5 rounded-full bg-secondary-fixed-dim ring-2 ring-surface-container-lowest"></div>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-sku-code text-sku-code text-secondary uppercase tracking-wider">SKU-319 · Audio</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface truncate font-semibold">Adaptador Lightning a Jack 3.5mm</h2>
+<div class="flex items-center gap-1.5 mt-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-secondary-container text-on-secondary-fixed">
+                4 / 10 unid.
+              </span>
+<span class="text-body-sm font-body-sm text-secondary font-medium">Por agotar</span>
+</div>
+</div>
+</div>
+<button aria-label="Opciones" class="text-secondary hover:text-on-surface p-1 rounded-lg">
+<span class="material-symbols-outlined text-xl">more_vert</span>
+</button>
+</div>
+<!-- Stock Meter Card Section -->
+<div class="bg-surface-container-low rounded-lg p-2.5 flex flex-col space-y-1.5">
+<div class="flex justify-between items-center text-label-sm font-label-sm">
+<span class="text-on-surface-variant font-medium">Capacidad de exhibición</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-bold">
+            Faltan +6 para completar 10
+          </span>
+</div>
+<!-- Progress Bar (4/10 = 40%) -->
+<div class="w-full h-2.5 bg-surface-container-highest rounded-full overflow-hidden flex">
+<div class="h-full bg-secondary rounded-full transition-all duration-500 w-[40%]"></div>
+</div>
+<div class="flex justify-between text-body-sm font-body-sm text-secondary pt-0.5">
+<span>Actual: <strong>4 unid.</strong></span>
+<span>Meta base: 10 unid.</span>
+</div>
+</div>
+<!-- Card Action Buttons -->
+<div class="flex items-center justify-between gap-2 pt-1">
+<div class="flex items-center space-x-1">
+<button aria-label="Restar" class="w-9 h-9 rounded-lg bg-surface-container text-on-surface flex items-center justify-center active:scale-95 transition-transform" onclick="adjustCount('sku-319', -1)">
+<span class="material-symbols-outlined text-base">remove</span>
+</button>
+<span class="w-9 text-center font-data-tabular text-data-tabular text-on-surface font-bold" id="qty-sku-319">6</span>
+<button aria-label="Aumentar" class="w-9 h-9 rounded-lg bg-surface-container text-on-surface flex items-center justify-center active:scale-95 transition-transform" onclick="adjustCount('sku-319', 1)">
+<span class="material-symbols-outlined text-base">add</span>
+</button>
+</div>
+<button class="flex-1 h-10 px-4 rounded-xl bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center space-x-1.5 active:scale-95 transition-all shadow-sm" onclick="reorderSingle('sku-319', 'Adaptador Lightning', 6)">
+<span class="material-symbols-outlined text-lg">add_box</span>
+<span>+ Reponer 6 unid.</span>
+</button>
+</div>
+</article>
+</main>
+<!-- Reorder Summary Floating Sticky Footer Pill (Total Units to Complete) -->
+<aside class="bg-surface-container-highest rounded-xl p-3.5 flex items-center justify-between shadow-sm">
+<div class="flex items-center space-x-2.5">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-base">inventory</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface font-semibold">Total a solicitar a bodega</p>
+<p class="text-body-sm font-body-sm text-secondary">30 unidades para nivelar stock</p>
+</div>
+</div>
+<span class="text-data-tabular font-data-tabular text-primary font-bold text-base px-2.5 py-1 rounded-md bg-surface-container-lowest">
+      +30 unid.
+    </span>
+</aside>
+<!-- Interactive Feedback Toast (Hidden by default) -->
+<div class="fixed bottom-20 left-4 right-4 bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 transition-opacity duration-300 opacity-0 pointer-events-none z-50" id="toast">
+<span class="material-symbols-outlined text-tertiary-fixed text-xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-body-sm font-body-sm font-medium flex-1" id="toast-text">Orden enviada exitosamente.</span>
+</div>
+<!-- Bottom Navigation Bar (Persistent Mobile POS Dock) -->
+<nav class="fixed bottom-0 left-0 right-0 bg-surface-container-lowest shadow-lg px-4 py-2 flex justify-around items-center z-40 border-none">
+<a class="flex flex-col items-center justify-center py-1 px-3 rounded-lg text-secondary hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">inventory_2</span>
+<span class="text-label-sm font-label-sm mt-0.5">Inventario</span>
+</a>
+<a class="flex flex-col items-center justify-center py-1 px-3 rounded-lg text-secondary hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">sync_alt</span>
+<span class="text-label-sm font-label-sm mt-0.5">Movimientos</span>
+</a>
+<!-- Active State: Alertas -->
+<a class="flex flex-col items-center justify-center py-1 px-3 rounded-lg text-primary-container relative" href="#">
+<div class="relative">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">notifications_active</span>
+<span class="absolute -top-1 -right-2 bg-error text-on-error text-[10px] font-bold px-1.5 py-0.2 rounded-full ring-2 ring-surface-container-lowest">
+          4
+        </span>
+</div>
+<span class="text-label-sm font-label-sm font-bold mt-0.5">Alertas</span>
+</a>
+<a class="flex flex-col items-center justify-center py-1 px-3 rounded-lg text-secondary hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">settings</span>
+<span class="text-label-sm font-label-sm mt-0.5">Ajustes</span>
+</a>
+</nav>
+</div>
+<script>
+  function adjustCount(id, delta) {
+    const qtyElem = document.getElementById('qty-' + id);
+    if (!qtyElem) return;
+    let current = parseInt(qtyElem.textContent, 10);
+    current = Math.max(1, current + delta);
+    qtyElem.textContent = current;
+    
+    // Update button label inside card
+    const card = document.getElementById('card-' + id);
+    if (card) {
+      const mainBtn = card.querySelector('button.bg-primary-container span:last-child');
+      if (mainBtn) {
+        mainBtn.textContent = `+ Reponer ${current} unid.`;
+      }
+    }
+  }
+
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    const toastText = document.getElementById('toast-text');
+    if (!toast || !toastText) return;
+    toastText.textContent = message;
+    toast.classList.remove('opacity-0', 'pointer-events-none');
+    toast.classList.add('opacity-100');
+    setTimeout(() => {
+      toast.classList.remove('opacity-100');
+      toast.classList.add('opacity-0', 'pointer-events-none');
+    }, 2800);
+  }
+
+  function reorderSingle(sku, name, defaultQty) {
+    const qtyElem = document.getElementById('qty-' + sku);
+    const qty = qtyElem ? qtyElem.textContent : defaultQty;
+    showToast(`Solicitud generada: ${qty} unid. de ${name}`);
+  }
+
+  function triggerBatchOrder() {
+    showToast('Orden global enviada: +30 unidades solicitadas a Bodega Central.');
+  }
+</script></main></body></html>

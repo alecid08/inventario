@@ -1,0 +1,125 @@
+---
+import '../styles/global.css';
+import BottomNav from '../components/BottomNav.astro';
+
+interface Props {
+  title?: string;
+  showNav?: boolean;
+}
+
+const { title = 'Tu Cell Expres - Control de Inventario', showNav = true } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>{title}</title>
+  <meta name="description" content="Gestión inteligente de inventario para tienda de accesorios de celular Tu Cell Expres. Control de stock, listas dinámicas y reportes en tiempo real." />
+  
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  
+  <script is:inline src="https://cdn.tailwindcss.com"></script>
+  <script is:inline id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "background": "#f8f9ff",
+            "outline-variant": "#c3c6d7",
+            "surface-container": "#e5eeff",
+            "primary-fixed": "#dbe1ff",
+            "inverse-on-surface": "#eaf1ff",
+            "tertiary": "#006243",
+            "on-primary-fixed-variant": "#003ea8",
+            "on-secondary": "#ffffff",
+            "primary-fixed-dim": "#b4c5ff",
+            "on-error-container": "#93000a",
+            "surface-container-high": "#dce9ff",
+            "secondary-fixed": "#dae2fd",
+            "tertiary-fixed-dim": "#68dba9",
+            "primary-container": "#2563eb",
+            "surface": "#f8f9ff",
+            "surface-container-highest": "#d3e4fe",
+            "error": "#ba1a1a",
+            "surface-bright": "#f8f9ff",
+            "secondary": "#565e74",
+            "surface-tint": "#0053db",
+            "inverse-primary": "#b4c5ff",
+            "surface-container-low": "#eff4ff",
+            "tertiary-fixed": "#85f8c4",
+            "error-container": "#ffdad6",
+            "on-primary-container": "#eeefff",
+            "on-secondary-fixed-variant": "#3f465c",
+            "on-error": "#ffffff",
+            "on-secondary-container": "#5c647a",
+            "surface-container-lowest": "#ffffff",
+            "on-primary": "#ffffff",
+            "surface-variant": "#d3e4fe",
+            "secondary-fixed-dim": "#bec6e0",
+            "on-secondary-fixed": "#131b2e",
+            "tertiary-container": "#007d57",
+            "secondary-container": "#dae2fd",
+            "surface-dim": "#cbdbf5",
+            "on-tertiary": "#ffffff",
+            "on-background": "#0b1c30",
+            "on-surface": "#0b1c30",
+            "primary": "#004ac6",
+            "outline": "#737686",
+            "on-tertiary-container": "#bdffdc",
+            "on-primary-fixed": "#00174b",
+            "on-surface-variant": "#434655",
+            "inverse-surface": "#213145",
+            "on-tertiary-fixed": "#002114",
+            "on-tertiary-fixed-variant": "#005137"
+          },
+          borderRadius: {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          spacing: {
+            "space-xs": "0.5rem",
+            "space-2xs": "0.25rem",
+            "space-md": "1rem",
+            "space-sm": "0.75rem",
+            "touch-min": "3rem",
+            "space-lg": "1.25rem",
+            "space-xl": "1.5rem",
+            "space-2xl": "2rem",
+            "space-3xl": "2.5rem",
+            "gutter-tablet": "1.5rem",
+            "gutter-mobile": "1rem"
+          },
+          fontFamily: {
+            "headline-sm": ["Inter", "sans-serif"],
+            "headline-md": ["Inter", "sans-serif"],
+            "headline-lg": ["Inter", "sans-serif"],
+            "body-sm": ["Inter", "sans-serif"],
+            "body-md": ["Inter", "sans-serif"],
+            "label-sm": ["Inter", "sans-serif"],
+            "label-md": ["Inter", "sans-serif"],
+            "label-lg": ["Inter", "sans-serif"],
+            "sku-code": ["monospace"],
+            "display": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md antialiased selection:bg-primary-container selection:text-on-primary">
+  <div class="flex-1 flex flex-col w-full max-w-lg mx-auto bg-surface relative min-h-screen border-x border-surface-container">
+    <slot />
+    {showNav && <BottomNav />}
+  </div>
+</body>
+</html>

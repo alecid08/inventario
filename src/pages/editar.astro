@@ -1,0 +1,310 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Stock Móvil - Editar Producto">
+  <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile">
+    <div class="flex flex-col w-full pb-24 space-y-space-md">
+      <!-- Barra de Encabezado Superior -->
+      <div class="flex items-center justify-between py-space-xs bg-surface pt-2">
+        <div class="flex items-center space-x-space-sm">
+          <a href="/" aria-label="Volver" class="w-touch-min h-touch-min flex items-center justify-center rounded-xl bg-surface-container text-on-surface active:bg-surface-container-high transition-colors">
+            <span class="material-symbols-outlined text-headline-sm">arrow_back</span>
+          </a>
+          <div>
+            <div class="flex items-center space-x-space-2xs">
+              <h1 class="font-headline-sm text-headline-sm text-on-surface">Editar Accesorio</h1>
+              <span class="px-space-xs py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-sku-code text-sku-code" id="headerSkuBadge">SKU-092</span>
+            </div>
+            <p class="font-body-sm text-body-sm text-on-surface-variant">Ficha técnica y ubicación de producto</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-space-xs">
+          <span class="px-space-xs py-1 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm flex items-center gap-1" id="headerStockStatusBadge">
+            <span class="material-symbols-outlined text-label-sm">warning</span>
+            Stock Bajo
+          </span>
+        </div>
+      </div>
+
+      <!-- Formulario Estructurado -->
+      <form class="space-y-space-md" id="productForm">
+        <!-- 1. Sección de Imagen de Producto -->
+        <div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm space-y-space-sm">
+          <div class="flex items-center justify-between">
+            <label class="font-label-md text-label-md text-on-surface">Fotografía de inventario</label>
+            <span class="font-body-sm text-body-sm text-on-surface-variant">Principal</span>
+          </div>
+          <div class="flex flex-col sm:flex-row items-center gap-space-md">
+            <div class="relative w-28 h-28 shrink-0 rounded-xl overflow-hidden bg-surface-container-low group">
+              <img alt="Fotografía del producto" title="Fotografía del producto" class="w-full h-full object-cover" id="editProdImg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww"/>
+              <div class="absolute inset-0 bg-inverse-surface/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                <span class="material-symbols-outlined text-on-primary text-headline-md">zoom_in</span>
+              </div>
+            </div>
+            <div class="flex-1 flex flex-col justify-center space-y-space-xs w-full">
+              <div class="flex flex-wrap gap-space-2xs">
+                <button class="h-10 px-space-md rounded-xl bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center gap-1.5 shadow-sm active:opacity-90 transition-opacity cursor-pointer" id="btnTakePhoto" type="button">
+                  <span class="material-symbols-outlined text-label-lg">photo_camera</span>
+                  Tomar foto
+                </button>
+                <button class="h-10 px-space-sm rounded-xl bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center gap-1 active:bg-surface-container-high transition-colors cursor-pointer" id="btnUploadPhoto" type="button">
+                  <span class="material-symbols-outlined text-label-lg">upload_file</span>
+                  Subir
+                </button>
+                <input accept="image/*" class="hidden" id="photoFileInput" type="file"/>
+              </div>
+              <p class="font-body-sm text-body-sm text-on-surface-variant">Archivos JPG, PNG hasta 5MB. Muestra visual del accesorio.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Datos Generales (Nombre, SKU y Compatibilidad) -->
+        <div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm space-y-space-md">
+          <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant mb-1" for="prod-sku">Código SKU / Referencia</label>
+            <div class="flex items-center justify-between px-space-md h-touch-min rounded-xl bg-surface-container-low text-on-surface">
+              <div class="flex items-center space-x-space-xs">
+                <span class="material-symbols-outlined text-secondary">qr_code_scanner</span>
+                <span class="font-sku-code text-sku-code tracking-wider text-on-surface font-semibold" id="displaySkuText">SKU-092</span>
+              </div>
+              <button aria-label="Copiar código" class="text-primary hover:text-primary-container active:scale-95 transition-transform flex items-center cursor-pointer" id="copySkuBtn" type="button">
+                <span class="material-symbols-outlined text-label-lg">content_copy</span>
+              </button>
+            </div>
+          </div>
+          <div>
+            <label class="block font-label-md text-label-md text-on-surface mb-1" for="prod-name">Nombre del producto <span class="text-error">*</span></label>
+            <input class="w-full h-touch-min px-space-md rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary shadow-sm transition-all" id="prod-name" name="prod-name" type="text" value="Funda Silicona Case iPhone 15 Pro"/>
+          </div>
+          <!-- Compatibilidad rápida de mostrador -->
+          <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Compatibilidad específica</label>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="px-space-xs py-1 rounded-full bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm flex items-center gap-1">
+                <span class="material-symbols-outlined text-label-sm">smartphone</span> iPhone 15 Pro
+              </span>
+              <span class="px-space-xs py-1 rounded-full bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm flex items-center gap-1">
+                <span class="material-symbols-outlined text-label-sm">bolt</span> MagSafe Qi2
+              </span>
+              <span class="px-space-xs py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1">
+                <span class="material-symbols-outlined text-label-sm">palette</span> Azul Medianoche
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Descripción y Categoría -->
+        <div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm space-y-space-md">
+          <div>
+            <label class="block font-label-md text-label-md text-on-surface mb-1" for="prod-desc">Descripción detallada</label>
+            <textarea class="w-full p-space-md rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary shadow-sm transition-all resize-none" id="prod-desc" rows="3">Funda de silicona líquida con forro de microfibra suave interior, compatibilidad MagSafe completa y protección perimetral contra caídas reforzada en bisel de pantalla y cámara.</textarea>
+          </div>
+          <div>
+            <label class="block font-label-md text-label-md text-on-surface mb-1" for="prod-cat">Categoría de Estante</label>
+            <div class="relative">
+              <select class="w-full h-touch-min px-space-md pr-10 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md appearance-none focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary shadow-sm transition-all" id="prod-cat">
+                <option value="Fundas">Fundas</option>
+                <option value="Cargas">Cargas &amp; Cables</option>
+                <option value="Micas">Micas 9D</option>
+                <option value="Audio">Audio</option>
+                <option value="Auto">Auto</option>
+              </select>
+              <span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant">expand_more</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Stock Actual - Solo Lectura -->
+        <div class="p-space-md rounded-xl bg-surface-container-low shadow-sm space-y-space-sm">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-space-xs">
+              <span class="material-symbols-outlined text-secondary text-headline-sm">lock</span>
+              <span class="font-label-md text-label-md text-on-surface">Conteo Físico Actual (Solo lectura)</span>
+            </div>
+            <span class="px-space-xs py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold" id="readOnlyStockBadge">
+              Revisable
+            </span>
+          </div>
+          <div class="p-space-sm rounded-xl bg-surface-container-lowest flex flex-col space-y-space-xs">
+            <div class="flex items-baseline justify-between">
+              <span class="font-display text-headline-lg text-error" id="readOnlyStockNum">3 <span class="font-body-md text-body-md text-on-surface-variant">/ 10 máx.</span></span>
+              <span class="font-label-sm text-label-sm text-error font-medium" id="readOnlyStockPercent">30% capacidad</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+              <div class="h-full bg-error rounded-full" id="readOnlyStockBar" style="width: 30%"></div>
+            </div>
+          </div>
+          <div class="flex items-start space-x-space-2xs pt-space-2xs text-on-surface-variant">
+            <span class="material-symbols-outlined text-label-md text-secondary shrink-0 mt-0.5">info</span>
+            <p class="font-body-sm text-body-sm">
+              Las unidades no se editan directamente desde esta ficha. Para ajustar existencias acuda a <strong><a href="/movimientos" class="text-primary underline">Movimientos y Conteo</a></strong>.
+            </p>
+          </div>
+        </div>
+
+        <!-- 5. Ubicación Física y Capacidad de Exhibición (Replaces money/prices) -->
+        <div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm space-y-space-sm">
+          <label class="block font-label-md text-label-md text-on-surface mb-2">Capacidad de Exhibición y Ubicación</label>
+          <div class="grid grid-cols-2 gap-space-sm">
+            <div>
+              <label class="block font-body-sm text-body-sm text-on-surface-variant mb-1" for="prod-location">Estante / Vitrina</label>
+              <input class="w-full h-touch-min px-space-md rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary shadow-sm transition-all" id="prod-location" type="text" value="Vitrina F-2"/>
+            </div>
+            <div>
+              <label class="block font-body-sm text-body-sm text-on-surface-variant mb-1" for="prod-maxstock">Capacidad Máxima</label>
+              <input class="w-full h-touch-min px-space-md rounded-xl bg-surface-container-low text-on-surface font-data-tabular text-data-tabular focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary shadow-sm transition-all" id="prod-maxstock" max="50" min="1" type="number" value="10"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra fija/adherida inferior con acciones -->
+        <div class="fixed bottom-0 left-0 right-0 p-space-md bg-surface-container-lowest shadow-xl flex items-center justify-between gap-space-sm z-30 max-w-lg mx-auto">
+          <a href="/" class="w-1/3 h-touch-min rounded-xl bg-surface-container text-on-surface font-label-lg text-label-lg active:bg-surface-container-high transition-colors flex items-center justify-center">
+            Cancelar
+          </a>
+          <button class="flex-1 h-touch-min rounded-xl bg-primary-container text-on-primary font-label-lg text-label-lg shadow-md active:bg-primary transition-colors flex items-center justify-center space-x-space-xs cursor-pointer" id="submitEditBtn" type="submit">
+            <span class="material-symbols-outlined text-label-lg">save</span>
+            <span>Guardar Cambios</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-on-surface text-surface px-4 py-2.5 rounded-full shadow-lg font-label-sm text-label-sm flex items-center gap-2 opacity-0 pointer-events-none transition-opacity duration-200" id="editToast">
+      <span class="material-symbols-outlined text-tertiary-fixed text-[18px]" id="editToastIcon">check_circle</span>
+      <span id="editToastText">Copiado al portapapeles</span>
+    </div>
+  </main>
+
+  <script is:inline>
+    const STORE_KEY = 'stock_movil_inventory_v1';
+
+    const defaultItems = [
+      { id: 'sku-092', sku: 'SKU-092', name: 'Funda Silicona Case iPhone 15 Pro', category: 'Fundas', stock: 3, minStock: 5, maxStock: 10, location: 'Vitrina F-2', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww' }
+    ];
+
+    function getStoredInventory() {
+      const raw = localStorage.getItem(STORE_KEY);
+      if (!raw) return defaultItems;
+      try { return JSON.parse(raw); } catch (e) { return defaultItems; }
+    }
+
+    function saveInventory(items) {
+      localStorage.setItem(STORE_KEY, JSON.stringify(items));
+      window.dispatchEvent(new CustomEvent('inventory-updated', { detail: items }));
+    }
+
+    const inventory = getStoredInventory();
+    const product = inventory[0] || defaultItems[0];
+
+    const form = document.getElementById('productForm');
+    const copyBtn = document.getElementById('copySkuBtn');
+    const toast = document.getElementById('editToast');
+    const toastText = document.getElementById('editToastText');
+    const toastIcon = document.getElementById('editToastIcon');
+
+    function showToastMsg(msg, icon = 'check_circle') {
+      if (!toast || !toastText) return;
+      toastText.textContent = msg;
+      if (toastIcon) toastIcon.textContent = icon;
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none'), 2200);
+    }
+
+    // Populate initial form fields
+    const nameInput = document.getElementById('prod-name');
+    const catSelect = document.getElementById('prod-cat');
+    const descTextarea = document.getElementById('prod-desc');
+    const locInput = document.getElementById('prod-location');
+    const maxStockInput = document.getElementById('prod-maxstock');
+    const displaySkuText = document.getElementById('displaySkuText');
+    const headerSkuBadge = document.getElementById('headerSkuBadge');
+
+    if (nameInput) nameInput.value = product.name;
+    if (catSelect) catSelect.value = product.category;
+    if (locInput) locInput.value = product.location || 'Vitrina F-2';
+    if (maxStockInput) maxStockInput.value = product.maxStock || 10;
+    if (displaySkuText) displaySkuText.textContent = product.sku;
+    if (headerSkuBadge) headerSkuBadge.textContent = product.sku;
+
+    // Readonly Stock details
+    const readOnlyStockNum = document.getElementById('readOnlyStockNum');
+    const readOnlyStockPercent = document.getElementById('readOnlyStockPercent');
+    const readOnlyStockBar = document.getElementById('readOnlyStockBar');
+    const readOnlyStockBadge = document.getElementById('readOnlyStockBadge');
+    const isLow = product.stock < (product.minStock || 5);
+
+    if (readOnlyStockNum) readOnlyStockNum.innerHTML = `${product.stock} <span class="font-body-md text-body-md text-on-surface-variant">/ ${product.maxStock || 10} máx.</span>`;
+    if (readOnlyStockPercent) readOnlyStockPercent.textContent = `${product.stock * 10}% capacidad`;
+    if (readOnlyStockBar) readOnlyStockBar.style.width = `${product.stock * 10}%`;
+    if (readOnlyStockBadge) {
+      readOnlyStockBadge.textContent = isLow ? 'Revisable' : 'OK';
+      readOnlyStockBadge.className = `px-space-xs py-0.5 rounded-full ${isLow ? 'bg-error-container text-on-error-container' : 'bg-tertiary-fixed text-on-tertiary-fixed'} font-label-sm text-label-sm font-semibold`;
+    }
+
+    copyBtn?.addEventListener('click', () => {
+      navigator.clipboard?.writeText(product.sku);
+      showToastMsg(`SKU ${product.sku} copiado al portapapeles`, 'content_copy');
+    });
+
+    const btnTakePhoto = document.getElementById('btnTakePhoto');
+    const btnUploadPhoto = document.getElementById('btnUploadPhoto');
+    const photoFileInput = document.getElementById('photoFileInput');
+
+    btnTakePhoto?.addEventListener('click', () => {
+      showToastMsg('Cámara activada para captura de producto', 'photo_camera');
+    });
+
+    btnUploadPhoto?.addEventListener('click', () => {
+      photoFileInput?.click();
+    });
+
+    photoFileInput?.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = document.getElementById('editProdImg');
+          if (img) img.src = event.target.result;
+          product.img = event.target.result;
+          showToastMsg('Imagen de accesorio actualizada', 'image');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    form?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitEditBtn');
+      if (!btn) return;
+
+      product.name = nameInput?.value || product.name;
+      product.category = catSelect?.value || product.category;
+      product.location = locInput?.value || product.location;
+      product.maxStock = parseInt(maxStockInput?.value || '10', 10);
+
+      const items = getStoredInventory();
+      const idx = items.findIndex(i => i.sku === product.sku);
+      if (idx !== -1) {
+        items[idx] = product;
+      } else {
+        items.push(product);
+      }
+      saveInventory(items);
+
+      const originalContent = btn.innerHTML;
+      btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-label-lg">sync</span><span>Guardando...</span>';
+      btn.setAttribute('disabled', 'true');
+      setTimeout(() => {
+        btn.innerHTML = '<span class="material-symbols-outlined text-label-lg">check_circle</span><span>¡Ficha Guardada!</span>';
+        showToastMsg('Detalles de estante guardados correctamente', 'done_all');
+        setTimeout(() => {
+          btn.innerHTML = originalContent;
+          btn.removeAttribute('disabled');
+        }, 1500);
+      }, 600);
+    });
+  </script>
+</Layout>

@@ -1,0 +1,196 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Stock Móvil - Acceso de Personal" showNav={false}>
+  <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile">
+    <div class="flex flex-col w-full max-w-md mx-auto py-space-xl px-space-xs">
+      <!-- Brand & Store Identity Header -->
+      <header class="flex flex-col items-center text-center mb-space-2xl">
+        <!-- Branch Chip -->
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 mb-space-lg rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm">
+          <span class="material-symbols-outlined text-primary text-[16px]">storefront</span>
+          <span>Sucursal Centro</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+          <span class="text-tertiary text-label-sm font-label-sm">En línea</span>
+        </div>
+        <!-- App Identity -->
+        <div class="relative mb-space-md">
+          <div class="w-16 h-16 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-center p-2.5">
+            <img alt="Logo Stock Móvil" title="Logo Stock Móvil" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WnIL8J1nkSAuADgPhfbUlLwgFXz8vZdoJPPpWXJLY2_mYTAD5yQfM6Qs1zSTarkAR05ibks32eBcxAm0ShFgfAtbtI1WjwSL-gsbiOnjSm6TIPGRgFdiVaDGN-IkCEHH7IvkGQNu6ebrvTZOxlnXQI_N-5eOpes7RPMyQgwmdv8_BP957lTZUKNroTwD_pCgkM_9GTIomaHwCPGFUPMOjX-djCYO7BrdYZZaBZi13edGMitYflmLK1zRnj"/>
+          </div>
+          <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-sm">
+            <span class="material-symbols-outlined text-[12px]">inventory_2</span>
+          </div>
+        </div>
+        <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Stock Móvil</h1>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5 max-w-[280px]">
+          Sistema interno de control de stock y accesorios para dispositivos
+        </p>
+      </header>
+
+      <!-- Login Form Container -->
+      <div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-xl">
+        <form class="flex flex-col gap-space-lg" id="loginForm" novalidate id="loginForm">
+          <!-- Email Field -->
+          <div class="flex flex-col gap-1.5">
+            <label class="font-label-md text-label-md text-on-surface flex items-center justify-between" for="emailInput">
+              <span>Correo corporativo</span>
+              <span class="font-body-sm text-body-sm text-secondary text-xs">Acceso tienda</span>
+            </label>
+            <div class="relative flex items-center bg-surface-container-lowest rounded-lg transition-colors focus-within:ring-2 focus-within:ring-primary-container">
+              <div class="absolute left-3.5 flex items-center pointer-events-none text-secondary">
+                <span class="material-symbols-outlined text-[20px]">alternate_email</span>
+              </div>
+              <input autocomplete="email" class="w-full h-touch-min pl-11 pr-4 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none focus:bg-surface-container-lowest transition-all" id="emailInput" name="email" placeholder="ejemplo@tienda.com" required type="email"/>
+            </div>
+          </div>
+
+          <!-- Password Field -->
+          <div class="flex flex-col gap-1.5">
+            <label class="font-label-md text-label-md text-on-surface flex items-center justify-between" for="passwordInput">
+              <span>Contraseña</span>
+              <span class="font-body-sm text-body-sm text-secondary text-xs">PIN o clave</span>
+            </label>
+            <div class="relative flex items-center bg-surface-container-lowest rounded-lg transition-colors focus-within:ring-2 focus-within:ring-primary-container">
+              <div class="absolute left-3.5 flex items-center pointer-events-none text-secondary">
+                <span class="material-symbols-outlined text-[20px]">lock</span>
+              </div>
+              <input autocomplete="current-password" class="w-full h-touch-min pl-11 pr-12 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none focus:bg-surface-container-lowest transition-all" id="passwordInput" name="password" placeholder="••••••••" required type="password"/>
+              <button aria-label="Alternar visibilidad de contraseña" class="absolute right-1 w-10 h-10 flex items-center justify-center text-secondary hover:text-on-surface rounded-lg transition-colors active:bg-surface-container" id="togglePasswordBtn" type="button">
+                <span class="material-symbols-outlined text-[20px]" id="eyeIcon">visibility</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Notification Banner (Feedback) -->
+          <div class="hidden flex items-center gap-2.5 p-3 rounded-lg bg-surface-container text-on-surface-variant font-body-sm text-body-sm" id="loginFeedback">
+            <span class="material-symbols-outlined text-[18px] text-primary" id="feedbackIcon">info</span>
+            <span id="feedbackMsg">Validando credenciales de empleado...</span>
+          </div>
+
+          <!-- Submit Action Button -->
+          <button class="w-full h-touch-min mt-space-xs flex items-center justify-center gap-2 rounded-lg bg-primary-container text-on-primary font-label-lg text-label-lg shadow-sm active:opacity-90 hover:brightness-105 transition-all cursor-pointer select-none" id="submitBtn" type="submit">
+            <span class="material-symbols-outlined text-[20px]">login</span>
+            <span>Iniciar sesión</span>
+          </button>
+
+          <!-- Forgot Password Link -->
+          <div class="flex justify-center pt-space-2xs">
+            <button class="font-label-sm text-label-sm text-primary hover:underline underline-offset-4 focus:outline-none focus:text-on-primary-fixed-variant transition-colors p-2" id="recoveryBtn" type="button">
+              ¿Olvidaste tu contraseña?
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Quick Store Badge / Device Category Highlights -->
+      <div class="mt-space-xl grid grid-cols-3 gap-2 px-1 text-center">
+        <div class="flex flex-col items-center p-2.5 rounded-lg bg-surface-container-low">
+          <span class="material-symbols-outlined text-secondary text-[20px] mb-1">cases</span>
+          <span class="font-label-sm text-label-sm text-on-surface">Fundas</span>
+          <span class="font-body-sm text-body-sm text-secondary text-[11px]">iOs &amp; Android</span>
+        </div>
+        <div class="flex flex-col items-center p-2.5 rounded-lg bg-surface-container-low">
+          <span class="material-symbols-outlined text-secondary text-[20px] mb-1">bolt</span>
+          <span class="font-label-sm text-label-sm text-on-surface">Cargas</span>
+          <span class="font-body-sm text-body-sm text-secondary text-[11px]">GaN / MagSafe</span>
+        </div>
+        <div class="flex flex-col items-center p-2.5 rounded-lg bg-surface-container-low">
+          <span class="material-symbols-outlined text-secondary text-[20px] mb-1">screen_lock_portrait</span>
+          <span class="font-label-sm text-label-sm text-on-surface">Micas 9D</span>
+          <span class="font-body-sm text-body-sm text-secondary text-[11px]">Vidrio templado</span>
+        </div>
+      </div>
+
+      <!-- Security & Internal Compliance Footer -->
+      <footer class="mt-space-2xl text-center flex flex-col items-center gap-1.5 text-on-surface-variant font-body-sm text-body-sm">
+        <div class="flex items-center gap-1 text-outline">
+          <span class="material-symbols-outlined text-[16px]">verified_user</span>
+          <span>Uso exclusivo para personal autorizado</span>
+        </div>
+        <div class="flex items-center gap-2 text-xs text-outline">
+          <span>Stock Móvil Suite</span>
+          <span>·</span>
+          <span>v1.2.0</span>
+          <span>·</span>
+          <span>Terminal POS-41</span>
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <script is:inline>
+    const passwordInput = document.getElementById('passwordInput');
+    const eyeIcon = document.getElementById('eyeIcon');
+    const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+    const loginForm = document.getElementById('loginForm');
+    const recoveryBtn = document.getElementById('recoveryBtn');
+
+    togglePasswordBtn?.addEventListener('click', () => {
+      if (!passwordInput || !eyeIcon) return;
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.textContent = 'visibility_off';
+      } else {
+        passwordInput.type = 'password';
+        eyeIcon.textContent = 'visibility';
+      }
+    });
+
+    loginForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('emailInput')?.value;
+      const pass = passwordInput?.value;
+      const banner = document.getElementById('loginFeedback');
+      const msg = document.getElementById('feedbackMsg');
+      const icon = document.getElementById('feedbackIcon');
+      const submitBtn = document.getElementById('submitBtn');
+
+      if (!banner || !msg || !icon) return;
+
+      if (!email || !pass) {
+        banner.classList.remove('hidden');
+        banner.classList.add('bg-error-container', 'text-on-error-container');
+        banner.classList.remove('bg-surface-container', 'text-on-surface-variant');
+        icon.classList.remove('text-primary');
+        icon.classList.add('text-error');
+        icon.textContent = 'error';
+        msg.textContent = 'Por favor completa tu correo y contraseña.';
+        return;
+      }
+
+      banner.classList.remove('hidden', 'bg-error-container', 'text-on-error-container');
+      banner.classList.add('bg-surface-container', 'text-on-surface-variant');
+      icon.classList.remove('text-error');
+      icon.classList.add('text-primary');
+      icon.textContent = 'sync';
+      msg.textContent = 'Comprobando terminal con servidor central...';
+      if (submitBtn) submitBtn.disabled = true;
+
+      setTimeout(() => {
+        icon.textContent = 'check_circle';
+        icon.classList.remove('text-primary');
+        icon.classList.add('text-tertiary');
+        msg.textContent = '¡Sesión confirmada! Accediendo a inventario...';
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 800);
+      }, 900);
+    });
+
+    recoveryBtn?.addEventListener('click', () => {
+      const banner = document.getElementById('loginFeedback');
+      const msg = document.getElementById('feedbackMsg');
+      const icon = document.getElementById('feedbackIcon');
+      if (!banner || !msg || !icon) return;
+
+      banner.classList.remove('hidden', 'bg-error-container', 'text-on-error-container');
+      banner.classList.add('bg-surface-container', 'text-on-surface-variant');
+      icon.textContent = 'support_agent';
+      icon.classList.remove('text-error');
+      icon.classList.add('text-primary');
+      msg.textContent = 'Contacta al Administrador de Tienda para restablecer tu PIN de acceso.';
+    });
+  </script>
+</Layout>
