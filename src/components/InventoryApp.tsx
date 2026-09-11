@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Filter, Database, Check } from 'lucide-react';
+import { Search, Plus, Filter, Database, Check, AlertCircle } from 'lucide-react';
 import { Header } from './Header';
 import { InventoryStats } from './InventoryStats';
 import { ProductList } from './ProductList';
@@ -12,8 +12,10 @@ const INITIAL_PRODUCTS: Product[] = [
     sku: 'FND-IP15-MGS',
     name: 'Funda MagSafe Transparente iPhone 15',
     category: 'Fundas y Casos',
-    stock: 14,
-    minStock: 4,
+    stock: 10,
+    minStock: 5,
+    maxStock: 10,
+    activo: true,
     price: 290.00,
     lastUpdated: '2026-09-03'
   },
@@ -24,6 +26,8 @@ const INITIAL_PRODUCTS: Product[] = [
     category: 'Cargadores y Cables',
     stock: 2,
     minStock: 5,
+    maxStock: 10,
+    activo: true,
     price: 320.00,
     lastUpdated: '2026-09-03'
   },
@@ -32,8 +36,10 @@ const INITIAL_PRODUCTS: Product[] = [
     sku: 'CRST-9H-SAM',
     name: 'Mica Cristal Templado 9H Samsung S24',
     category: 'Protección de Pantalla',
-    stock: 25,
-    minStock: 8,
+    stock: 8,
+    minStock: 5,
+    maxStock: 10,
+    activo: true,
     price: 120.00,
     lastUpdated: '2026-09-02'
   },
@@ -44,6 +50,8 @@ const INITIAL_PRODUCTS: Product[] = [
     category: 'Audio y Audífonos',
     stock: 0,
     minStock: 3,
+    maxStock: 10,
+    activo: true,
     price: 550.00,
     lastUpdated: '2026-09-01'
   },
@@ -54,6 +62,8 @@ const INITIAL_PRODUCTS: Product[] = [
     category: 'Soportes y Accesorios',
     stock: 9,
     minStock: 3,
+    maxStock: 10,
+    activo: true,
     price: 180.00,
     lastUpdated: '2026-09-02'
   },
@@ -62,8 +72,10 @@ const INITIAL_PRODUCTS: Product[] = [
     sku: 'CBL-C2C-15M',
     name: 'Cable USB-C a USB-C Trenzado 1.5m',
     category: 'Cargadores y Cables',
-    stock: 18,
+    stock: 10,
     minStock: 5,
+    maxStock: 10,
+    activo: true,
     price: 195.00,
     lastUpdated: '2026-09-03'
   }
@@ -74,45 +86,65 @@ export const InventoryApp: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
   const [showDrawer, setShowDrawer] = useState(false);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ msg: string; isError?: boolean } | null>(null);
 
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
+  const showNotification = (msg: string, isError: boolean = false) => {
+    setToast({ msg, isError });
     setTimeout(() => {
-      setToastMessage(null);
-    }, 3000);
+      setToast(null);
+    }, 3200);
   };
 
   const handleAddProduct = (newProdData: Omit<Product, 'id' | 'lastUpdated'>) => {
     const newProduct: Product = {
       ...newProdData,
       id: Date.now().toString(),
+      stock: 10, // Stock inicial estándar de 10 unidades
+      maxStock: 10,
+      activo: true,
       lastUpdated: new Date().toISOString().split('T')[0]
     };
     setProducts(prev => [newProduct, ...prev]);
-    showToast(`Producto "${newProduct.name}" agregado con éxito.`);
+    showNotification(`Producto "${newProduct.name}" creado con stock inicial de 10 unidades.`);
   };
 
   const handleUpdateStock = (id: string, delta: number) => {
+    let errorOccurred = false;
+    let errorMsg = '';
+
     setProducts(prev => prev.map(prod => {
       if (prod.id === id) {
-        const newStock = Math.max(0, prod.stock + delta);
-        return { ...prod, stock: newStock };
+        const maxLimit = prod.maxStock || 10;
+        const newStock = prod.stock + delta;
+
+        if (newStock > maxLimit) {
+          errorOccurred = true;
+          errorMsg = `Operación rechazada: No se puede superar el tope máximo de ${maxLimit} unidades en "${prod.name}".`;
+          return prod;
+        }
+
+        return { ...prod, stock: Math.max(0, newStock) };
       }
       return prod;
     }));
+
+    if (errorOccurred) {
+      showNotification(errorMsg, true);
+    }
   };
 
-  const handleDeleteProduct = (id: string) => {
-    const prodToDelete = products.find(p => p.id === id);
-    if (prodToDelete && confirm(`¿Estás seguro de eliminar "${prodToDelete.name}"?`)) {
-      setProducts(prev => prev.filter(p => p.id !== id));
-      showToast(`Producto eliminado.`);
+  // Requirement 1: Soft Delete (Desactivar)
+  const handleDeactivateProduct = (id: string) => {
+    const prodToDeactivate = products.find(p => p.id === id);
+    if (prodToDeactivate && confirm(`¿Deseas desactivar "${prodToDeactivate.name}"? El producto permanecerá en el sistema con su historial intacto.`)) {
+      setProducts(prev => prev.map(p => p.id === id ? { ...p, activo: false } : p));
+      showNotification(`Producto "${prodToDeactivate.name}" desactivado correctamente.`);
     }
   };
 
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
+      if (p.activo === false) return false; // Default active filter
       const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                             p.sku.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCat = selectedCategory === 'Todas' || p.category === selectedCategory;
@@ -126,7 +158,7 @@ export const InventoryApp: React.FC = () => {
       <Header />
 
       {/* Dynamic Inventory Stats */}
-      <InventoryStats products={products} />
+      <InventoryStats products={products.filter(p => p.activo !== false)} />
 
       {/* Control Toolbar */}
       <div className="controls-bar">
@@ -175,7 +207,7 @@ export const InventoryApp: React.FC = () => {
         <ProductList
           products={filteredProducts}
           onUpdateStock={handleUpdateStock}
-          onDeleteProduct={handleDeleteProduct}
+          onDeactivateProduct={handleDeactivateProduct}
         />
 
         {showDrawer && (
@@ -194,17 +226,21 @@ export const InventoryApp: React.FC = () => {
         <div className="firebase-banner-text">
           <h4>Siguiente Paso: Conexión con Firebase / Firestore</h4>
           <p>
-            Este esqueleto React + Astro ya administra el estado dinámicamente con componentes interactivos.
-            Cuando estés listo para conectar Firebase, instalaremos <code>firebase</code> y reemplazaremos los hooks locales por listeners de <code>onSnapshot(collection(db, 'inventario'))</code>.
+            Este esqueleto React + Astro administra las reglas de negocio de Punto B (Soft Delete, tope duro de 10 unid., stock inicial 10).
+            Al conectar Firebase, se enlazarán las transacciones de Firestore con listeners de <code>onSnapshot</code>.
           </p>
         </div>
       </div>
 
       {/* Toast Notification */}
-      {toastMessage && (
-        <div className="toast-notice">
-          <Check size={18} style={{ color: 'var(--accent-emerald)' }} />
-          <span>{toastMessage}</span>
+      {toast && (
+        <div className={`toast-notice ${toast.isError ? 'toast-error' : ''}`} style={toast.isError ? { backgroundColor: 'var(--error-container)', color: 'var(--on-error-container)', borderLeft: '4px solid var(--error)' } : {}}>
+          {toast.isError ? (
+            <AlertCircle size={18} style={{ color: 'var(--error)' }} />
+          ) : (
+            <Check size={18} style={{ color: 'var(--accent-emerald)' }} />
+          )}
+          <span>{toast.msg}</span>
         </div>
       )}
     </div>

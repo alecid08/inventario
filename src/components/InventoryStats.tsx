@@ -10,7 +10,7 @@ export const InventoryStats: React.FC<InventoryStatsProps> = ({ products }) => {
   const totalProducts = products.length;
   const totalItemsCount = products.reduce((acc, item) => acc + item.stock, 0);
   const lowStockCount = products.filter(item => item.stock <= item.minStock).length;
-  const totalValue = products.reduce((acc, item) => acc + (item.stock * item.price), 0);
+  const totalValue = products.reduce((acc, item) => acc + (item.stock * (item.price || 0)), 0);
   const categoriesCount = new Set(products.map(item => item.category)).size;
 
   return (
