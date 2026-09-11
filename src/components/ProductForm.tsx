@@ -20,8 +20,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onClose 
   const [sku, setSku] = useState('');
   const [name, setName] = useState('');
   const [category, setCategory] = useState<CategoryOption>('Fundas y Casos');
-  const [stock, setStock] = useState<number | ''>(10);
-  const [minStock, setMinStock] = useState<number | ''>(3);
+  const [minStock, setMinStock] = useState<number | ''>(5);
   const [price, setPrice] = useState<number | ''>(150);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -35,8 +34,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onClose 
       sku: finalSku,
       name: name.trim(),
       category,
-      stock: Number(stock) || 0,
-      minStock: Number(minStock) || 0,
+      stock: 10, // Stock inicial estándar de 10 unidades por defecto
+      minStock: Number(minStock) || 5,
+      maxStock: 10,
+      activo: true,
       price: Number(price) || 0
     });
 
@@ -44,8 +45,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onClose 
     setSku('');
     setName('');
     setCategory('Fundas y Casos');
-    setStock(10);
-    setMinStock(3);
+    setMinStock(5);
     setPrice(150);
 
     if (onClose) onClose();
@@ -106,6 +106,19 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onClose 
 
         <div className="form-row-2">
           <div className="form-group">
+            <label htmlFor="prod-stock">Stock Inicial (Estándar)</label>
+            <input
+              id="prod-stock"
+              type="number"
+              className="form-control form-input-simple"
+              value={10}
+              readOnly
+              disabled
+              title="Stock inicial estándar asignado a 10 unidades por defecto"
+            />
+          </div>
+
+          <div className="form-group">
             <label htmlFor="prod-price">Precio ($ MXN)</label>
             <input
               id="prod-price"
@@ -118,23 +131,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onClose 
               required
             />
           </div>
-
-          <div className="form-group">
-            <label htmlFor="prod-stock">Stock Inicial</label>
-            <input
-              id="prod-stock"
-              type="number"
-              min="0"
-              className="form-control form-input-simple"
-              value={stock}
-              onChange={(e) => setStock(e.target.value === '' ? '' : Number(e.target.value))}
-              required
-            />
-          </div>
         </div>
 
         <div className="form-group">
-          <label htmlFor="prod-min-stock">Alerta de Mínimo en Stock</label>
+          <label htmlFor="prod-min-stock">Umbral Alerta Reposición</label>
           <input
             id="prod-min-stock"
             type="number"
