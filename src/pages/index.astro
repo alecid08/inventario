@@ -28,13 +28,13 @@ import Layout from '../layouts/Layout.astro';
 
   <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile pt-16 pb-20">
     <div class="flex flex-col w-full pb-24">
-      <!-- Quick Stock Adjust Modal -->
+      <!-- Interactive Stock Quick Adjust Modal -->
       <div class="hidden fixed inset-0 z-50 flex items-end justify-center bg-on-surface/40 backdrop-blur-sm transition-all duration-200" id="quickAdjustModal">
         <div class="w-full max-w-lg bg-surface-container-lowest rounded-t-2xl p-space-lg shadow-2xl flex flex-col gap-space-md animate-in slide-in-from-bottom duration-200">
           <div class="w-10 h-1.5 bg-outline-variant/60 rounded-full self-center mb-1"></div>
           <div class="flex items-center justify-between">
             <div>
-              <span class="font-label-sm text-label-sm text-primary uppercase tracking-wider">Conteo de Vitrina</span>
+              <span class="font-label-sm text-label-sm text-primary uppercase tracking-wider">Conteo de Mostrador</span>
               <h3 class="font-headline-sm text-headline-sm text-on-surface" id="modalProductName">Nombre del Producto</h3>
               <p class="font-body-sm text-body-sm text-on-surface-variant" id="modalProductSku">SKU-000</p>
             </div>
@@ -60,32 +60,7 @@ import Layout from '../layouts/Layout.astro';
             </button>
             <button class="flex-1 h-touch-min rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-md flex items-center justify-center gap-1.5" id="saveModalBtn" type="button">
               <span class="material-symbols-outlined text-[20px]">check</span>
-              <span>Confirmar Conteo</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Delete Product Confirmation Modal -->
-      <div class="hidden fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40 backdrop-blur-sm p-4" id="deleteProductModal">
-        <div class="w-full max-w-sm bg-surface-container-lowest rounded-2xl p-space-lg shadow-2xl flex flex-col gap-space-md border border-error-container">
-          <div class="w-12 h-12 rounded-full bg-error-container text-error flex items-center justify-center self-center">
-            <span class="material-symbols-outlined text-[28px]">delete_forever</span>
-          </div>
-          <div class="text-center">
-            <h3 class="font-headline-sm text-headline-sm text-on-surface" id="deleteModalProductName">¿Eliminar producto?</h3>
-            <p class="font-body-sm text-body-sm text-on-surface-variant mt-1" id="deleteModalProductSku">SKU-000</p>
-            <p class="font-body-sm text-body-sm text-error bg-error-container/40 p-2.5 rounded-xl mt-3 text-left">
-              <strong>Nota:</strong> Se removerá del estante activo, pero su historial de ventas quedará guardado de forma permanente en la base de datos de reportes.
-            </p>
-          </div>
-          <div class="flex gap-space-sm pt-2">
-            <button class="flex-1 h-11 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md" id="cancelDeleteBtn" type="button">
-              Cancelar
-            </button>
-            <button class="flex-1 h-11 rounded-xl bg-error text-on-error font-label-md text-label-md shadow-md flex items-center justify-center gap-1" id="confirmDeleteBtn" type="button">
-              <span class="material-symbols-outlined text-[18px]">delete</span>
-              <span>Eliminar</span>
+              Confirmar Conteo
             </button>
           </div>
         </div>
@@ -99,7 +74,7 @@ import Layout from '../layouts/Layout.astro';
               <div class="w-9 h-9 rounded-xl bg-primary-container text-on-primary flex items-center justify-center">
                 <span class="material-symbols-outlined text-[20px]">add_box</span>
               </div>
-              <h3 class="font-headline-sm text-headline-sm text-on-surface">Añadir Accesorio a Tu Cell Expres</h3>
+              <h3 class="font-headline-sm text-headline-sm text-on-surface">Añadir Accesorio a Estante</h3>
             </div>
             <button class="w-9 h-9 flex items-center justify-center rounded-full text-secondary hover:bg-surface-container transition-colors" id="closeNewModalBtn" type="button">
               <span class="material-symbols-outlined">close</span>
@@ -129,7 +104,7 @@ import Layout from '../layouts/Layout.astro';
             <div class="grid grid-cols-2 gap-space-sm">
               <div>
                 <label class="block font-label-sm text-label-sm text-on-surface mb-1" for="newProdStock">Conteo Físico Inicial</label>
-                <input class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none" id="newProdStock" max="10" min="0" type="number" value="10"/>
+                <input class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none opacity-80 cursor-not-allowed" id="newProdStock" readonly title="Stock inicial estándar asignado a 10 unidades por defecto" type="number" value="10"/>
               </div>
               <div>
                 <label class="block font-label-sm text-label-sm text-on-surface mb-1" for="newProdLoc">Ubicación / Estante</label>
@@ -149,72 +124,76 @@ import Layout from '../layouts/Layout.astro';
         </div>
       </div>
 
-      <!-- Search & Filter Bar -->
-      <div class="flex flex-col gap-space-sm mb-space-md mt-2">
+      <!-- Search & Barcode Quick Access Bar -->
+      <div class="flex flex-col gap-space-sm mb-space-md">
         <div class="flex items-center gap-space-xs">
           <div class="relative flex-1 flex items-center">
             <span class="material-symbols-outlined absolute left-3.5 text-secondary text-[22px] pointer-events-none">search</span>
-            <input class="w-full h-touch-min pl-11 pr-10 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-md text-body-md shadow-sm focus:outline-none focus:bg-surface-container-low transition-all" id="inventorySearchInput" placeholder="Buscar accesorio o SKU..." type="text"/>
+            <input class="w-full h-touch-min pl-11 pr-10 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-md text-body-md shadow-sm focus:outline-none focus:bg-surface-container-low transition-all" id="inventorySearchInput" placeholder="Buscar por accesorio, modelo o SKU..." type="text"/>
+            <button class="hidden absolute right-3 w-7 h-7 flex items-center justify-center rounded-full text-secondary hover:bg-surface-container" id="clearSearchBtn" type="button">
+              <span class="material-symbols-outlined text-[18px]">cancel</span>
+            </button>
           </div>
+          <button class="h-touch-min w-touch-min flex-shrink-0 flex items-center justify-center rounded-xl bg-surface-container-lowest text-secondary shadow-sm active:bg-surface-container transition-colors" id="btnFilterToggle" title="Filtros avanzados" type="button">
+            <span class="material-symbols-outlined text-[22px]">tune</span>
+          </button>
         </div>
         <!-- Category Filter Chips -->
-        <div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-1" id="categoryChips">
-          <button class="chip-btn px-4 min-h-[44px] rounded-full font-label-sm text-label-sm bg-on-surface text-surface-container-lowest shadow-sm flex items-center gap-1.5 flex-shrink-0 transition-colors active:scale-95" data-category="all" type="button">
+        <div class="flex items-center gap-space-2xs overflow-x-auto no-scrollbar py-0.5" id="categoryChips">
+          <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-on-surface text-surface-container-lowest shadow-sm flex items-center gap-1 flex-shrink-0 transition-colors" data-category="all" type="button">
             <span>Todos</span>
-            <span class="px-2 py-0.5 rounded-full bg-surface-container-lowest/20 text-[11px]" id="badgeCountAll">0</span>
+            <span class="px-1.5 py-0.2 rounded-full bg-surface-container-lowest/20 text-[11px]" id="badgeCountAll">8</span>
           </button>
-          <button class="chip-btn px-4 min-h-[44px] rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors active:scale-95" data-category="Fundas" type="button">
+          <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors" data-category="Fundas" type="button">
             <span>Fundas</span>
           </button>
-          <button class="chip-btn px-4 min-h-[44px] rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors active:scale-95" data-category="Cargas" type="button">
+          <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors" data-category="Cargas" type="button">
             <span>Cargas &amp; Cables</span>
           </button>
-          <button class="chip-btn px-4 min-h-[44px] rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors active:scale-95" data-category="Micas" type="button">
+          <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors" data-category="Micas" type="button">
             <span>Micas 9D</span>
           </button>
-          <button class="chip-btn px-4 min-h-[44px] rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors active:scale-95" data-category="Audio" type="button">
+          <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors" data-category="Audio" type="button">
             <span>Audio</span>
           </button>
-          <button class="chip-btn px-4 min-h-[44px] rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors active:scale-95" data-category="Auto" type="button">
+          <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors" data-category="Auto" type="button">
             <span>Auto</span>
           </button>
         </div>
       </div>
 
-      <!-- Operational Metrics Summary -->
+      <!-- Operational Metrics & Count Summary -->
       <div class="bg-surface-container-low rounded-xl p-space-sm mb-space-md flex items-center justify-between shadow-sm">
         <div class="flex items-center gap-space-xs">
           <div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
             <span class="material-symbols-outlined text-[20px]">layers</span>
           </div>
           <div class="flex flex-col">
-            <span class="font-label-md text-label-md text-on-surface leading-snug">Estantes de Tu Cell Expres</span>
-            <span class="font-body-sm text-body-sm text-on-surface-variant" id="productCountSubtitle">Cargando inventario...</span>
+            <span class="font-label-md text-label-md text-on-surface leading-snug">Stock de Piso</span>
+            <span class="font-body-sm text-body-sm text-on-surface-variant" id="productCountSubtitle">Mostrando 8 productos · 3 en estado revisable</span>
           </div>
         </div>
         <span class="px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-error-container text-on-error-container font-semibold flex items-center gap-1 shadow-sm" id="topAlertPill">
           <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-          <span id="topAlertText">0 Alertas</span>
+          <span id="topAlertText">3 Alertas</span>
         </span>
       </div>
 
       <!-- Inventory Items List -->
       <div class="flex flex-col gap-space-sm" id="inventoryList">
-        <!-- Skeleton Loaders placeholder before JS load -->
-        <div class="inventory-card bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex items-center gap-space-sm">
-          <div class="w-14 h-14 rounded-xl skeleton-box shrink-0"></div>
-          <div class="flex-1 space-y-2">
-            <div class="h-4 w-3/4 skeleton-box rounded"></div>
-            <div class="h-3 w-1/2 skeleton-box rounded"></div>
-          </div>
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Empty Search State -->
+      <div class="hidden flex-col items-center justify-center py-space-2xl text-center" id="emptyInventoryState">
+        <div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center text-secondary mb-space-sm">
+          <span class="material-symbols-outlined text-[32px]">inventory_2</span>
         </div>
-        <div class="inventory-card bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex items-center gap-space-sm">
-          <div class="w-14 h-14 rounded-xl skeleton-box shrink-0"></div>
-          <div class="flex-1 space-y-2">
-            <div class="h-4 w-2/3 skeleton-box rounded"></div>
-            <div class="h-3 w-1/3 skeleton-box rounded"></div>
-          </div>
-        </div>
+        <h4 class="font-headline-sm text-headline-sm text-on-surface mb-1">Sin coincidencias</h4>
+        <p class="font-body-sm text-body-sm text-on-surface-variant max-w-[240px]">No se encontraron accesorios que coincidan con la búsqueda actual.</p>
+        <button class="mt-space-md px-4 py-2 bg-primary text-on-primary rounded-xl font-label-sm text-label-sm shadow-sm" id="resetFiltersBtn" type="button">
+          Restablecer lista
+        </button>
       </div>
 
       <!-- Floating Action Button (FAB) -->
@@ -226,106 +205,69 @@ import Layout from '../layouts/Layout.astro';
 
       <!-- Micro-interaction Toast -->
       <div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-on-surface text-surface px-4 py-2.5 rounded-full shadow-lg font-label-sm text-label-sm flex items-center gap-2 opacity-0 pointer-events-none transition-opacity duration-200" id="stockToast">
-        <span class="material-symbols-outlined text-tertiary-fixed text-[18px]">check_circle</span>
+        <span class="material-symbols-outlined text-tertiary-fixed text-[18px]" id="stockToastIcon">check_circle</span>
         <span id="stockToastText">Stock actualizado correctamente</span>
       </div>
     </div>
   </main>
 
-  <script is:inline>
-    const STORE_KEY = 'stock_movil_inventory_v1';
-    const DB_LEDGER_KEY = 'tu_cell_expres_db_v1';
+  <script>
+    import { getStoredInventory, saveInventory, deactivateProduct, createProduct } from '../utils/inventoryStore.js';
+    import type { Product } from '../types/inventory';
 
-    const defaultItems = [
-      { id: 'sku-520', sku: 'SKU-520', name: 'Soporte Magnético para Auto', category: 'Auto', stock: 1, minStock: 5, maxStock: 10, location: 'Vitrina A-1', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCoO16TT-tR-wlBrTApCGHxTpxWYKIILFh-fa-B9ONyuxDC7S0ZXI1xdRds3NS2MAjynS8X2uxtjbBTZFQOx3cu80HN_IChP6er-zID8eNdtHMdl2IaINz3QBd6WqP7XAeWK_-CkFA6KuSLUQ3uYW8aLVdzLA0HU-wJ4SV3_opoxIxnm0ropW05_gKwnufdKjkZCa6ege8rRfS1fIRvvjUVG7PXm7gqADoptCJ87melL-SZW9KfqE8rfw' },
-      { id: 'sku-092', sku: 'SKU-092', name: 'Funda Silicona Case iPhone 15 Pro', category: 'Fundas', stock: 3, minStock: 5, maxStock: 10, location: 'Vitrina F-2', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww' },
-      { id: 'sku-104', sku: 'SKU-104', name: 'Mica Vidrio Templado 9D iPhone', category: 'Micas', stock: 3, minStock: 5, maxStock: 10, location: 'Estante M-3', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDArc9PQMZMX60YZdL2HuhroEsYV6UgzSH87z-kJS4ARnnmSqmNSHgA9qBp7g6F6dHgZFFqTSVgq2gdJp58wHONkBxTxsO8hE0qtwatBHzLpB31H6chYL2O8S5CJSDi-z88o0vFq5sZcG3tsWBWISuppZf-tVqo03v5gno6pOC0TkrrhFGhyhCHAt7jP4NM9ZHobv-4beNobhEKe-UBtNC0__DBtmC90qfTOgVDh-SgPW_fPqxi2Q1q1g' },
-      { id: 'sku-319', sku: 'SKU-319', name: 'Adaptador Lightning a Jack 3.5mm', category: 'Audio', stock: 4, minStock: 5, maxStock: 10, location: 'Cajón A-4', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBEddAYibZMjqLmVbQYfK77Qtk_GR18aEIxR3iZD-Z2oh2vBwMBHO4f5rmtUUOpsECq0Ki6-5kKq2rrbOwb5qTeegm3mwiaDth6G9WXs1pYgShhoy9AIo62Yi2tPtSAwuB9NT8Xg1cpDcF-6cJyQ2S_WpLWIWQIu2INbGpBjXUA7YtOlsTuVV3M7ipH2vBUeAEuuoP8SCLpb0_EussBUxFkyspxVV1X9GEiyd9dr9O0HJLNk35vxy8HOA' },
-      { id: 'sku-141', sku: 'SKU-141', name: 'Cargador Rápido 30W USB-C GaN', category: 'Cargas', stock: 8, minStock: 5, maxStock: 10, location: 'Estante C-1', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBrfDhd7aPs8GoEZkbA-xzj03A0JGJv23NKGhczYuRs8EJYYf_q4gvPULwdu7W8msYzasXSZ5CRFCaiereQb0MBGmy_2rZyX803yRgihTlaUjdsvBhZ43BV5z9VhWzAtBp5NCT6sMqRZH17UfXJqbpvnnAVKBFI_dqtFRl2c6VUhREY7ilvtDMv5-2DsAZhazqG9qhIVZnFgDAxPizJb5ovXT5omGmRTXTgZYwc5QvkWW6J76B2YiQrvw' },
-      { id: 'sku-077', sku: 'SKU-077', name: 'Cable MagSafe Trenzado 1.5m', category: 'Cargas', stock: 9, minStock: 5, maxStock: 10, location: 'Estante C-2', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDwBW1Tnz4ox8TJimQ2nNWfY6o33DXFVI_9hnHGKzzl3XJhpYMd92sEX1p-M2182e_5P1T9-E8ueXBhioGF4oy264i2UoGbNDW_wFjgwrSNzAJjJhAlRcLwnmRjbP3lOMSy1dM0qSLvxcPA4Wzeciz7TUTmcvBPhWTMLu9gKEJNK5yXbrAMIG8EdaCNX49rw4X2MbQ7za9LNvHHrL-orE8zBLnoZbp1y9YNu2Jb_lniNxeofy9PERKBGA' },
-      { id: 'sku-488', sku: 'SKU-488', name: 'Funda Anti-Impacto Clear Xiaomi 13', category: 'Fundas', stock: 10, minStock: 5, maxStock: 10, location: 'Vitrina F-5', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD8yFvjKwounxmxfefyxJ6pQNZmZx6LkTJQVrUADi5hbA-8gQidK-tSdABrjRL7gF-sQi6kim0oFp012xnciJYpi0tv9Pw97bAYZyF4K7P9__alU03GwtXyQQ2PTIu_nCHsNtXVhc26ZDbNNypGQIYQWnw6JKRoj0mqZ7f2iNq2ZVxsD4SlWSyb2Wwmp6qM6K7_44eiJIAMke3u3Y56YUezv3TCk11M0YfIIgfk9mCcby7k7295nmFOEA' },
-      { id: 'sku-619', sku: 'SKU-619', name: 'Mica de Privacidad iPhone 14 Pro', category: 'Micas', stock: 7, minStock: 5, maxStock: 10, location: 'Estante M-1', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC8B5a-cyEEF6wquBHLued8VQwaW2YhzZ7G7_PreIiNp-RQU4JezmA3UOoFDmzZWxgPIV8OJn6naH_5wyXwZoUKN0rpmitA6wsQWp-3nbuulOBq9rXHWnawiRYqZRejjnn-zhtAz7LBQgJ1wRdIZNkOWZKJreWiyTJ-YxfNgujy8v1JO05gE-m33zUA5aAUOHCQ-GgkgW9vRI5G6i_7n8benb1vTa7Ep32rukJtKVU2adBLxzaMNa9P7g' }
-    ];
-
-    function loadInventory() {
-      const raw = localStorage.getItem(STORE_KEY);
-      if (!raw) {
-        localStorage.setItem(STORE_KEY, JSON.stringify(defaultItems));
-        return defaultItems;
-      }
-      try { return JSON.parse(raw); } catch (e) { return defaultItems; }
-    }
-
-    function saveInventory(items) {
-      localStorage.setItem(STORE_KEY, JSON.stringify(items));
-      window.dispatchEvent(new CustomEvent('inventory-updated', { detail: items }));
-    }
-
-    function logToDatabase(tx) {
-      const raw = localStorage.getItem(DB_LEDGER_KEY);
-      let ledger = [];
-      try { ledger = raw ? JSON.parse(raw) : []; } catch (e) { ledger = []; }
-      const now = new Date();
-      const entry = {
-        id: 'tx-' + Date.now(),
-        timestamp: now.toISOString(),
-        dateStr: now.toISOString().split('T')[0],
-        ...tx
-      };
-      ledger.unshift(entry);
-      localStorage.setItem(DB_LEDGER_KEY, JSON.stringify(ledger));
-    }
-
-    let inventory = loadInventory();
-    let activeCardSku = null;
+    let inventory: Product[] = getStoredInventory(false);
+    let activeCardSku: string | null = null;
     let currentModalStock = 0;
-    let deleteTargetSku = null;
+    let currentCategory = 'all';
 
-    function showToast(text) {
+    function showToast(text: string, isError = false) {
       const toast = document.getElementById('stockToast');
       const toastText = document.getElementById('stockToastText');
+      const toastIcon = document.getElementById('stockToastIcon');
       if (!toast || !toastText) return;
       toastText.textContent = text;
-      toast.classList.remove('opacity-0', 'pointer-events-none');
-      setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none'), 2200);
+      if (toastIcon) toastIcon.textContent = isError ? 'error' : 'check_circle';
+      toast.className = `fixed top-20 left-1/2 -translate-x-1/2 z-50 ${isError ? 'bg-error-container text-on-error-container' : 'bg-on-surface text-surface'} px-4 py-2.5 rounded-full shadow-lg font-label-sm text-label-sm flex items-center gap-2 opacity-100 transition-opacity duration-200`;
+      setTimeout(() => {
+        toast.className = 'fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-on-surface text-surface px-4 py-2.5 rounded-full shadow-lg font-label-sm text-label-sm flex items-center gap-2 opacity-0 pointer-events-none transition-opacity duration-200';
+      }, 2600);
     }
 
     function renderInventoryList() {
+      inventory = getStoredInventory(false);
       const container = document.getElementById('inventoryList');
       if (!container) return;
       container.innerHTML = '';
 
-      let lowCount = 0;
       inventory.forEach(item => {
         const isLow = item.stock < (item.minStock || 5);
-        if (isLow) lowCount++;
-
         const card = document.createElement('div');
         card.className = 'inventory-card bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col gap-space-xs relative overflow-hidden transition-all duration-150 active:scale-[0.99]';
         card.setAttribute('data-id', item.id);
         card.setAttribute('data-sku', item.sku);
         card.setAttribute('data-name', item.name);
         card.setAttribute('data-category', item.category);
+        card.setAttribute('data-stock', item.stock.toString());
 
         card.innerHTML = `
           <div class="absolute top-0 left-0 bottom-0 w-1.5 ${isLow ? 'bg-error' : 'bg-tertiary'}"></div>
           <div class="flex items-center gap-space-sm pl-2">
             <div class="w-14 h-14 rounded-xl bg-surface-container-low overflow-hidden flex-shrink-0 flex items-center justify-center shadow-inner">
-              <img width="56" height="56" loading="lazy" style="aspect-ratio: 1/1;" alt="${item.name}" title="${item.name}" class="w-full h-full object-cover" src="${item.img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'}"/>
+              <img alt="${item.name}" title="${item.name}" class="w-full h-full object-cover" src="${item.img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'}"/>
             </div>
             <div class="flex-1 min-w-0 flex flex-col">
               <div class="flex items-start justify-between gap-1">
-                <h4 class="font-label-md text-label-md text-on-surface truncate font-semibold">${item.name}</h4>
-                <div class="flex items-center gap-1 shrink-0">
-                  <span class="status-badge px-2 py-0.5 rounded-full font-label-sm text-label-sm ${isLow ? 'bg-error-container text-on-error-container' : 'bg-tertiary-fixed text-on-tertiary-fixed'} font-bold">
+                <h4 class="font-label-md text-label-md text-on-surface truncate">${item.name}</h4>
+                <div class="flex items-center gap-1">
+                  <span class="status-badge px-2 py-0.5 rounded-full font-label-sm text-label-sm ${isLow ? 'bg-error-container text-on-error-container' : 'bg-tertiary-fixed text-on-tertiary-fixed'} font-bold flex-shrink-0">
                     ${isLow ? 'Revisable' : 'OK'}
                   </span>
-                  <button class="btn-delete-prod w-11 h-11 rounded-xl text-error hover:bg-error-container/40 flex items-center justify-center transition-colors" data-sku="${item.sku}" data-name="${item.name}" title="Eliminar de estante" type="button">
-                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                  <button class="btn-deactivate p-1 rounded-md text-secondary hover:bg-error-container hover:text-error transition-colors" data-sku="${item.sku}" title="Desactivar producto (Soft delete)" type="button">
+                    <span class="material-symbols-outlined text-[18px]">visibility_off</span>
                   </button>
                 </div>
               </div>
-              <span class="font-body-sm text-body-sm text-on-surface-variant truncate mt-0.5">${item.category} · ${item.sku} · ${item.location || 'Estante Principal'}</span>
+              <span class="font-body-sm text-body-sm text-on-surface-variant truncate mt-0.5">${item.category} · ${item.sku}</span>
               <div class="flex items-center justify-between mt-2 gap-2 flex-wrap sm:flex-nowrap">
                 <div class="flex items-center gap-2">
                   <span class="stock-text font-sku-code text-sku-code ${isLow ? 'text-error font-bold' : 'text-on-surface font-semibold'}">${item.stock} / ${item.maxStock || 10}</span>
@@ -333,15 +275,15 @@ import Layout from '../layouts/Layout.astro';
                     <div class="stock-bar h-full ${isLow ? 'bg-error' : 'bg-tertiary'} rounded-full" style="width: ${Math.min(100, item.stock * 10)}%"></div>
                   </div>
                 </div>
-                <div class="flex items-center gap-1.5 shrink-0">
-                  <button class="btn-card-dec w-11 h-11 rounded-xl bg-surface-container text-on-surface hover:bg-surface-container-high flex items-center justify-center active:scale-95 transition-all" data-sku="${item.sku}" title="Venta (-1)" type="button">
-                    <span class="material-symbols-outlined text-[18px]">remove</span>
+                <div class="flex items-center gap-1 shrink-0">
+                  <button class="btn-card-dec w-8 h-8 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high flex items-center justify-center active:scale-95 transition-all" data-sku="${item.sku}" title="Descontar 1 unidad" type="button">
+                    <span class="material-symbols-outlined text-[16px]">remove</span>
                   </button>
-                  <button class="btn-card-inc w-11 h-11 rounded-xl bg-surface-container text-on-surface hover:bg-surface-container-high flex items-center justify-center active:scale-95 transition-all" data-sku="${item.sku}" title="Ingreso (+1)" type="button">
-                    <span class="material-symbols-outlined text-[18px]">add</span>
+                  <button class="btn-card-inc w-8 h-8 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high flex items-center justify-center active:scale-95 transition-all" data-sku="${item.sku}" title="Sumar 1 unidad" type="button">
+                    <span class="material-symbols-outlined text-[16px]">add</span>
                   </button>
-                  <button class="btn-adjust h-11 px-3 rounded-xl bg-surface-container-low text-primary hover:bg-surface-container font-label-sm text-label-sm flex items-center gap-1 active:bg-primary active:text-on-primary transition-colors" data-sku="${item.sku}" type="button">
-                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                  <button class="btn-adjust px-2.5 py-1 rounded-lg bg-surface-container-low text-primary hover:bg-surface-container font-label-sm text-label-sm flex items-center gap-1 active:bg-primary active:text-on-primary transition-colors" data-sku="${item.sku}" type="button">
+                    <span class="material-symbols-outlined text-[16px]">edit</span>
                     <span>Ajustar</span>
                   </button>
                 </div>
@@ -352,16 +294,8 @@ import Layout from '../layouts/Layout.astro';
         container.appendChild(card);
       });
 
-      const subtitle = document.getElementById('productCountSubtitle');
-      if (subtitle) subtitle.textContent = `Mostrando ${inventory.length} productos en estante · ${lowCount} en estado revisable`;
-
-      const topAlertText = document.getElementById('topAlertText');
-      if (topAlertText) topAlertText.textContent = `${lowCount} Alertas`;
-
-      const badgeCountAll = document.getElementById('badgeCountAll');
-      if (badgeCountAll) badgeCountAll.textContent = inventory.length;
-
       attachCardEventListeners();
+      applyFilters();
     }
 
     function attachCardEventListeners() {
@@ -369,7 +303,7 @@ import Layout from '../layouts/Layout.astro';
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           const sku = btn.getAttribute('data-sku');
-          updateProductStock(sku, 1);
+          if (sku) updateProductStock(sku, 1);
         });
       });
 
@@ -377,20 +311,21 @@ import Layout from '../layouts/Layout.astro';
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           const sku = btn.getAttribute('data-sku');
-          updateProductStock(sku, -1);
+          if (sku) updateProductStock(sku, -1);
         });
       });
 
-      document.querySelectorAll('.btn-delete-prod').forEach(btn => {
+      document.querySelectorAll('.btn-deactivate').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           const sku = btn.getAttribute('data-sku');
-          const name = btn.getAttribute('data-name');
-          deleteTargetSku = sku;
-          
-          document.getElementById('deleteModalProductName').textContent = `¿Eliminar "${name}"?`;
-          document.getElementById('deleteModalProductSku').textContent = `SKU: ${sku}`;
-          document.getElementById('deleteProductModal')?.classList.remove('hidden');
+          if (!sku) return;
+          const item = inventory.find(i => i.sku === sku);
+          if (item && confirm(`¿Deseas desactivar "${item.name}"? El producto se mantendrá en el sistema con su historial intacto.`)) {
+            deactivateProduct(sku);
+            renderInventoryList();
+            showToast(`Producto "${item.name}" desactivado correctamente.`);
+          }
         });
       });
 
@@ -404,138 +339,59 @@ import Layout from '../layouts/Layout.astro';
           activeCardSku = sku;
           currentModalStock = item.stock;
 
-          document.getElementById('modalProductName').textContent = item.name;
-          document.getElementById('modalProductSku').textContent = item.sku;
-          document.getElementById('modalStockDisplay').textContent = currentModalStock;
+          const modalName = document.getElementById('modalProductName');
+          const modalSku = document.getElementById('modalProductSku');
+          const modalDisplay = document.getElementById('modalStockDisplay');
+
+          if (modalName) modalName.textContent = item.name;
+          if (modalSku) modalSku.textContent = item.sku;
+          if (modalDisplay) modalDisplay.textContent = currentModalStock.toString();
 
           document.getElementById('quickAdjustModal')?.classList.remove('hidden');
         });
       });
     }
 
-    // Delete Modal Actions
-    document.getElementById('cancelDeleteBtn')?.addEventListener('click', () => {
-      document.getElementById('deleteProductModal')?.classList.add('hidden');
-      deleteTargetSku = null;
-    });
-
-    document.getElementById('confirmDeleteBtn')?.addEventListener('click', () => {
-      if (!deleteTargetSku) return;
-      const targetItem = inventory.find(i => i.sku === deleteTargetSku);
-      if (targetItem) {
-        // Log BAJA_PRODUCTO to permanent DB ledger before removing from shelf
-        logToDatabase({
-          sku: targetItem.sku,
-          productName: targetItem.name,
-          type: 'BAJA_PRODUCTO',
-          quantity: -targetItem.stock,
-          notes: 'Producto retirado de estantes activos'
-        });
-
-        inventory = inventory.filter(i => i.sku !== deleteTargetSku);
-        saveInventory(inventory);
-        renderInventoryList();
-        showToast(`"${targetItem.name}" retirado de estante (Historial conservado en reportes).`);
-      }
-      document.getElementById('deleteProductModal')?.classList.add('hidden');
-      deleteTargetSku = null;
-    });
-
-    function updateProductStock(sku, delta) {
+    function updateProductStock(sku: string, delta: number) {
       const item = inventory.find(i => i.sku === sku);
       if (!item) return;
       let newStock = item.stock + delta;
-      newStock = Math.max(0, Math.min(10, newStock));
-      
-      const changeType = delta < 0 ? 'VENTA' : 'ENTRADA';
-      logToDatabase({
-        sku: item.sku,
-        productName: item.name,
-        type: changeType,
-        quantity: delta,
-        notes: delta < 0 ? 'Despacho rápido por venta en la app' : 'Reabastecimiento rápido de estante'
-      });
 
+      if (newStock > (item.maxStock || 10)) {
+        showToast(`Rechazado: El stock no puede superar el tope máximo de ${item.maxStock || 10} unidades.`, true);
+        return;
+      }
+
+      newStock = Math.max(0, newStock);
       item.stock = newStock;
       saveInventory(inventory);
       renderInventoryList();
-      showToast(`${item.name}: Conteo actualizado a ${newStock} unid.`);
+      showToast(`${item.name}: Stock actualizado a ${newStock} unid.`);
     }
 
-    // Modal Add & Adjust handlers
-    const fabBtn = document.getElementById('fabBtn');
-    const btnHeaderAddProd = document.getElementById('btnHeaderAddProd');
-    const newProductModal = document.getElementById('newProductModal');
-    const closeNewModalBtn = document.getElementById('closeNewModalBtn');
-    const cancelNewModalBtn = document.getElementById('cancelNewModalBtn');
-    const newProductForm = document.getElementById('newProductForm');
-
-    function openNewModal() { newProductModal?.classList.remove('hidden'); }
-    function closeNewModal() { newProductModal?.classList.add('hidden'); newProductForm?.reset(); }
-
-    fabBtn?.addEventListener('click', openNewModal);
-    btnHeaderAddProd?.addEventListener('click', openNewModal);
-    closeNewModalBtn?.addEventListener('click', closeNewModal);
-    cancelNewModalBtn?.addEventListener('click', closeNewModal);
-
-    newProductForm?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = document.getElementById('newProdName')?.value.trim();
-      let sku = document.getElementById('newProdSku')?.value.trim();
-      const category = document.getElementById('newProdCat')?.value;
-      const stock = parseInt(document.getElementById('newProdStock')?.value || '10', 10);
-      const location = document.getElementById('newProdLoc')?.value.trim() || 'Estante Principal';
-
-      if (!name) return;
-      if (!sku) { sku = 'SKU-' + Math.floor(100 + Math.random() * 900); }
-
-      const newItem = {
-        id: 'sku-' + Date.now(),
-        sku: sku.toUpperCase(),
-        name: name,
-        category: category,
-        stock: Math.max(0, Math.min(10, stock)),
-        minStock: 5,
-        maxStock: 10,
-        location: location,
-        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'
-      };
-
-      // Log ALTA_PRODUCTO in DB ledger
-      logToDatabase({
-        sku: newItem.sku,
-        productName: newItem.name,
-        type: 'ALTA_PRODUCTO',
-        quantity: newItem.stock,
-        notes: `Registrado en ${newItem.location}`
-      });
-
-      inventory.unshift(newItem);
-      saveInventory(inventory);
-      renderInventoryList();
-      closeNewModal();
-      showToast(`¡"${name}" añadido exitosamente a Tu Cell Expres!`);
-    });
-
-    // Quick Adjust Modal
     function closeModal() {
       document.getElementById('quickAdjustModal')?.classList.add('hidden');
       activeCardSku = null;
     }
+
     document.getElementById('closeModalBtn')?.addEventListener('click', closeModal);
     document.getElementById('cancelModalBtn')?.addEventListener('click', closeModal);
 
     document.getElementById('modalIncBtn')?.addEventListener('click', () => {
+      const modalDisplay = document.getElementById('modalStockDisplay');
       if (currentModalStock < 10) {
         currentModalStock++;
-        document.getElementById('modalStockDisplay').textContent = currentModalStock;
+        if (modalDisplay) modalDisplay.textContent = currentModalStock.toString();
+      } else {
+        showToast('Bloqueo: No es posible superar 10 unidades.', true);
       }
     });
 
     document.getElementById('modalDecBtn')?.addEventListener('click', () => {
+      const modalDisplay = document.getElementById('modalStockDisplay');
       if (currentModalStock > 0) {
         currentModalStock--;
-        document.getElementById('modalStockDisplay').textContent = currentModalStock;
+        if (modalDisplay) modalDisplay.textContent = currentModalStock.toString();
       }
     });
 
@@ -543,26 +399,148 @@ import Layout from '../layouts/Layout.astro';
       if (!activeCardSku) return;
       const item = inventory.find(i => i.sku === activeCardSku);
       if (item) {
-        const delta = currentModalStock - item.stock;
         item.stock = currentModalStock;
         saveInventory(inventory);
-
-        if (delta !== 0) {
-          logToDatabase({
-            sku: item.sku,
-            productName: item.name,
-            type: 'AJUSTE',
-            quantity: delta,
-            notes: 'Ajuste manual de conteo en vitrina'
-          });
-        }
         renderInventoryList();
         showToast(`${item.name}: Conteo confirmado a ${currentModalStock} unid.`);
       }
       closeModal();
     });
 
-    // Initial render
+    const fabBtn = document.getElementById('fabBtn');
+    const btnHeaderAddProd = document.getElementById('btnHeaderAddProd');
+    const newProductModal = document.getElementById('newProductModal');
+    const closeNewModalBtn = document.getElementById('closeNewModalBtn');
+    const cancelNewModalBtn = document.getElementById('cancelNewModalBtn');
+    const newProductForm = document.getElementById('newProductForm') as HTMLFormElement | null;
+
+    function openNewModal() {
+      newProductModal?.classList.remove('hidden');
+    }
+
+    fabBtn?.addEventListener('click', openNewModal);
+    btnHeaderAddProd?.addEventListener('click', openNewModal);
+
+    function closeNewModal() {
+      newProductModal?.classList.add('hidden');
+      newProductForm?.reset();
+    }
+
+    closeNewModalBtn?.addEventListener('click', closeNewModal);
+    cancelNewModalBtn?.addEventListener('click', closeNewModal);
+
+    newProductForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = (document.getElementById('newProdName') as HTMLInputElement | null)?.value.trim();
+      let sku = (document.getElementById('newProdSku') as HTMLInputElement | null)?.value.trim();
+      const category = (document.getElementById('newProdCat') as HTMLSelectElement | null)?.value;
+      const location = (document.getElementById('newProdLoc') as HTMLInputElement | null)?.value.trim() || 'Estante Principal';
+
+      if (!name) return;
+
+      const newItem = createProduct({
+        name,
+        sku,
+        category,
+        location
+      });
+
+      closeNewModal();
+      renderInventoryList();
+      showToast(`¡Accesorio ${newItem.sku} creado con stock estándar de 10 unid.!`);
+    });
+
+    function applyFilters() {
+      const searchInput = document.getElementById('inventorySearchInput') as HTMLInputElement | null;
+      const query = (searchInput?.value || '').toLowerCase().trim();
+      const cards = document.querySelectorAll('.inventory-card');
+
+      let visibleCount = 0;
+      let revisableCount = 0;
+
+      cards.forEach(card => {
+        const name = (card.getAttribute('data-name') || '').toLowerCase();
+        const sku = (card.getAttribute('data-sku') || '').toLowerCase();
+        const category = card.getAttribute('data-category') || '';
+        const stock = parseInt(card.getAttribute('data-stock') || '0', 10);
+
+        const matchesCat = (currentCategory === 'all') || (category === currentCategory);
+        const matchesSearch = !query || name.includes(query) || sku.includes(query);
+
+        if (matchesCat && matchesSearch) {
+          card.classList.remove('hidden');
+          visibleCount++;
+          if (stock < 5) revisableCount++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      const subtitle = document.getElementById('productCountSubtitle');
+      if (subtitle) {
+        subtitle.textContent = `Mostrando ${visibleCount} productos · ${revisableCount} en estado revisable`;
+      }
+
+      const totalAlerts = inventory.filter(i => i.stock < 5).length;
+      const topAlertText = document.getElementById('topAlertText');
+      if (topAlertText) topAlertText.textContent = `${totalAlerts} Alertas`;
+
+      const badgeCountAll = document.getElementById('badgeCountAll');
+      if (badgeCountAll) badgeCountAll.textContent = inventory.length.toString();
+
+      const emptyState = document.getElementById('emptyInventoryState');
+      if (emptyState) {
+        if (visibleCount === 0) {
+          emptyState.classList.remove('hidden');
+          emptyState.classList.add('flex');
+        } else {
+          emptyState.classList.add('hidden');
+          emptyState.classList.remove('flex');
+        }
+      }
+    }
+
+    document.querySelectorAll('#categoryChips .chip-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const target = e.currentTarget as HTMLElement;
+        currentCategory = target.getAttribute('data-category') || 'all';
+
+        document.querySelectorAll('#categoryChips .chip-btn').forEach(b => {
+          b.className = 'chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors';
+        });
+        target.className = 'chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-on-surface text-surface-container-lowest shadow-sm flex items-center gap-1 flex-shrink-0 transition-colors';
+
+        applyFilters();
+      });
+    });
+
+    const searchInput = document.getElementById('inventorySearchInput') as HTMLInputElement | null;
+    const clearBtn = document.getElementById('clearSearchBtn');
+
+    searchInput?.addEventListener('input', (e) => {
+      const val = (e.target as HTMLInputElement).value;
+      if (clearBtn) {
+        if (val.length > 0) {
+          clearBtn.classList.remove('hidden');
+        } else {
+          clearBtn.classList.add('hidden');
+        }
+      }
+      applyFilters();
+    });
+
+    clearBtn?.addEventListener('click', () => {
+      if (searchInput) {
+        searchInput.value = '';
+        clearBtn.classList.add('hidden');
+        applyFilters();
+      }
+    });
+
+    window.addEventListener('inventory-updated', () => {
+      renderInventoryList();
+    });
+
     renderInventoryList();
   </script>
 </Layout>

@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Stock Móvil - Productos por Reponer">
+<Layout title="Tu Cell Expres - Productos por Reponer">
   <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile">
     <div class="flex flex-col w-full pb-24 space-y-4">
       <!-- Header Notification & Action Bar -->
@@ -15,13 +15,13 @@ import Layout from '../layouts/Layout.astro';
             <div>
               <h1 class="font-headline-md text-headline-md text-on-surface leading-tight">Productos por Reponer</h1>
               <span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container mt-0.5" id="headerAlertBadge">
-                4 artículos en nivel crítico
+                Cargando alertas...
               </span>
             </div>
           </div>
           <button class="h-10 px-3.5 rounded-xl bg-primary-container text-on-primary font-label-md text-label-md flex items-center space-x-1.5 shadow-sm active:scale-95 transition-transform cursor-pointer" id="batch-order-btn" type="button">
             <span class="material-symbols-outlined text-lg">playlist_add_check</span>
-            <span class="hidden sm:inline">Reponer Todo</span>
+            <span class="hidden sm:inline">Reponer Todo (A 10 max)</span>
             <span class="sm:hidden">Reponer</span>
           </button>
         </div>
@@ -30,33 +30,15 @@ import Layout from '../layouts/Layout.astro';
           <span class="material-symbols-outlined text-primary-container mt-0.5 text-xl">info</span>
           <div class="flex-1">
             <p class="text-body-sm font-body-sm text-on-surface-variant leading-snug">
-              Stock crítico (<span class="font-semibold text-error">menor a 5 unidades</span>). El rellenado automático ajusta cada referencia para completar la capacidad base de <span class="font-semibold text-on-surface">10 unidades</span> por vitrina. Al reponer se elimina la alerta del sistema.
+              Stock crítico (<span class="font-semibold text-error">menor a 5 unidades</span>). La reposición nivela cada referencia hasta completar la capacidad máxima de <span class="font-semibold text-on-surface">10 unidades</span> por vitrina.
             </p>
           </div>
         </div>
       </header>
 
-      <!-- Filter & Sort Strip -->
-      <section class="flex items-center justify-between gap-2 overflow-x-auto py-1">
-        <div class="flex items-center space-x-2 shrink-0">
-          <span class="text-label-sm font-label-sm text-secondary">Ordenar:</span>
-          <button class="px-3 py-1.5 rounded-full bg-on-surface text-surface-container-lowest font-label-sm text-label-sm flex items-center space-x-1 shadow-sm" type="button">
-            <span>Menor stock primero</span>
-            <span class="material-symbols-outlined text-sm">arrow_downward</span>
-          </button>
-          <button class="px-3 py-1.5 rounded-full bg-surface-container text-secondary font-label-sm text-label-sm hover:bg-surface-container-high transition-colors" type="button">
-            Por categoría
-          </button>
-        </div>
-        <div class="shrink-0 flex items-center space-x-1 text-label-sm font-label-sm text-secondary">
-          <span class="material-symbols-outlined text-base">storefront</span>
-          <span>Vitrina Central</span>
-        </div>
-      </section>
-
       <!-- Container for Alert Cards -->
       <div class="flex flex-col space-y-3" id="alertsListContainer">
-        <!-- Rendered dynamically via Script -->
+        <!-- Rendered dynamically -->
       </div>
 
       <!-- Empty State when All Alerts are Resolved -->
@@ -92,59 +74,34 @@ import Layout from '../layouts/Layout.astro';
 
       <!-- Feedback Toast -->
       <div class="fixed bottom-20 left-4 right-4 bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 transition-opacity duration-300 opacity-0 pointer-events-none z-50" id="toast">
-        <span class="material-symbols-outlined text-tertiary-fixed text-xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+        <span class="material-symbols-outlined text-tertiary-fixed text-xl" id="toastIcon">check_circle</span>
         <span class="text-body-sm font-body-sm font-medium flex-1" id="toast-text">Alerta resuelta exitosamente.</span>
       </div>
     </div>
   </main>
 
-  <script is:inline>
-    const STORE_KEY = 'stock_movil_inventory_v1';
+  <script>
+    import { getStoredInventory, saveInventory } from '../utils/inventoryStore.js';
+    import type { Product } from '../types/inventory';
 
-    const defaultItems = [
-      { id: 'sku-520', sku: 'SKU-520', name: 'Soporte Magnético para Auto', category: 'Auto', stock: 1, minStock: 5, maxStock: 10, location: 'Vitrina A-1', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCoO16TT-tR-wlBrTApCGHxTpxWYKIILFh-fa-B9ONyuxDC7S0ZXI1xdRds3NS2MAjynS8X2uxtjbBTZFQOx3cu80HN_IChP6er-zID8eNdtHMdl2IaINz3QBd6WqP7XAeWK_-CkFA6KuSLUQ3uYW8aLVdzLA0HU-wJ4SV3_opoxIxnm0ropW05_gKwnufdKjkZCa6ege8rRfS1fIRvvjUVG7PXm7gqADoptCJ87melL-SZW9KfqE8rfw' },
-      { id: 'sku-092', sku: 'SKU-092', name: 'Funda Silicona Case iPhone 15 Pro', category: 'Fundas', stock: 3, minStock: 5, maxStock: 10, location: 'Vitrina F-2', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww' },
-      { id: 'sku-104', sku: 'SKU-104', name: 'Mica Vidrio Templado 9D iPhone', category: 'Micas', stock: 3, minStock: 5, maxStock: 10, location: 'Estante M-3', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDArc9PQMZMX60YZdL2HuhroEsYV6UgzSH87z-kJS4ARnnmSqmNSHgA9qBp7g6F6dHgZFFqTSVgq2gdJp58wHONkBxTxsO8hE0qtwatBHzLpB31H6chYL2O8S5CJSDi-z88o0vFq5sZcG3tsWBWISuppZf-tVqo03v5gno6pOC0TkrrhFGhyhCHAt7jP4NM9ZHobv-4beNobhEKe-UBtNC0__DBtmC90qfTOgVDh-SgPW_fPqxi2Q1q1g' },
-      { id: 'sku-319', sku: 'SKU-319', name: 'Adaptador Lightning a Jack 3.5mm', category: 'Audio', stock: 4, minStock: 5, maxStock: 10, location: 'Cajón A-4', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBEddAYibZMjqLmVbQYfK77Qtk_GR18aEIxR3iZD-Z2oh2vBwMBHO4f5rmtUUOpsECq0Ki6-5kKq2rrbOwb5qTeegm3mwiaDth6G9WXs1pYgShhoy9AIo62Yi2tPtSAwuB9NT8Xg1cpDcF-6cJyQ2S_WpLWIWQIu2INbGpBjXUA7YtOlsTuVV3M7ipH2vBUeAEuuoP8SCLpb0_EussBUxFkyspxVV1X9GEiyd9dr9O0HJLNk35vxy8HOA' },
-      { id: 'sku-141', sku: 'SKU-141', name: 'Cargador Rápido 30W USB-C GaN', category: 'Cargas', stock: 8, minStock: 5, maxStock: 10, location: 'Estante C-1', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBrfDhd7aPs8GoEZkbA-xzj03A0JGJv23NKGhczYuRs8EJYYf_q4gvPULwdu7W8msYzasXSZ5CRFCaiereQb0MBGmy_2rZyX803yRgihTlaUjdsvBhZ43BV5z9VhWzAtBp5NCT6sMqRZH17UfXJqbpvnnAVKBFI_dqtFRl2c6VUhREY7ilvtDMv5-2DsAZhazqG9qhIVZnFgDAxPizJb5ovXT5omGmRTXTgZYwc5QvkWW6J76B2YiQrvw' }
-    ];
+    const toast = document.getElementById('toast');
+    const toastText = document.getElementById('toast-text');
+    const toastIcon = document.getElementById('toastIcon');
 
-    function getStoredInventory() {
-      const raw = localStorage.getItem(STORE_KEY);
-      if (!raw) {
-        localStorage.setItem(STORE_KEY, JSON.stringify(defaultItems));
-        return defaultItems;
-      }
-      try {
-        return JSON.parse(raw);
-      } catch (e) {
-        localStorage.setItem(STORE_KEY, JSON.stringify(defaultItems));
-        return defaultItems;
-      }
-    }
-
-    function saveInventory(items) {
-      localStorage.setItem(STORE_KEY, JSON.stringify(items));
-      window.dispatchEvent(new CustomEvent('inventory-updated', { detail: items }));
-    }
-
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      const toastText = document.getElementById('toast-text');
+    function showToast(message: string, isError = false) {
       if (!toast || !toastText) return;
       toastText.textContent = message;
-      toast.classList.remove('opacity-0', 'pointer-events-none');
-      toast.classList.add('opacity-100');
+      if (toastIcon) toastIcon.textContent = isError ? 'error' : 'check_circle';
+      toast.className = `fixed bottom-20 left-4 right-4 ${isError ? 'bg-error-container text-on-error-container' : 'bg-inverse-surface text-inverse-on-surface'} px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 transition-opacity duration-300 opacity-100 z-50`;
       setTimeout(() => {
-        toast.classList.remove('opacity-100');
-        toast.classList.add('opacity-0', 'pointer-events-none');
+        toast.className = 'fixed bottom-20 left-4 right-4 bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 transition-opacity duration-300 opacity-0 pointer-events-none z-50';
       }, 2800);
     }
 
-    let alertAddQtys = {};
+    let alertAddQtys: Record<string, number> = {};
 
     function renderAlerts() {
-      const items = getStoredInventory();
+      const items: Product[] = getStoredInventory(false);
       const alertItems = items.filter(i => i.stock < (i.minStock || 5));
       const container = document.getElementById('alertsListContainer');
       const emptyState = document.getElementById('emptyAlertsState');
@@ -179,15 +136,13 @@ import Layout from '../layouts/Layout.astro';
         headerBadge.textContent = `${alertItems.length} artículo${alertItems.length > 1 ? 's' : ''} en nivel crítico`;
         headerBadge.className = 'inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container mt-0.5 font-bold';
       }
-      if (headerIcon) {
-        headerIcon.className = 'w-9 h-9 rounded-xl bg-error-container text-on-error-container flex items-center justify-center shadow-sm';
-      }
 
       let grandTotalNeeded = 0;
       container.innerHTML = '';
 
       alertItems.forEach(item => {
-        const neededToFull = (item.maxStock || 10) - item.stock;
+        const maxStock = item.maxStock || 10;
+        const neededToFull = Math.max(0, maxStock - item.stock);
         if (!alertAddQtys[item.sku]) {
           alertAddQtys[item.sku] = Math.max(1, neededToFull);
         }
@@ -210,7 +165,7 @@ import Layout from '../layouts/Layout.astro';
                 <h2 class="font-headline-sm text-headline-sm text-on-surface truncate font-semibold">${item.name}</h2>
                 <div class="flex items-center gap-1.5 mt-1">
                   <span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container">
-                    ${item.stock} / ${item.maxStock || 10} unid.
+                    ${item.stock} / ${maxStock} unid.
                   </span>
                   <span class="text-body-sm font-body-sm text-error font-medium">Urgencia de rellenado</span>
                 </div>
@@ -222,42 +177,35 @@ import Layout from '../layouts/Layout.astro';
             <div class="flex justify-between items-center text-label-sm font-label-sm">
               <span class="text-on-surface-variant font-medium">Ubicación: ${item.location || 'Estante Principal'}</span>
               <span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-bold">
-                Faltan +${neededToFull} para completar 10
+                Faltan +${neededToFull} para tope ${maxStock}
               </span>
             </div>
             <div class="w-full h-2.5 bg-surface-container-highest rounded-full overflow-hidden flex">
               <div class="h-full bg-error rounded-full transition-all duration-500" style="width: ${item.stock * 10}%"></div>
-                </div>
-                <span class="font-body-sm text-body-sm text-on-surface-variant truncate block mt-0.5">${item.category} · ${item.sku} · ${item.location || 'Estante Vitrina'}</span>
-                
-                <div class="flex items-center justify-between mt-2 gap-2 flex-wrap sm:flex-nowrap">
-                  <div class="flex items-center gap-2">
-                    <span class="font-sku-code text-sku-code ${isCritical ? 'text-error font-bold' : 'text-on-surface font-semibold'}">${item.stock} / ${item.minStock || 5} min.</span>
-                    <div class="w-16 h-1.5 bg-surface-container rounded-full overflow-hidden">
-                      <div class="h-full ${isCritical ? 'bg-error' : 'bg-tertiary'} rounded-full" style="width: ${Math.min(100, (item.stock / (item.minStock || 5)) * 100)}%"></div>
-                    </div>
-                  </div>
-
-                  <div class="flex items-center gap-1.5 shrink-0">
-                    <div class="flex items-center bg-surface-container-low rounded-xl p-0.5">
-                      <button class="btn-step-dec w-11 h-11 rounded-lg hover:bg-surface-container text-on-surface flex items-center justify-center active:scale-95 transition-all" data-sku="${item.sku}" title="Disminuir lote" type="button">
-                        <span class="material-symbols-outlined text-[18px]">remove</span>
-                      </button>
-                      <span class="px-2 font-data-tabular text-data-tabular font-bold text-on-surface text-label-md" id="step-val-${item.sku}">+${currentAddQty}</span>
-                      <button class="btn-step-inc w-11 h-11 rounded-lg hover:bg-surface-container text-on-surface flex items-center justify-center active:scale-95 transition-all" data-sku="${item.sku}" title="Aumentar lote" type="button">
-                        <span class="material-symbols-outlined text-[18px]">add</span>
-                      </button>
-                    </div>
-                    <button class="btn-restock-one h-11 px-3.5 rounded-xl bg-tertiary text-on-tertiary hover:opacity-95 font-label-sm text-label-sm font-semibold flex items-center gap-1 active:scale-95 transition-all shadow-sm" data-sku="${item.sku}" data-name="${item.name}" type="button">
-                      <span class="material-symbols-outlined text-[18px]">domain_verification</span>
-                      <span>Reponer</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
             </div>
+            <div class="flex justify-between text-body-sm font-body-sm text-secondary pt-0.5">
+              <span>Actual: <strong>${item.stock} unid.</strong></span>
+              <span>Meta base: ${maxStock} unid.</span>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between gap-2 pt-1">
+            <div class="flex items-center space-x-1">
+              <button aria-label="Restar" class="btn-dec-sku w-9 h-9 rounded-lg bg-surface-container text-on-surface flex items-center justify-center active:scale-95 transition-transform cursor-pointer" data-sku="${item.sku}" type="button">
+                <span class="material-symbols-outlined text-base">remove</span>
+              </button>
+              <span class="w-9 text-center font-data-tabular text-data-tabular text-on-surface font-bold" id="qty-${item.sku}">${currentAddQty}</span>
+              <button aria-label="Aumentar" class="btn-inc-sku w-9 h-9 rounded-lg bg-surface-container text-on-surface flex items-center justify-center active:scale-95 transition-transform cursor-pointer" data-sku="${item.sku}" type="button">
+                <span class="material-symbols-outlined text-base">add</span>
+              </button>
+            </div>
+            <button class="btn-reorder flex-1 h-10 px-4 rounded-xl bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center space-x-1.5 active:scale-95 transition-all shadow-sm cursor-pointer" data-name="${item.name}" data-sku="${item.sku}" type="button">
+              <span class="material-symbols-outlined text-lg">add_box</span>
+              <span class="reorder-label" id="label-${item.sku}">+ Reponer ${currentAddQty} unid.</span>
+            </button>
+          </div>
         `;
-        container.appendChild(card);
+        container.appendChild(article);
       });
 
       if (totalUnitsPill) totalUnitsPill.textContent = `+${grandTotalNeeded} unid.`;
@@ -274,7 +222,7 @@ import Layout from '../layouts/Layout.astro';
           alertAddQtys[sku] = Math.max(1, (alertAddQtys[sku] || 1) - 1);
           const qtyElem = document.getElementById('qty-' + sku);
           const labelElem = document.getElementById('label-' + sku);
-          if (qtyElem) qtyElem.textContent = alertAddQtys[sku];
+          if (qtyElem) qtyElem.textContent = alertAddQtys[sku].toString();
           if (labelElem) labelElem.textContent = `+ Reponer ${alertAddQtys[sku]} unid.`;
           recalculateTotalNeeded();
         });
@@ -287,7 +235,7 @@ import Layout from '../layouts/Layout.astro';
           alertAddQtys[sku] = (alertAddQtys[sku] || 1) + 1;
           const qtyElem = document.getElementById('qty-' + sku);
           const labelElem = document.getElementById('label-' + sku);
-          if (qtyElem) qtyElem.textContent = alertAddQtys[sku];
+          if (qtyElem) qtyElem.textContent = alertAddQtys[sku].toString();
           if (labelElem) labelElem.textContent = `+ Reponer ${alertAddQtys[sku]} unid.`;
           recalculateTotalNeeded();
         });
@@ -297,6 +245,7 @@ import Layout from '../layouts/Layout.astro';
         btn.addEventListener('click', () => {
           const sku = btn.getAttribute('data-sku');
           const name = btn.getAttribute('data-name');
+          if (!sku || !name) return;
           const addQty = alertAddQtys[sku] || 1;
           repopulateItem(sku, name, addQty);
         });
@@ -310,32 +259,27 @@ import Layout from '../layouts/Layout.astro';
       if (totalUnitsPill) totalUnitsPill.textContent = `+${sum} unid.`;
     }
 
-    function repopulateItem(sku, name, addQty) {
-      const items = getStoredInventory();
+    function repopulateItem(sku: string, name: string, addQty: number) {
+      const items: Product[] = getStoredInventory(true);
       const item = items.find(i => i.sku === sku);
       if (!item) return;
 
-      item.stock = Math.min(10, item.stock + addQty);
+      const maxLimit = item.maxStock || 10;
+      const targetStock = item.stock + addQty;
+      if (targetStock > maxLimit) {
+        showToast(`Operación rechazada: Reponer +${addQty} dejaría el stock en ${targetStock}, superando el tope de ${maxLimit}.`, true);
+        return;
+      }
+
+      item.stock = targetStock;
       saveInventory(items);
 
-      // Animate card removal
-      const card = document.getElementById(`alert-card-${sku}`);
-      if (card) {
-        card.style.transform = 'scale(0.95)';
-        card.style.opacity = '0';
-        setTimeout(() => {
-          renderAlerts();
-          showToast(`+${addQty} unid. añadidos a ${name}. ¡Alerta eliminada!`);
-        }, 300);
-      } else {
-        renderAlerts();
-        showToast(`+${addQty} unid. añadidos a ${name}. ¡Alerta eliminada!`);
-      }
+      renderAlerts();
+      showToast(`+${addQty} unid. añadidos a ${name}. ¡Stock actualizado!`);
     }
 
-    // Batch order reponers
     document.getElementById('batch-order-btn')?.addEventListener('click', () => {
-      const items = getStoredInventory();
+      const items: Product[] = getStoredInventory(true);
       let count = 0;
       items.forEach(item => {
         if (item.stock < (item.minStock || 5)) {
@@ -351,7 +295,7 @@ import Layout from '../layouts/Layout.astro';
 
       saveInventory(items);
       renderAlerts();
-      showToast(`¡${count} alertas han sido rellenadas y eliminadas del estante!`);
+      showToast(`¡${count} alertas han sido niveladas al tope de 10 unidades!`);
     });
 
     window.addEventListener('inventory-updated', renderAlerts);

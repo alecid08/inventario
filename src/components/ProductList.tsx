@@ -1,17 +1,17 @@
 import React from 'react';
-import { Plus, Minus, Trash2, AlertTriangle, CheckCircle, PackageX } from 'lucide-react';
+import { Plus, Minus, EyeOff, AlertTriangle, CheckCircle, PackageX } from 'lucide-react';
 import type { Product } from '../types/inventory';
 
 interface ProductListProps {
   products: Product[];
   onUpdateStock: (id: string, delta: number) => void;
-  onDeleteProduct: (id: string) => void;
+  onDeactivateProduct: (id: string) => void;
 }
 
 export const ProductList: React.FC<ProductListProps> = ({
   products,
   onUpdateStock,
-  onDeleteProduct,
+  onDeactivateProduct,
 }) => {
   if (products.length === 0) {
     return (
@@ -35,7 +35,7 @@ export const ProductList: React.FC<ProductListProps> = ({
             <tr>
               <th>Producto & SKU</th>
               <th>Categoría</th>
-              <th>Stock</th>
+              <th>Stock (Máx. 10)</th>
               <th>Estado</th>
               <th>Precio (Unit.)</th>
               <th style={{ textAlign: 'right' }}>Acciones</th>
@@ -43,6 +43,7 @@ export const ProductList: React.FC<ProductListProps> = ({
           </thead>
           <tbody>
             {products.map((product) => {
+              const maxStock = product.maxStock || 10;
               const isLow = product.stock > 0 && product.stock <= product.minStock;
               const isEmpty = product.stock === 0;
 
@@ -68,12 +69,13 @@ export const ProductList: React.FC<ProductListProps> = ({
                       >
                         <Minus size={14} />
                       </button>
-                      <span className="stock-num">{product.stock}</span>
+                      <span className="stock-num">{product.stock} / {maxStock}</span>
                       <button
                         type="button"
                         className="btn-icon btn-sm"
                         onClick={() => onUpdateStock(product.id, 1)}
                         title="Aumentar stock"
+                        disabled={product.stock >= maxStock}
                       >
                         <Plus size={14} />
                       </button>
@@ -96,17 +98,17 @@ export const ProductList: React.FC<ProductListProps> = ({
                   </td>
                   <td>
                     <span className="price-text">
-                      ${product.price.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                      ${(product.price || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
                     </span>
                   </td>
                   <td style={{ textAlign: 'right' }}>
                     <button
                       type="button"
                       className="btn-icon danger"
-                      onClick={() => onDeleteProduct(product.id)}
-                      title="Eliminar producto"
+                      onClick={() => onDeactivateProduct(product.id)}
+                      title="Desactivar producto (Soft Delete)"
                     >
-                      <Trash2 size={16} />
+                      <EyeOff size={16} />
                     </button>
                   </td>
                 </tr>
