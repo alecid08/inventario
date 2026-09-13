@@ -1,6 +1,6 @@
 {
-  "name": "Stock Móvil - Control de Inventario",
-  "short_name": "Stock Móvil",
+  "name": "Tu Cell Express - Control de Inventario",
+  "short_name": "Tu Cell Express",
   "description": "App de inventario de piso y vitrina para tienda de accesorios de celular.",
   "start_url": "/inventario/",
   "scope": "/inventario/",
