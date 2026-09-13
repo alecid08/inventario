@@ -5,5 +5,6 @@ import react from '@astrojs/react';
 export default defineConfig({
   site: 'https://alecid08.github.io',
   base: '/inventario/',
+  trailingSlash: 'always',
   integrations: [react()],
 });

@@ -3,9 +3,9 @@ const pathname = Astro.url.pathname;
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL.slice(0, -1) : import.meta.env.BASE_URL;
 
 const isInventario = pathname === base || pathname === `${base}/` || pathname === '/';
-const isMovimientos = pathname.startsWith(`${base}/movimientos`);
-const isAlertas = pathname.startsWith(`${base}/alertas`);
-const isReportes = pathname.startsWith(`${base}/reportes`);
+const isMovimientos = pathname.includes('/movimientos');
+const isAlertas = pathname.includes('/alertas');
+const isReportes = pathname.includes('/reportes');
 ---
 
 <nav class="fixed bottom-0 left-0 right-0 bg-surface-container-lowest shadow-lg px-4 py-2 flex justify-around items-center z-40 border-none">
@@ -16,13 +16,13 @@ const isReportes = pathname.startsWith(`${base}/reportes`);
   </a>
 
   <!-- 2. Movimientos -->
-  <a href={`${base}/movimientos`} class={`flex flex-col items-center justify-center py-1 px-3 rounded-lg transition-colors ${isMovimientos ? 'text-primary' : 'text-secondary hover:text-on-surface'}`}>
+  <a href={`${base}/movimientos/`} class={`flex flex-col items-center justify-center py-1 px-3 rounded-lg transition-colors ${isMovimientos ? 'text-primary' : 'text-secondary hover:text-on-surface'}`}>
     <span class="material-symbols-outlined text-2xl" style={isMovimientos ? "font-variation-settings: 'FILL' 1;" : ""}>sync_alt</span>
     <span class={`text-label-sm font-label-sm mt-0.5 ${isMovimientos ? 'font-bold' : ''}`}>Movimientos</span>
   </a>
 
   <!-- 3. Alertas -->
-  <a href={`${base}/alertas`} class={`flex flex-col items-center justify-center py-1 px-3 rounded-lg relative ${isAlertas ? 'text-primary-container' : 'text-secondary hover:text-on-surface'}`}>
+  <a href={`${base}/alertas/`} class={`flex flex-col items-center justify-center py-1 px-3 rounded-lg relative ${isAlertas ? 'text-primary-container' : 'text-secondary hover:text-on-surface'}`}>
     <div class="relative">
       <span class="material-symbols-outlined text-2xl" style={isAlertas ? "font-variation-settings: 'FILL' 1;" : ""}>notifications_active</span>
       <span class="absolute -top-1 -right-2 bg-error text-on-error text-[10px] font-bold px-1.5 py-0.2 rounded-full ring-2 ring-surface-container-lowest transition-all" id="bottomNavAlertBadge">
@@ -33,7 +33,7 @@ const isReportes = pathname.startsWith(`${base}/reportes`);
   </a>
 
   <!-- 4. Reportes -->
-  <a href={`${base}/reportes`} class={`flex flex-col items-center justify-center py-1 px-3 rounded-lg transition-colors ${isReportes ? 'text-primary' : 'text-secondary hover:text-on-surface'}`}>
+  <a href={`${base}/reportes/`} class={`flex flex-col items-center justify-center py-1 px-3 rounded-lg transition-colors ${isReportes ? 'text-primary' : 'text-secondary hover:text-on-surface'}`}>
     <span class="material-symbols-outlined text-2xl" style={isReportes ? "font-variation-settings: 'FILL' 1;" : ""}>assessment</span>
     <span class={`text-label-sm font-label-sm mt-0.5 ${isReportes ? 'font-bold' : ''}`}>Reportes</span>
   </a>

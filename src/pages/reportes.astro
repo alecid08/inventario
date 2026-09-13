@@ -8,7 +8,7 @@ import Layout from '../layouts/Layout.astro';
       <!-- Header Section -->
       <header class="w-full flex items-center justify-between py-space-sm mb-space-sm pt-2">
         <div class="flex items-center gap-space-sm">
-          <a href={import.meta.env.BASE_URL} aria-label="Volver atrás" class="w-touch-min h-touch-min flex items-center justify-center rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors active:scale-95 text-on-surface">
+          <a href={`${import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/'}`} aria-label="Volver atrás" class="w-touch-min h-touch-min flex items-center justify-center rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors active:scale-95 text-on-surface">
             <span class="material-symbols-outlined text-[22px]">arrow_back</span>
           </a>
           <div>
