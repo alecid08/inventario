@@ -196,7 +196,8 @@ import Layout from '../layouts/Layout.astro';
         deactivateProduct(product.sku);
         showToastMsg(`Accesorio "${product.name}" desactivado`, 'visibility_off');
         setTimeout(() => {
-          window.location.href = import.meta.env.BASE_URL;
+          const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/';
+          window.location.href = baseUrl;
         }, 800);
       }
     });
@@ -221,7 +222,8 @@ import Layout from '../layouts/Layout.astro';
 
       showToastMsg('Detalles guardados correctamente', 'done_all');
       setTimeout(() => {
-        window.location.href = import.meta.env.BASE_URL;
+        const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/';
+        window.location.href = baseUrl;
       }, 700);
     });
   </script>

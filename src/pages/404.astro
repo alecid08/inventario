@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/';
 ---
 
 <Layout title="Tu Cell Express - Redireccionando..." showNav={false}>
@@ -8,33 +9,56 @@ import Layout from '../layouts/Layout.astro';
       <span class="material-symbols-outlined text-3xl">sync</span>
     </div>
     <h2 class="font-headline-md text-headline-md text-on-surface mb-2">Cargando sección...</h2>
-    <p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs">
+    <p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs mb-6">
       Redireccionando a la vista correcta en Tu Cell Express...
     </p>
+    <a href={base} class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-sm active:scale-95 transition-all">
+      <span class="material-symbols-outlined text-[18px]">inventory_2</span>
+      <span>Ir al Inventario</span>
+    </a>
   </main>
 
   <script is:inline>
-    // GitHub Pages 404 handler for subpath repositories
+    // GitHub Pages 404 intelligent handler for subpath repositories
     (function() {
-      const path = window.location.pathname;
       const base = '/inventario/';
+      const rawPath = window.location.pathname;
+      const search = window.location.search || '';
+      const hash = window.location.hash || '';
 
-      // Case 1: Browser attempted https://alecid08.github.io/movimientos (GitHub Pages dropped /inventario/)
-      if (!path.startsWith(base)) {
-        const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-        const targetPath = base + cleanPath + (cleanPath.endsWith('/') ? '' : '/') + window.location.search + window.location.hash;
+      // Normalize trimmed path without leading/trailing slashes
+      let trimmed = rawPath.replace(/^\/+|\/+$/g, '');
+
+      // Case 1: Root request or exactly "inventario" without trailing slash
+      if (!trimmed || trimmed === 'inventario') {
+        const target = base + search + hash;
+        if (window.location.pathname !== base) {
+          window.location.replace(target);
+        }
+        return;
+      }
+
+      // Case 2: Starts with "inventario/" (missing trailing slash or deeper route)
+      if (trimmed.startsWith('inventario/')) {
+        trimmed = trimmed.slice('inventario/'.length).replace(/^\/+/, '');
+      }
+
+      // If empty after stripping inventario, return to base
+      if (!trimmed) {
+        if (window.location.pathname !== base) {
+          window.location.replace(base + search + hash);
+        }
+        return;
+      }
+
+      // Check if this is a static asset file (e.g. .svg, .js, .css, .png, etc.)
+      const isFile = /\.[a-zA-Z0-9]+$/.test(trimmed);
+      const targetPath = base + trimmed + (isFile ? '' : '/') + search + hash;
+
+      // Only redirect if destination is different from current location to prevent loops
+      if (window.location.pathname + search + hash !== targetPath) {
         window.location.replace(targetPath);
-        return;
       }
-
-      // Case 2: Missing trailing slash (e.g. /inventario/movimientos -> /inventario/movimientos/)
-      if (path.startsWith(base) && !path.endsWith('/')) {
-        window.location.replace(path + '/' + window.location.search + window.location.hash);
-        return;
-      }
-
-      // Fallback: Default to base home
-      window.location.replace(base);
     })();
   </script>
 </Layout>
