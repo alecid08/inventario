@@ -2,13 +2,13 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Tu Cell Expres - Consulta Histórica y Reporte de Base de Datos">
+<Layout title="Tu Cell Express - Consulta Histórica y Reportes">
   <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile">
     <div class="flex flex-col w-full pb-24">
       <!-- Header Section -->
       <header class="w-full flex items-center justify-between py-space-sm mb-space-sm pt-2">
         <div class="flex items-center gap-space-sm">
-          <a href="/" aria-label="Volver atrás" class="w-touch-min h-touch-min flex items-center justify-center rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors active:scale-95 text-on-surface">
+          <a href={`${import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/'}`} aria-label="Volver atrás" class="w-touch-min h-touch-min flex items-center justify-center rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors active:scale-95 text-on-surface">
             <span class="material-symbols-outlined text-[22px]">arrow_back</span>
           </a>
           <div>

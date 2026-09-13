@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Tu Cell Expres - Acceso de Personal" showNav={false}>
+<Layout title="Tu Cell Express - Acceso de Personal" showNav={false}>
   <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile">
     <div class="flex flex-col w-full max-w-md mx-auto py-space-xl px-space-xs">
       <!-- Brand & Store Identity Header -->
@@ -10,7 +10,7 @@ import Layout from '../layouts/Layout.astro';
         <!-- Branch Chip -->
         <div class="inline-flex items-center gap-1.5 px-3 py-1 mb-space-lg rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm">
           <span class="material-symbols-outlined text-primary text-[16px]">storefront</span>
-          <span>Tienda Tu Cell Expres</span>
+          <span>Tienda Tu Cell Express</span>
           <span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
           <span class="text-tertiary text-label-sm font-label-sm">En línea</span>
         </div>
@@ -23,7 +23,7 @@ import Layout from '../layouts/Layout.astro';
             <span class="material-symbols-outlined text-[12px]">inventory_2</span>
           </div>
         </div>
-        <h1 class="font-headline-lg text-headline-lg text-on-surface mb-1">Tu Cell Expres</h1>
+        <h1 class="font-headline-lg text-headline-lg text-on-surface mb-1">Tu Cell Express</h1>
         <p class="font-body-md text-body-md text-on-surface-variant max-w-[280px]">
           Sistema de Control de Inventario y Auditoría de Piso
         </p>
@@ -78,18 +78,41 @@ import Layout from '../layouts/Layout.astro';
         </form>
       </section>
 
-      <!-- Quick Demo Credentials Hint -->
-      <footer class="mt-space-xl text-center flex flex-col items-center gap-space-xs">
+      <!-- Quick Store Badge / Device Category Highlights -->
+      <div class="mt-space-xl grid grid-cols-3 gap-2 px-1 text-center">
+        <div class="flex flex-col items-center p-2.5 rounded-lg bg-surface-container-low">
+          <span class="material-symbols-outlined text-secondary text-[20px] mb-1">cases</span>
+          <span class="font-label-sm text-label-sm text-on-surface">Fundas</span>
+          <span class="font-body-sm text-body-sm text-secondary text-[11px]">iOS &amp; Android</span>
+        </div>
+        <div class="flex flex-col items-center p-2.5 rounded-lg bg-surface-container-low">
+          <span class="material-symbols-outlined text-secondary text-[20px] mb-1">bolt</span>
+          <span class="font-label-sm text-label-sm text-on-surface">Cargas</span>
+          <span class="font-body-sm text-body-sm text-secondary text-[11px]">GaN / MagSafe</span>
+        </div>
+        <div class="flex flex-col items-center p-2.5 rounded-lg bg-surface-container-low">
+          <span class="material-symbols-outlined text-secondary text-[20px] mb-1">screen_lock_portrait</span>
+          <span class="font-label-sm text-label-sm text-on-surface">Micas 9D</span>
+          <span class="font-body-sm text-body-sm text-secondary text-[11px]">Vidrio templado</span>
+        </div>
+      </div>
+
+      <!-- Quick Demo Credentials Hint & Security Footer -->
+      <footer class="mt-space-lg text-center flex flex-col items-center gap-space-xs">
         <div class="p-3 bg-surface-container-low rounded-xl text-body-sm font-body-sm text-on-surface-variant max-w-xs">
           <p class="font-label-sm text-label-sm text-on-surface font-semibold mb-0.5">Acceso Demostración:</p>
           <p>Cualquier PIN de 4 dígitos (Ej. <strong class="text-primary">1234</strong>)</p>
+        </div>
+        <div class="flex items-center gap-1 text-outline text-xs mt-2">
+          <span class="material-symbols-outlined text-[16px]">verified_user</span>
+          <span>Uso exclusivo para personal autorizado · Tu Cell Express</span>
         </div>
       </footer>
     </div>
   </main>
 
-  <script is:inline>
-    const pinInput = document.getElementById('operatorPin');
+  <script>
+    const pinInput = document.getElementById('operatorPin') as HTMLInputElement | null;
     const togglePinBtn = document.getElementById('btnTogglePin');
     const eyeIcon = document.getElementById('pinEyeIcon');
     const loginForm = document.getElementById('loginForm');
@@ -108,7 +131,7 @@ import Layout from '../layouts/Layout.astro';
 
       if (pin.length >= 4) {
         if (errorMsg) errorMsg.classList.add('hidden');
-        window.location.href = '/';
+        window.location.href = import.meta.env.BASE_URL;
       } else {
         if (errorMsg) errorMsg.classList.remove('hidden');
       }

@@ -1,0 +1,40 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Tu Cell Express - Redireccionando..." showNav={false}>
+  <main class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+    <div class="w-16 h-16 rounded-full bg-primary-container/20 text-primary flex items-center justify-center mb-4 animate-spin">
+      <span class="material-symbols-outlined text-3xl">sync</span>
+    </div>
+    <h2 class="font-headline-md text-headline-md text-on-surface mb-2">Cargando sección...</h2>
+    <p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs">
+      Redireccionando a la vista correcta en Tu Cell Express...
+    </p>
+  </main>
+
+  <script is:inline>
+    // GitHub Pages 404 handler for subpath repositories
+    (function() {
+      const path = window.location.pathname;
+      const base = '/inventario/';
+
+      // Case 1: Browser attempted https://alecid08.github.io/movimientos (GitHub Pages dropped /inventario/)
+      if (!path.startsWith(base)) {
+        const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+        const targetPath = base + cleanPath + (cleanPath.endsWith('/') ? '' : '/') + window.location.search + window.location.hash;
+        window.location.replace(targetPath);
+        return;
+      }
+
+      // Case 2: Missing trailing slash (e.g. /inventario/movimientos -> /inventario/movimientos/)
+      if (path.startsWith(base) && !path.endsWith('/')) {
+        window.location.replace(path + '/' + window.location.search + window.location.hash);
+        return;
+      }
+
+      // Fallback: Default to base home
+      window.location.replace(base);
+    })();
+  </script>
+</Layout>
