@@ -7,7 +7,7 @@ interface Props {
   showNav?: boolean;
 }
 
-const { title = 'Tu Cell Expres - Control de Inventario', showNav = true } = Astro.props;
+const { title = 'Stock Móvil - Control de Inventario', showNav = true } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -16,8 +16,17 @@ const { title = 'Tu Cell Expres - Control de Inventario', showNav = true } = Ast
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- PWA & Mobile Capabilities -->
+  <link rel="manifest" href="/manifest.webmanifest"/>
+  <meta name="theme-color" content="#004ac6"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Stock Móvil"/>
+  <link rel="apple-touch-icon" href="/icons/icon-192.png"/>
+
   <title>{title}</title>
-  <meta name="description" content="Gestión inteligente de inventario para tienda de accesorios de celular Tu Cell Expres. Control de stock, listas dinámicas y reportes en tiempo real." />
+  <meta name="description" content="Gestión inteligente de inventario para tienda de accesorios de celular. Control de stock de piso, vitrinas y reportes en tiempo real." />
   
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -121,5 +130,18 @@ const { title = 'Tu Cell Expres - Control de Inventario', showNav = true } = Ast
     <slot />
     {showNav && <BottomNav />}
   </div>
+
+  <!-- Register Service Worker for PWA -->
+  <script is:inline>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then((reg) => {
+          console.log('Service Worker registrado con éxito:', reg.scope);
+        }).catch((err) => {
+          console.log('Error al registrar Service Worker:', err);
+        });
+      });
+    }
+  </script>
 </body>
 </html>
