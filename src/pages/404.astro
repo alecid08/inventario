@@ -14,15 +14,27 @@ import Layout from '../layouts/Layout.astro';
   </main>
 
   <script is:inline>
-    // GitHub Pages SPA / 404 fallback script to fix missing trailing slash or direct path issues
+    // GitHub Pages 404 handler for subpath repositories
     (function() {
       const path = window.location.pathname;
       const base = '/inventario/';
+
+      // Case 1: Browser attempted https://alecid08.github.io/movimientos (GitHub Pages dropped /inventario/)
+      if (!path.startsWith(base)) {
+        const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+        const targetPath = base + cleanPath + (cleanPath.endsWith('/') ? '' : '/') + window.location.search + window.location.hash;
+        window.location.replace(targetPath);
+        return;
+      }
+
+      // Case 2: Missing trailing slash (e.g. /inventario/movimientos -> /inventario/movimientos/)
       if (path.startsWith(base) && !path.endsWith('/')) {
         window.location.replace(path + '/' + window.location.search + window.location.hash);
-      } else if (!path.startsWith(base)) {
-        window.location.replace(base);
+        return;
       }
+
+      // Fallback: Default to base home
+      window.location.replace(base);
     })();
   </script>
 </Layout>
