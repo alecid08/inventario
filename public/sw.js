@@ -1,14 +1,14 @@
-const CACHE_NAME = 'stock-movil-v1';
+const CACHE_NAME = 'stock-movil-v2';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/manifest.webmanifest',
-  '/favicon.svg',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/movimientos',
-  '/alertas',
-  '/reportes',
-  '/login'
+  '/inventario/',
+  '/inventario/manifest.webmanifest',
+  '/inventario/favicon.svg',
+  '/inventario/icons/icon-192.png',
+  '/inventario/icons/icon-512.png',
+  '/inventario/movimientos',
+  '/inventario/alertas',
+  '/inventario/reportes',
+  '/inventario/login'
 ];
 
 self.addEventListener('install', (event) => {
@@ -39,12 +39,11 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
-        // Return cached response and fetch updated version in background
         fetch(event.request).then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {
             caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse));
           }
-        }).catch(() => {/* ignore network errors offline */});
+        }).catch(() => {});
         return cachedResponse;
       }
 
@@ -56,9 +55,8 @@ self.addEventListener('fetch', (event) => {
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
         return networkResponse;
       }).catch(() => {
-        // Fallback for navigation requests when offline
         if (event.request.mode === 'navigate') {
-          return caches.match('/');
+          return caches.match('/inventario/');
         }
       });
     })
