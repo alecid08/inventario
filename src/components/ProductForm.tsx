@@ -23,7 +23,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onClose 
   const [minStock, setMinStock] = useState<number | ''>(5);
   const [price, setPrice] = useState<number | ''>(150);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!name.trim()) return;
 

@@ -24,7 +24,7 @@ import Layout from '../layouts/Layout.astro';
         </div>
       </div>
       <div class="flex items-center gap-space-xs">
-        <a href={`${import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/'}login`} class="h-10 px-2.5 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-xl font-label-sm text-label-sm flex items-center gap-1.5 shadow-sm transition-all border border-surface-container-highest cursor-pointer" id="headerOperatorLink" title="Cambiar operador o turno">
+        <a href={`${import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/'}login/`} class="h-10 px-2.5 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-xl font-label-sm text-label-sm flex items-center gap-1.5 shadow-sm transition-all border border-surface-container-highest cursor-pointer" id="headerOperatorLink" title="Cambiar operador o turno">
           <span class="w-6 h-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-[11px]" id="headerOperatorInitial">A</span>
           <span class="hidden sm:inline font-semibold text-xs max-w-[120px] truncate" id="headerOperatorName">Alejandro (Admin)</span>
           <span class="material-symbols-outlined text-[16px] text-secondary">swap_horiz</span>
@@ -411,7 +411,7 @@ import Layout from '../layouts/Layout.astro';
                 <span class="material-symbols-outlined text-[16px]">tune</span>
                 <span>Ajustar</span>
               </button>
-              <a href="${baseEditUrl}editar?sku=${encodeURIComponent(item.sku)}" class="px-2.5 py-1.5 rounded-xl bg-surface-container text-secondary hover:text-on-surface hover:bg-surface-container-high font-label-sm text-label-sm font-semibold flex items-center gap-1 active:scale-95 transition-colors border border-surface-container-highest" title="Editar detalles de accesorio">
+              <a href="${baseEditUrl}editar/?sku=${encodeURIComponent(item.sku)}" class="px-2.5 py-1.5 rounded-xl bg-surface-container text-secondary hover:text-on-surface hover:bg-surface-container-high font-label-sm text-label-sm font-semibold flex items-center gap-1 active:scale-95 transition-colors border border-surface-container-highest" title="Editar detalles de accesorio">
                 <span class="material-symbols-outlined text-[16px]">edit</span>
                 <span>Editar</span>
               </a>
