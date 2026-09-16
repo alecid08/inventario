@@ -11,10 +11,11 @@ import Layout from '../layouts/Layout.astro';
           <a href={`${import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/'}`} aria-label="Volver atrás" class="flex items-center justify-center w-10 h-10 rounded-full bg-surface-container-low text-on-surface hover:bg-surface-container transition-colors shadow-sm">
             <span class="material-symbols-outlined text-[20px]">arrow_back</span>
           </a>
-          <div class="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-surface-container text-on-surface text-label-sm font-label-sm font-semibold border border-surface-container-highest">
+          <a href={`${import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/'}login/`} class="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface text-label-sm font-label-sm font-semibold border border-surface-container-highest cursor-pointer active:scale-95 transition-all shadow-xs" id="headerOperatorLink" title="Cambiar operador o turno">
             <span class="material-symbols-outlined text-[16px] text-primary">person</span>
             <span id="activeOperatorBadge">Alejandro (Admin)</span>
-          </div>
+            <span class="material-symbols-outlined text-[14px] text-secondary">swap_horiz</span>
+          </a>
         </div>
         <div class="pt-1">
           <h1 class="font-headline-lg text-headline-lg text-on-surface font-bold">Movimientos de Inventario</h1>
@@ -203,9 +204,13 @@ import Layout from '../layouts/Layout.astro';
     const toastIcon = document.getElementById('toastIcon');
     const operatorBadge = document.getElementById('activeOperatorBadge');
 
-    if (operatorBadge) {
-      operatorBadge.textContent = getCurrentOperator();
+    function updateActiveOperator() {
+      if (operatorBadge) {
+        operatorBadge.textContent = getCurrentOperator();
+      }
     }
+    updateActiveOperator();
+    window.addEventListener('operator-changed', updateActiveOperator);
 
     function showToast(msg: string, isError = false) {
       if (!toast || !toastText) return;
@@ -454,8 +459,9 @@ import Layout from '../layouts/Layout.astro';
       todayMovements.forEach(m => {
         const isEntry = m.tipo === 'entrada' || m.tipo === 'reposicion';
         const isReversion = m.tipo === 'reversion';
-        const sign = isEntry ? '+' : (isReversion ? '↺' : '-');
-        const colorClass = isEntry ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : (isReversion ? 'text-purple-700 bg-purple-50 border-purple-200' : 'text-rose-700 bg-rose-50 border-rose-200');
+        const isAjuste = m.tipo === 'ajuste';
+        const sign = isEntry ? '+' : (isReversion ? '↺' : (isAjuste ? '⚙' : '-'));
+        const colorClass = isEntry ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : (isReversion ? 'text-purple-700 bg-purple-50 border-purple-200' : (isAjuste ? 'text-blue-700 bg-blue-50 border-blue-200' : 'text-rose-700 bg-rose-50 border-rose-200'));
 
         const timeStr = new Date(m.fechaHora).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
@@ -472,8 +478,8 @@ import Layout from '../layouts/Layout.astro';
             </div>
           </div>
           <div class="flex items-center gap-2 shrink-0">
-            <span class="font-data-tabular font-bold ${isEntry ? 'text-emerald-700' : 'text-rose-700'} text-sm">${sign}${m.cantidad}</span>
-            ${!m.revertido && !isReversion ? `
+            <span class="font-data-tabular font-bold ${isEntry ? 'text-emerald-700' : (isAjuste ? 'text-blue-700' : 'text-rose-700')} text-sm">${sign}${isAjuste ? m.stockResultante : m.cantidad}</span>
+            ${!m.revertido && !isReversion && !isAjuste ? `
               <button class="btn-revert px-2 py-1 rounded-lg bg-surface-container text-[11px] font-semibold text-secondary hover:text-error hover:bg-error-container transition-colors" data-id="${m.id}" title="Revertir este movimiento">
                 Revertir
               </button>

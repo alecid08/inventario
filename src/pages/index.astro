@@ -166,6 +166,12 @@ import Layout from '../layouts/Layout.astro';
               </div>
             </div>
 
+            <!-- Ubicación física en tienda / Estante / Vitrina -->
+            <div>
+              <label class="block font-label-sm text-label-sm text-on-surface mb-1" for="newProdLocation">Ubicación / Estante / Lugar de exhibición</label>
+              <input class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="newProdLocation" placeholder="Ej. Estante C-2, Vitrina A-1, Mostrador" type="text" value="Estante Principal"/>
+            </div>
+
             <!-- Stock Inicial Estándar -->
             <div class="grid grid-cols-2 gap-space-sm">
               <div>
@@ -266,7 +272,7 @@ import Layout from '../layouts/Layout.astro';
   </main>
 
   <script>
-    import { getStoredInventory, saveInventory, deactivateProduct, createProduct, getCategories, addCategory, getCurrentOperator } from '../utils/inventoryStore.js';
+    import { getStoredInventory, deactivateProduct, createProduct, getCategories, addCategory, getCurrentOperator, recordMovement } from '../utils/inventoryStore.js';
     import type { Product } from '../types/inventory';
 
     const baseEditUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/';
@@ -480,18 +486,24 @@ import Layout from '../layouts/Layout.astro';
     function updateProductStock(sku: string, delta: number) {
       const item = inventory.find(i => i.sku === sku);
       if (!item) return;
-      let newStock = item.stock + delta;
 
-      if (newStock > (item.maxStock || 10)) {
-        showToast(`Rechazado: El stock no puede superar el tope máximo de ${item.maxStock || 10} unidades.`, true);
-        return;
+      const tipo = delta > 0 ? 'entrada' : 'salida';
+      const qty = Math.abs(delta);
+
+      try {
+        recordMovement({
+          sku: item.sku,
+          tipo: tipo,
+          cantidad: qty,
+          nota: delta > 0 ? 'Incremento rápido (+1) desde Inicio' : 'Descuento rápido (-1) desde Inicio',
+          operador: getCurrentOperator()
+        });
+        inventory = getStoredInventory(false);
+        renderInventoryList();
+        showToast(`${item.name}: Stock actualizado a ${item.stock} unid.`);
+      } catch (err: any) {
+        showToast(err.message || 'Error al actualizar stock', true);
       }
-
-      newStock = Math.max(0, newStock);
-      item.stock = newStock;
-      saveInventory(inventory);
-      renderInventoryList();
-      showToast(`${item.name}: Stock actualizado a ${newStock} unid.`);
     }
 
     function closeModal() {
@@ -524,10 +536,25 @@ import Layout from '../layouts/Layout.astro';
       if (!activeCardSku) return;
       const item = inventory.find(i => i.sku === activeCardSku);
       if (item) {
-        item.stock = currentModalStock;
-        saveInventory(inventory);
-        renderInventoryList();
-        showToast(`${item.name}: Conteo confirmado a ${currentModalStock} unid.`);
+        const diff = currentModalStock - item.stock;
+        if (diff !== 0) {
+          try {
+            recordMovement({
+              sku: item.sku,
+              tipo: diff > 0 ? 'entrada' : 'salida',
+              cantidad: Math.abs(diff),
+              nota: `Conteo rápido verificado en piso (${currentModalStock} unid.)`,
+              operador: getCurrentOperator()
+            });
+            inventory = getStoredInventory(false);
+            renderInventoryList();
+            showToast(`${item.name}: Conteo confirmado a ${currentModalStock} unid.`);
+          } catch (err: any) {
+            showToast(err.message || 'Error al guardar conteo', true);
+          }
+        } else {
+          showToast(`${item.name}: Stock confirmado sin variaciones (${currentModalStock} unid.)`);
+        }
       }
       closeModal();
     });
@@ -580,6 +607,7 @@ import Layout from '../layouts/Layout.astro';
       const name = (document.getElementById('newProdName') as HTMLInputElement | null)?.value.trim();
       let sku = (document.getElementById('newProdSku') as HTMLInputElement | null)?.value.trim();
       const category = (document.getElementById('newProdCat') as HTMLSelectElement | null)?.value || 'Otros';
+      const location = (document.getElementById('newProdLocation') as HTMLInputElement | null)?.value.trim() || 'Estante Principal';
       const img = newProdImgInput?.value.trim() || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww';
 
       if (!name) return;
@@ -588,10 +616,12 @@ import Layout from '../layouts/Layout.astro';
         name,
         sku,
         category,
+        location,
         img
       });
 
       closeNewModal();
+      inventory = getStoredInventory(false);
       renderInventoryList();
       showToast(`¡Accesorio ${newItem.sku} creado con stock estándar de 10 unid.!`);
     });

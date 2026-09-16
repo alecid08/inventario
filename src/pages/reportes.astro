@@ -217,6 +217,7 @@ import Layout from '../layouts/Layout.astro';
       movements.forEach(m => {
         const isEntry = m.tipo === 'entrada' || m.tipo === 'reposicion';
         const isReversion = m.tipo === 'reversion';
+        const isAjuste = m.tipo === 'ajuste';
 
         let badgeStyle = 'bg-rose-100 text-rose-800 border-rose-200';
         let badgeLabel = 'Salida (-)';
@@ -230,6 +231,10 @@ import Layout from '../layouts/Layout.astro';
           badgeStyle = 'bg-purple-100 text-purple-800 border-purple-200';
           badgeLabel = 'Reversión (↺)';
           qtyPrefix = '↺';
+        } else if (isAjuste) {
+          badgeStyle = 'bg-blue-100 text-blue-800 border-blue-200';
+          badgeLabel = 'Ajuste / Registro (⚙)';
+          qtyPrefix = '=';
         }
 
         const dateObj = new Date(m.fechaHora);
@@ -262,8 +267,8 @@ import Layout from '../layouts/Layout.astro';
 
           <!-- Cantidad de Unidades -->
           <td class="py-3 px-3 text-center font-bold text-sm bg-surface-container-low/40">
-            <span class="${isEntry ? 'text-emerald-700' : (isReversion ? 'text-purple-700' : 'text-rose-700')}">
-              ${qtyPrefix}${m.cantidad} unid.
+            <span class="${isEntry ? 'text-emerald-700' : (isReversion ? 'text-purple-700' : (isAjuste ? 'text-blue-700' : 'text-rose-700'))}">
+              ${qtyPrefix}${isAjuste ? m.stockResultante : m.cantidad} unid.
             </span>
           </td>
 

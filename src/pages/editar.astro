@@ -93,6 +93,14 @@ import Layout from '../layouts/Layout.astro';
               <span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-secondary">expand_more</span>
             </div>
           </div>
+
+          <div>
+            <label class="block font-label-sm text-label-sm text-on-surface mb-1 font-semibold" for="prod-location">Ubicación / Estante / Lugar de exhibición</label>
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-3.5 text-secondary text-[20px] pointer-events-none">place</span>
+              <input class="w-full h-12 pl-11 pr-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md border border-surface-container focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary shadow-xs transition-all font-semibold" id="prod-location" name="prod-location" placeholder="Ej. Estante C-2, Vitrina A-1, Mostrador" type="text" value=""/>
+            </div>
+          </div>
         </div>
 
         <!-- 3. Stock Actual (Solo Lectura Informativo) -->
@@ -142,7 +150,7 @@ import Layout from '../layouts/Layout.astro';
   </main>
 
   <script>
-    import { getStoredInventory, saveInventory, getCategories } from '../utils/inventoryStore.js';
+    import { getStoredInventory, saveInventory, getCategories, recordMovement, getCurrentOperator } from '../utils/inventoryStore.js';
     import type { Product } from '../types/inventory';
 
     const defaultFallbackImg = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww';
@@ -167,6 +175,7 @@ import Layout from '../layouts/Layout.astro';
 
     const nameInput = document.getElementById('prod-name') as HTMLInputElement | null;
     const catSelect = document.getElementById('prod-cat') as HTMLSelectElement | null;
+    const locationInput = document.getElementById('prod-location') as HTMLInputElement | null;
     const displaySkuText = document.getElementById('displaySkuText');
     const headerSkuBadge = document.getElementById('headerSkuBadge');
     const imgPreview = document.getElementById('editProdImg') as HTMLImageElement | null;
@@ -203,6 +212,7 @@ import Layout from '../layouts/Layout.astro';
     if (product) {
       if (nameInput) nameInput.value = product.name;
       if (catSelect) catSelect.value = product.category;
+      if (locationInput) locationInput.value = product.location || 'Estante Principal';
       if (displaySkuText) displaySkuText.textContent = product.sku;
       if (headerSkuBadge) headerSkuBadge.textContent = product.sku;
 
@@ -291,6 +301,19 @@ import Layout from '../layouts/Layout.astro';
         if (idx !== -1) items[idx] = product;
         saveInventory(items);
 
+        // Registrar auditoría del cambio de estado activo/inactivo
+        try {
+          recordMovement({
+            sku: product.sku,
+            tipo: 'ajuste',
+            cantidad: product.stock,
+            nota: product.activo ? `Reactivación de accesorio en catálogo` : `Desactivación de accesorio del catálogo`,
+            operador: getCurrentOperator()
+          });
+        } catch (err) {
+          console.warn('Error registrando auditoría:', err);
+        }
+
         updateDeactivateBtnState();
         showToastMsg(product.activo ? 'Accesorio reactivado' : 'Accesorio desactivado', 'done');
       }
@@ -307,15 +330,37 @@ import Layout from '../layouts/Layout.astro';
         return;
       }
 
+      const oldLocation = product.location || 'Estante Principal';
+      const newLocation = locationInput?.value.trim() || 'Estante Principal';
+      const locationChanged = oldLocation !== newLocation;
+
       product.name = newName;
       product.category = catSelect?.value || product.category;
       product.img = imgInput?.value.trim() || product.img || defaultFallbackImg;
+      product.location = newLocation;
       product.lastUpdated = new Date().toISOString().split('T')[0];
 
       const items: Product[] = getStoredInventory(true);
       const idx = items.findIndex(i => i.sku === product.sku);
       if (idx !== -1) items[idx] = product;
       saveInventory(items);
+
+      // Registrar movimiento de auditoría por edición o cambio de ubicación
+      try {
+        const auditNote = locationChanged 
+          ? `Cambio de ubicación: ${oldLocation} ➔ ${newLocation}` 
+          : `Edición de accesorio: ${product.name} (${product.location})`;
+
+        recordMovement({
+          sku: product.sku,
+          tipo: 'ajuste',
+          cantidad: product.stock,
+          nota: auditNote,
+          operador: getCurrentOperator()
+        });
+      } catch (err) {
+        console.warn('Error registrando auditoría de edición:', err);
+      }
 
       showToastMsg('Detalles guardados exitosamente', 'done_all');
       setTimeout(() => {

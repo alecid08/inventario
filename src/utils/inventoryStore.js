@@ -4,7 +4,7 @@ import {
   doc, 
   onSnapshot, 
   addDoc, 
-  updateDoc, 
+  setDoc,
   serverTimestamp 
 } from 'firebase/firestore';
 
@@ -90,6 +90,17 @@ export function saveCategories(categories) {
   if (typeof window === 'undefined') return;
   localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
   window.dispatchEvent(new CustomEvent('categories-updated', { detail: categories }));
+
+  // Sincronizar categorías en Firestore
+  try {
+    const catDocRef = doc(db, 'config', 'categories');
+    setDoc(catDocRef, {
+      list: categories,
+      updatedAt: serverTimestamp()
+    }, { merge: true }).catch(err => console.warn('Error guardando categorías en Firestore:', err));
+  } catch (e) {
+    console.warn('No se pudo guardar categorías en Firestore:', e);
+  }
 }
 
 export function addCategory(name) {
@@ -132,6 +143,7 @@ export function initFirestoreSync() {
   isFirestoreListening = true;
 
   try {
+    // Listener de productos
     const productsRef = collection(db, 'products');
     onSnapshot(productsRef, (snapshot) => {
       if (!snapshot.empty) {
@@ -152,6 +164,20 @@ export function initFirestoreSync() {
       }
     }, (err) => {
       console.warn('Advertencia en sincronización en tiempo real de Firestore:', err);
+    });
+
+    // Listener de categorías en tiempo real
+    const catDocRef = doc(db, 'config', 'categories');
+    onSnapshot(catDocRef, (snap) => {
+      if (snap.exists() && Array.isArray(snap.data()?.list)) {
+        const firestoreCats = snap.data().list;
+        const current = getCategories();
+        const merged = Array.from(new Set([...current, ...firestoreCats]));
+        localStorage.setItem(CATEGORIES_KEY, JSON.stringify(merged));
+        window.dispatchEvent(new CustomEvent('categories-updated', { detail: merged }));
+      }
+    }, (err) => {
+      console.warn('Advertencia en sincronización de categorías:', err);
     });
   } catch (e) {
     console.warn('No se pudo inicializar listener de Firestore:', e);
@@ -198,17 +224,20 @@ export function saveInventory(items) {
     if (item.id && !item.id.startsWith('sku-temp-')) {
       try {
         const docRef = doc(db, 'products', item.id);
-        await updateDoc(docRef, {
+        await setDoc(docRef, {
+          sku: item.sku,
           stock: item.stock,
           activo: item.activo !== false,
           name: item.name,
           category: item.category,
           img: item.img || '',
           location: item.location || 'Estante Principal',
+          minStock: item.minStock || 5,
+          maxStock: item.maxStock || 10,
           lastUpdated: item.lastUpdated || new Date().toISOString().split('T')[0]
-        });
+        }, { merge: true });
       } catch (err) {
-        // Ignore or continue
+        console.warn('Error sincronizando producto en Firestore:', err);
       }
     }
   });
@@ -227,13 +256,29 @@ export async function deactivateProduct(sku) {
   });
   saveInventory(updated);
 
-  if (targetItem && targetItem.id) {
+  if (targetItem && targetItem.id && !targetItem.id.startsWith('sku-temp-')) {
     try {
       const docRef = doc(db, 'products', targetItem.id);
-      await updateDoc(docRef, { activo: false });
+      await setDoc(docRef, { 
+        activo: false, 
+        lastUpdated: new Date().toISOString().split('T')[0] 
+      }, { merge: true });
     } catch (err) {
       console.error('Error al desactivar en Firestore:', err);
     }
+  }
+
+  // Registrar auditoría de desactivación
+  try {
+    recordMovement({
+      sku: targetItem?.sku || sku,
+      tipo: 'ajuste',
+      cantidad: targetItem?.stock || 0,
+      nota: `Desactivación de accesorio del catálogo activo`,
+      operador: getCurrentOperator()
+    });
+  } catch (e) {
+    console.warn('No se pudo registrar auditoría de desactivación:', e);
   }
 }
 
@@ -260,6 +305,26 @@ export function createProduct(prodData) {
   localStorage.setItem(STORE_KEY, JSON.stringify(allItems));
   window.dispatchEvent(new CustomEvent('inventory-updated', { detail: allItems }));
 
+  // Registrar movimiento inicial de ingreso para trazabilidad absoluta (+10 unidades)
+  const activeOp = getCurrentOperator();
+  const initMov = {
+    id: 'mov-' + Date.now(),
+    productoId: tempId,
+    sku: newProduct.sku,
+    productName: newProduct.name,
+    tipo: 'entrada',
+    cantidad: 10,
+    stockResultante: 10,
+    fechaHora: new Date().toISOString(),
+    nota: `Alta inicial en catálogo (${newProduct.location})`,
+    operador: activeOp,
+    revertido: false,
+    movimientoReversionId: null
+  };
+  const movements = getStoredMovements();
+  movements.unshift(initMov);
+  saveMovements(movements);
+
   // Save to Firestore asynchronously
   if (typeof window !== 'undefined') {
     addDoc(collection(db, 'products'), {
@@ -276,7 +341,16 @@ export function createProduct(prodData) {
       createdAt: serverTimestamp()
     }).then(docRef => {
       newProduct.id = docRef.id;
+      initMov.productoId = docRef.id;
       localStorage.setItem(STORE_KEY, JSON.stringify(allItems));
+      saveMovements(movements);
+
+      // Registrar también el movimiento inicial en Firestore
+      addDoc(collection(db, 'movements'), {
+        ...initMov,
+        productoId: docRef.id,
+        createdAt: serverTimestamp()
+      }).catch(err => console.warn('Error guardando movimiento inicial en Firestore:', err));
     }).catch(err => {
       console.error('Error guardando nuevo producto en Firestore:', err);
     });
