@@ -2,72 +2,73 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Stock Móvil - Productos por Reponer">
+<Layout title="Tu Cell Express - Alertas de Stock Bajo">
   <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile">
     <div class="flex flex-col w-full pb-24 space-y-4">
-      <!-- Header Notification & Action Bar -->
+      <!-- Header Notification & Context -->
       <header class="flex flex-col space-y-3 pt-2">
         <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <div class="w-9 h-9 rounded-xl bg-error-container text-on-error-container flex items-center justify-center shadow-sm" id="headerAlertIcon">
-              <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">warning</span>
+          <div class="flex items-center space-x-2.5">
+            <div class="w-10 h-10 rounded-2xl bg-error-container text-on-error-container flex items-center justify-center shadow-sm" id="headerAlertIcon">
+              <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">warning</span>
             </div>
             <div>
-              <h1 class="font-headline-md text-headline-md text-on-surface leading-tight">Productos por Reponer</h1>
-              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container mt-0.5" id="headerAlertBadge">
+              <h1 class="font-headline-md text-headline-md text-on-surface leading-tight font-bold">Alertas de Stock</h1>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container mt-0.5 font-bold" id="headerAlertBadge">
                 Cargando alertas...
               </span>
             </div>
           </div>
-          <button class="h-10 px-3.5 rounded-xl bg-primary-container text-on-primary font-label-md text-label-md flex items-center space-x-1.5 shadow-sm active:scale-95 transition-transform cursor-pointer" id="batch-order-btn" type="button">
-            <span class="material-symbols-outlined text-lg">playlist_add_check</span>
-            <span class="hidden sm:inline">Reponer Todo (A 10 max)</span>
-            <span class="sm:hidden">Reponer</span>
-          </button>
+          <!-- Sin botón masivo 'Reponer Todo', se repone producto a producto -->
+          <div class="flex items-center gap-1 text-secondary text-xs bg-surface-container-low px-3 py-1.5 rounded-full">
+            <span class="material-symbols-outlined text-[16px]">touch_app</span>
+            <span>Reposición Individual</span>
+          </div>
         </div>
-        <!-- Context Banner -->
-        <div class="bg-surface-container-low p-3.5 rounded-xl shadow-sm flex items-start space-x-3">
-          <span class="material-symbols-outlined text-primary-container mt-0.5 text-xl">info</span>
+
+        <!-- Banner de Contexto y Regla de Negocio -->
+        <div class="bg-surface-container-low p-3.5 rounded-2xl shadow-sm flex items-start space-x-3 border border-surface-container">
+          <span class="material-symbols-outlined text-primary mt-0.5 text-xl">info</span>
           <div class="flex-1">
             <p class="text-body-sm font-body-sm text-on-surface-variant leading-snug">
-              Stock crítico (<span class="font-semibold text-error">menor a 5 unidades</span>). La reposición nivela cada referencia hasta completar la capacidad máxima de <span class="font-semibold text-on-surface">10 unidades</span> por vitrina.
+              Se consideran en alerta las referencias con <strong class="text-error font-semibold">menos de 5 unidades</strong>. Puedes reponer cada producto de forma individual hasta completar su tope de 10 unidades.
             </p>
           </div>
         </div>
       </header>
 
-      <!-- Container for Alert Cards -->
+      <!-- Lista de Tarjetas de Alerta Individuales -->
       <div class="flex flex-col space-y-3" id="alertsListContainer">
-        <!-- Rendered dynamically -->
+        <!-- Renderizado dinámicamente -->
       </div>
 
-      <!-- Empty State when All Alerts are Resolved -->
+      <!-- Estado Vacío cuando no hay alertas pendientes -->
       <div class="hidden flex-col items-center justify-center p-8 bg-surface-container-lowest rounded-2xl shadow-sm text-center border border-surface-container" id="emptyAlertsState">
-        <div class="w-16 h-16 rounded-full bg-tertiary-fixed/40 text-tertiary flex items-center justify-center mb-3">
+        <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mb-3">
           <span class="material-symbols-outlined text-3xl">check_circle</span>
         </div>
-        <h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">¡Estantes Completos!</h3>
+        <h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 font-bold">¡Inventario Nivelado!</h3>
         <p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs">
-          Todos los accesorios cuentan con stock suficiente en sus vitrinas. No hay alertas pendientes.
+          Todos los accesorios cuentan con stock suficiente en piso. No hay alertas pendientes por reponer.
         </p>
-        <a href={`${import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/'}`} class="mt-4 px-4 py-2 bg-primary text-on-primary rounded-xl font-label-sm text-label-sm shadow-sm flex items-center gap-1.5">
+        <a href={`${import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/'}`} class="mt-4 px-5 py-2.5 bg-primary text-on-primary rounded-xl font-label-md text-label-md shadow-sm flex items-center gap-2 font-semibold">
           <span class="material-symbols-outlined text-base">inventory_2</span>
           <span>Volver al Inventario</span>
         </a>
       </div>
 
-      <!-- Summary Pill -->
-      <aside class="bg-surface-container-highest rounded-xl p-3.5 flex items-center justify-between shadow-sm" id="alertsSummaryAside">
-        <div class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center">
-            <span class="material-symbols-outlined text-base">inventory</span>
+      <!-- Resumen General -->
+      <aside class="bg-surface-container-lowest rounded-2xl p-4 flex items-center justify-between shadow-sm border border-surface-container" id="alertsSummaryAside">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-primary-container text-on-primary flex items-center justify-center">
+            <span class="material-symbols-outlined text-lg">inventory</span>
           </div>
           <div>
-            <p class="text-label-sm font-label-sm text-on-surface font-semibold">Total faltante para nivelar estantes</p>
-            <p class="text-body-sm font-body-sm text-secondary" id="totalUnitsSubtitle">Unidades requeridas para completar stock</p>
+            <p class="text-label-sm font-label-sm text-on-surface font-bold">Total faltante para completar estantes</p>
+            <p class="text-body-sm text-body-sm text-secondary" id="totalUnitsSubtitle">Unidades requeridas para stock al 100%</p>
           </div>
         </div>
-        <span class="text-data-tabular font-data-tabular text-primary font-bold text-base px-2.5 py-1 rounded-md bg-surface-container-lowest" id="totalUnitsNeededPill">
+        <span class="text-data-tabular font-data-tabular text-primary font-bold text-base px-3 py-1 rounded-xl bg-surface-container-low" id="totalUnitsNeededPill">
           +0 unid.
         </span>
       </aside>
@@ -75,13 +76,13 @@ import Layout from '../layouts/Layout.astro';
       <!-- Feedback Toast -->
       <div class="fixed bottom-20 left-4 right-4 bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 transition-opacity duration-300 opacity-0 pointer-events-none z-50" id="toast">
         <span class="material-symbols-outlined text-tertiary-fixed text-xl" id="toastIcon">check_circle</span>
-        <span class="text-body-sm font-body-sm font-medium flex-1" id="toast-text">Alerta resuelta exitosamente.</span>
+        <span class="text-body-sm font-body-sm font-medium flex-1" id="toast-text">Producto repuesto exitosamente.</span>
       </div>
     </div>
   </main>
 
   <script>
-    import { getStoredInventory, saveInventory } from '../utils/inventoryStore.js';
+    import { getStoredInventory, recordMovement } from '../utils/inventoryStore.js';
     import type { Product } from '../types/inventory';
 
     const toast = document.getElementById('toast');
@@ -98,32 +99,33 @@ import Layout from '../layouts/Layout.astro';
       }, 2800);
     }
 
-    let alertAddQtys: Record<string, number> = {};
+    const alertAddQtys: Record<string, number> = {};
 
     function renderAlerts() {
-      const items: Product[] = getStoredInventory(false);
-      const alertItems = items.filter(i => i.stock < (i.minStock || 5));
       const container = document.getElementById('alertsListContainer');
       const emptyState = document.getElementById('emptyAlertsState');
       const headerBadge = document.getElementById('headerAlertBadge');
       const headerIcon = document.getElementById('headerAlertIcon');
       const totalUnitsPill = document.getElementById('totalUnitsNeededPill');
       const totalUnitsSubtitle = document.getElementById('totalUnitsSubtitle');
+      const summaryAside = document.getElementById('alertsSummaryAside');
 
       if (!container) return;
 
+      const items: Product[] = getStoredInventory(false);
+      const alertItems = items.filter(i => (parseInt(i.stock as any, 10) || 0) < (parseInt(i.minStock as any, 10) || 5));
+
       if (alertItems.length === 0) {
+        container.innerHTML = '';
         container.classList.add('hidden');
-        if (emptyState) {
-          emptyState.classList.remove('hidden');
-          emptyState.classList.add('flex');
-        }
+        if (emptyState) emptyState.classList.remove('hidden');
+        if (summaryAside) summaryAside.classList.add('hidden');
         if (headerBadge) {
           headerBadge.textContent = '0 artículos en nivel crítico';
-          headerBadge.className = 'inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-tertiary-fixed text-on-tertiary-fixed mt-0.5 font-bold';
+          headerBadge.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-emerald-100 text-emerald-800 mt-0.5 font-bold';
         }
         if (headerIcon) {
-          headerIcon.className = 'w-9 h-9 rounded-xl bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center shadow-sm';
+          headerIcon.className = 'w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center shadow-sm';
         }
         if (totalUnitsPill) totalUnitsPill.textContent = '0 unid.';
         if (totalUnitsSubtitle) totalUnitsSubtitle.textContent = 'Stock al 100% en todos los estantes';
@@ -132,9 +134,11 @@ import Layout from '../layouts/Layout.astro';
 
       container.classList.remove('hidden');
       if (emptyState) emptyState.classList.add('hidden');
+      if (summaryAside) summaryAside.classList.remove('hidden');
+
       if (headerBadge) {
         headerBadge.textContent = `${alertItems.length} artículo${alertItems.length > 1 ? 's' : ''} en nivel crítico`;
-        headerBadge.className = 'inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container mt-0.5 font-bold';
+        headerBadge.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container mt-0.5 font-bold';
       }
 
       let grandTotalNeeded = 0;
@@ -149,59 +153,58 @@ import Layout from '../layouts/Layout.astro';
         const currentAddQty = alertAddQtys[item.sku];
         grandTotalNeeded += currentAddQty;
 
+        const defaultFallbackImg = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww';
+
         const article = document.createElement('article');
-        article.className = 'bg-surface-container-lowest rounded-xl p-3.5 shadow-sm flex flex-col space-y-3 transition-all duration-300 transform';
+        article.className = 'bg-surface-container-lowest rounded-2xl p-4 shadow-sm border border-surface-container flex flex-col space-y-3 transition-all duration-300';
         article.id = `alert-card-${item.sku}`;
 
         article.innerHTML = `
+          <!-- Cabecera del Producto -->
           <div class="flex items-start justify-between gap-3">
             <div class="flex space-x-3 min-w-0">
-              <div class="w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-surface-container-high relative flex items-center justify-center shadow-inner">
-                <img alt="${item.name}" title="${item.name}" class="w-full h-full object-cover" src="${item.img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuCoO16TT-tR-wlBrTApCGHxTpxWYKIILFh-fa-B9ONyuxDC7S0ZXI1xdRds3NS2MAjynS8X2uxtjbBTZFQOx3cu80HN_IChP6er-zID8eNdtHMdl2IaINz3QBd6WqP7XAeWK_-CkFA6KuSLUQ3uYW8aLVdzLA0HU-wJ4SV3_opoxIxnm0ropW05_gKwnufdKjkZCa6ege8rRfS1fIRvvjUVG7PXm7gqADoptCJ87melL-SZW9KfqE8rfw'}"/>
-                <div class="absolute top-1 left-1 w-2.5 h-2.5 rounded-full bg-error ring-2 ring-surface-container-lowest"></div>
+              <div class="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-surface-container-high relative flex items-center justify-center shadow-inner border border-surface-container">
+                <img alt="${item.name}" class="w-full h-full object-cover" src="${item.img || defaultFallbackImg}" onerror="this.src='${defaultFallbackImg}'"/>
+                <div class="absolute top-1 left-1 w-3 h-3 rounded-full bg-error ring-2 ring-surface-container-lowest"></div>
               </div>
               <div class="flex flex-col min-w-0">
-                <span class="font-sku-code text-sku-code text-secondary uppercase tracking-wider">${item.sku} · ${item.category}</span>
-                <h2 class="font-headline-sm text-headline-sm text-on-surface truncate font-semibold">${item.name}</h2>
-                <div class="flex items-center gap-1.5 mt-1">
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container">
-                    ${item.stock} / ${maxStock} unid.
+                <span class="font-sku-code text-sku-code text-secondary uppercase tracking-wider text-[11px] font-semibold">${item.sku} · ${item.category}</span>
+                <h2 class="font-label-lg text-label-lg text-on-surface truncate font-bold">${item.name}</h2>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container font-bold">
+                    Stock: ${item.stock} / ${maxStock}
                   </span>
-                  <span class="text-body-sm font-body-sm text-error font-medium">Urgencia de rellenado</span>
+                  <span class="text-body-sm font-body-sm text-error font-semibold">Faltan +${neededToFull} unid.</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="bg-surface-container-low rounded-lg p-2.5 flex flex-col space-y-1.5">
-            <div class="flex justify-between items-center text-label-sm font-label-sm">
-              <span class="text-on-surface-variant font-medium">Ubicación: ${item.location || 'Estante Principal'}</span>
-              <span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-bold">
-                Faltan +${neededToFull} para tope ${maxStock}
-              </span>
-            </div>
+          <!-- Barra de Progreso de Nivelación -->
+          <div class="bg-surface-container-low rounded-xl p-3 flex flex-col space-y-1.5 border border-surface-container/60">
             <div class="w-full h-2.5 bg-surface-container-highest rounded-full overflow-hidden flex">
-              <div class="h-full bg-error rounded-full transition-all duration-500" style="width: ${item.stock * 10}%"></div>
+              <div class="h-full bg-error rounded-full transition-all duration-500" style="width: ${Math.min(100, item.stock * 10)}%"></div>
             </div>
-            <div class="flex justify-between text-body-sm font-body-sm text-secondary pt-0.5">
-              <span>Actual: <strong>${item.stock} unid.</strong></span>
-              <span>Meta base: ${maxStock} unid.</span>
+            <div class="flex justify-between text-[12px] text-secondary pt-0.5">
+              <span>Actual: <strong class="text-on-surface">${item.stock} unid.</strong></span>
+              <span>Capacidad: <strong class="text-on-surface">${maxStock} unid.</strong></span>
             </div>
           </div>
 
-          <div class="flex items-center justify-between gap-2 pt-1">
-            <div class="flex items-center space-x-1">
-              <button aria-label="Restar" class="btn-dec-sku w-9 h-9 rounded-lg bg-surface-container text-on-surface flex items-center justify-center active:scale-95 transition-transform cursor-pointer" data-sku="${item.sku}" type="button">
+          <!-- Controles de Reposición Producto a Producto -->
+          <div class="flex items-center justify-between gap-3 pt-1">
+            <div class="flex items-center space-x-1 bg-surface-container-low p-1 rounded-xl border border-surface-container">
+              <button aria-label="Restar" class="btn-dec-sku w-9 h-9 rounded-lg bg-surface-container-lowest text-on-surface flex items-center justify-center active:scale-95 transition-transform cursor-pointer shadow-xs" data-sku="${item.sku}" type="button">
                 <span class="material-symbols-outlined text-base">remove</span>
               </button>
-              <span class="w-9 text-center font-data-tabular text-data-tabular text-on-surface font-bold" id="qty-${item.sku}">${currentAddQty}</span>
-              <button aria-label="Aumentar" class="btn-inc-sku w-9 h-9 rounded-lg bg-surface-container text-on-surface flex items-center justify-center active:scale-95 transition-transform cursor-pointer" data-sku="${item.sku}" type="button">
+              <span class="w-10 text-center font-data-tabular text-data-tabular text-on-surface font-bold text-sm" id="qty-${item.sku}">${currentAddQty}</span>
+              <button aria-label="Aumentar" class="btn-inc-sku w-9 h-9 rounded-lg bg-surface-container-lowest text-on-surface flex items-center justify-center active:scale-95 transition-transform cursor-pointer shadow-xs" data-sku="${item.sku}" type="button">
                 <span class="material-symbols-outlined text-base">add</span>
               </button>
             </div>
-            <button class="btn-reorder flex-1 h-10 px-4 rounded-xl bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center space-x-1.5 active:scale-95 transition-all shadow-sm cursor-pointer" data-name="${item.name}" data-sku="${item.sku}" type="button">
+            <button class="btn-reorder flex-1 h-11 px-4 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-bold flex items-center justify-center space-x-2 active:scale-95 transition-all shadow-md shadow-primary/20 cursor-pointer hover:opacity-95" data-name="${item.name}" data-sku="${item.sku}" type="button">
               <span class="material-symbols-outlined text-lg">add_box</span>
-              <span class="reorder-label" id="label-${item.sku}">+ Reponer ${currentAddQty} unid.</span>
+              <span class="reorder-label" id="label-${item.sku}">Reponer +${currentAddQty} unid.</span>
             </button>
           </div>
         `;
@@ -209,7 +212,7 @@ import Layout from '../layouts/Layout.astro';
       });
 
       if (totalUnitsPill) totalUnitsPill.textContent = `+${grandTotalNeeded} unid.`;
-      if (totalUnitsSubtitle) totalUnitsSubtitle.textContent = `${grandTotalNeeded} unidades requeridas para nivelar stock`;
+      if (totalUnitsSubtitle) totalUnitsSubtitle.textContent = `${grandTotalNeeded} unidades requeridas para stock al 100%`;
 
       attachAlertEventListeners();
     }
@@ -219,12 +222,14 @@ import Layout from '../layouts/Layout.astro';
         btn.addEventListener('click', () => {
           const sku = btn.getAttribute('data-sku');
           if (!sku) return;
-          alertAddQtys[sku] = Math.max(1, (alertAddQtys[sku] || 1) - 1);
-          const qtyElem = document.getElementById('qty-' + sku);
-          const labelElem = document.getElementById('label-' + sku);
-          if (qtyElem) qtyElem.textContent = alertAddQtys[sku].toString();
-          if (labelElem) labelElem.textContent = `+ Reponer ${alertAddQtys[sku]} unid.`;
-          recalculateTotalNeeded();
+          if ((alertAddQtys[sku] || 1) > 1) {
+            alertAddQtys[sku]--;
+            const labelEl = document.getElementById(`qty-${sku}`);
+            const btnLabelEl = document.getElementById(`label-${sku}`);
+            if (labelEl) labelEl.textContent = alertAddQtys[sku].toString();
+            if (btnLabelEl) btnLabelEl.textContent = `Reponer +${alertAddQtys[sku]} unid.`;
+            updateGrandTotal();
+          }
         });
       });
 
@@ -232,73 +237,82 @@ import Layout from '../layouts/Layout.astro';
         btn.addEventListener('click', () => {
           const sku = btn.getAttribute('data-sku');
           if (!sku) return;
-          alertAddQtys[sku] = (alertAddQtys[sku] || 1) + 1;
-          const qtyElem = document.getElementById('qty-' + sku);
-          const labelElem = document.getElementById('label-' + sku);
-          if (qtyElem) qtyElem.textContent = alertAddQtys[sku].toString();
-          if (labelElem) labelElem.textContent = `+ Reponer ${alertAddQtys[sku]} unid.`;
-          recalculateTotalNeeded();
+          const items: Product[] = getStoredInventory(false);
+          const item = items.find(i => i.sku === sku);
+          const maxAllowed = item ? (item.maxStock || 10) - item.stock : 10;
+          if ((alertAddQtys[sku] || 1) < maxAllowed) {
+            alertAddQtys[sku]++;
+            const labelEl = document.getElementById(`qty-${sku}`);
+            const btnLabelEl = document.getElementById(`label-${sku}`);
+            if (labelEl) labelEl.textContent = alertAddQtys[sku].toString();
+            if (btnLabelEl) btnLabelEl.textContent = `Reponer +${alertAddQtys[sku]} unid.`;
+            updateGrandTotal();
+          } else {
+            showToast(`Tope máximo alcanzado para ${item?.name || sku} (${item?.maxStock || 10} unid.)`, true);
+          }
         });
       });
 
+      // Reponer individualmente producto a producto
       document.querySelectorAll('.btn-reorder').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const sku = btn.getAttribute('data-sku');
-          const name = btn.getAttribute('data-name');
-          if (!sku || !name) return;
+        btn.addEventListener('click', (e) => {
+          const sku = (e.currentTarget as HTMLElement).getAttribute('data-sku');
+          const name = (e.currentTarget as HTMLElement).getAttribute('data-name');
+          if (!sku) return;
+
           const addQty = alertAddQtys[sku] || 1;
-          repopulateItem(sku, name, addQty);
+          const items: Product[] = getStoredInventory(true);
+          const item = items.find(i => i.sku === sku);
+
+          if (!item) return;
+
+          if (item.stock + addQty > (item.maxStock || 10)) {
+            showToast(`Rechazado: Superaría el tope de ${item.maxStock || 10} unid.`, true);
+            return;
+          }
+
+          // Registrar movimiento en el store y Firestore
+          recordMovement({
+            sku: item.sku,
+            tipo: 'reposicion',
+            cantidad: addQty,
+            nota: `Reposición individual desde Alertas (+${addQty} unid.)`,
+            operador: 'Alejandro (Admin)'
+          });
+
+          showToast(`¡${name}: Se repusieron +${addQty} unidades exitosamente!`);
+
+          const card = document.getElementById(`alert-card-${sku}`);
+          if (card) {
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+              renderAlerts();
+            }, 300);
+          } else {
+            renderAlerts();
+          }
         });
       });
     }
 
-    function recalculateTotalNeeded() {
+    function updateGrandTotal() {
+      const items: Product[] = getStoredInventory(false);
+      const alertItems = items.filter(i => (parseInt(i.stock as any, 10) || 0) < (parseInt(i.minStock as any, 10) || 5));
       let sum = 0;
-      Object.values(alertAddQtys).forEach(v => sum += v);
-      const totalUnitsPill = document.getElementById('totalUnitsNeededPill');
-      if (totalUnitsPill) totalUnitsPill.textContent = `+${sum} unid.`;
-    }
-
-    function repopulateItem(sku: string, name: string, addQty: number) {
-      const items: Product[] = getStoredInventory(true);
-      const item = items.find(i => i.sku === sku);
-      if (!item) return;
-
-      const maxLimit = item.maxStock || 10;
-      const targetStock = item.stock + addQty;
-      if (targetStock > maxLimit) {
-        showToast(`Operación rechazada: Reponer +${addQty} dejaría el stock en ${targetStock}, superando el tope de ${maxLimit}.`, true);
-        return;
-      }
-
-      item.stock = targetStock;
-      saveInventory(items);
-
-      renderAlerts();
-      showToast(`+${addQty} unid. añadidos a ${name}. ¡Stock actualizado!`);
-    }
-
-    document.getElementById('batch-order-btn')?.addEventListener('click', () => {
-      const items: Product[] = getStoredInventory(true);
-      let count = 0;
-      items.forEach(item => {
-        if (item.stock < (item.minStock || 5)) {
-          item.stock = item.maxStock || 10;
-          count++;
-        }
+      alertItems.forEach(i => {
+        sum += alertAddQtys[i.sku] || 1;
       });
+      const totalUnitsPill = document.getElementById('totalUnitsNeededPill');
+      const totalUnitsSubtitle = document.getElementById('totalUnitsSubtitle');
+      if (totalUnitsPill) totalUnitsPill.textContent = `+${sum} unid.`;
+      if (totalUnitsSubtitle) totalUnitsSubtitle.textContent = `${sum} unidades requeridas para stock al 100%`;
+    }
 
-      if (count === 0) {
-        showToast('No hay alertas activas para reponer.');
-        return;
-      }
-
-      saveInventory(items);
-      renderAlerts();
-      showToast(`¡${count} alertas han sido niveladas al tope de 10 unidades!`);
-    });
-
-    window.addEventListener('inventory-updated', renderAlerts);
     renderAlerts();
+
+    window.addEventListener('inventory-updated', () => {
+      renderAlerts();
+    });
   </script>
 </Layout>

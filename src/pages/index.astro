@@ -2,18 +2,24 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Stock Móvil - Inventario de Piso">
-  <header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-sm">
+<Layout title="Tu Cell Express - Gestión de Inventario">
+  <!-- Cabecera Oficial Tu Cell Express -->
+  <header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-sm border-b border-surface-container">
     <div class="h-16 px-gutter-mobile flex items-center justify-between">
       <div class="flex items-center gap-space-sm min-w-0">
-        <div class="w-10 h-10 rounded-full overflow-hidden bg-primary-container text-on-primary flex items-center justify-center flex-shrink-0 shadow-sm font-bold text-lg">
-          TC
+        <!-- Logo Oficial Tu Cell Express -->
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-700 via-primary to-blue-500 text-white flex items-center justify-center flex-shrink-0 shadow-md shadow-primary/20 p-2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
+            <rect width="14" height="20" x="5" y="2" rx="3" ry="3"/>
+            <path d="M12 18h.01"/>
+            <path d="M9 6h6"/>
+          </svg>
         </div>
         <div class="flex flex-col min-w-0">
-          <span class="font-label-md text-label-md text-on-surface truncate leading-tight">Stock Móvil</span>
-          <span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 truncate">
-            <span class="w-1.5 h-1.5 rounded-full bg-tertiary flex-shrink-0"></span>
-            <span class="truncate">Tienda de Accesorios · Piso &amp; Vitrinas</span>
+          <span class="font-headline-sm text-headline-sm text-on-surface truncate leading-tight font-bold tracking-tight">Tu Cell Express</span>
+          <span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1.5 truncate">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0"></span>
+            <span class="truncate font-medium">Gestión de Inventario</span>
           </span>
         </div>
       </div>
@@ -28,14 +34,15 @@ import Layout from '../layouts/Layout.astro';
 
   <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile pt-16 pb-20">
     <div class="flex flex-col w-full pb-24">
-      <!-- Interactive Stock Quick Adjust Modal -->
+
+      <!-- Modal Rápido de Conteo / Ajuste -->
       <div class="hidden fixed inset-0 z-50 flex items-end justify-center bg-on-surface/40 backdrop-blur-sm transition-all duration-200" id="quickAdjustModal">
         <div class="w-full max-w-lg bg-surface-container-lowest rounded-t-2xl p-space-lg shadow-2xl flex flex-col gap-space-md animate-in slide-in-from-bottom duration-200">
           <div class="w-10 h-1.5 bg-outline-variant/60 rounded-full self-center mb-1"></div>
           <div class="flex items-center justify-between">
             <div>
-              <span class="font-label-sm text-label-sm text-primary uppercase tracking-wider">Conteo de Mostrador</span>
-              <h3 class="font-headline-sm text-headline-sm text-on-surface" id="modalProductName">Nombre del Producto</h3>
+              <span class="font-label-sm text-label-sm text-primary uppercase tracking-wider font-semibold">Conteo Rápido</span>
+              <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold" id="modalProductName">Nombre del Producto</h3>
               <p class="font-body-sm text-body-sm text-on-surface-variant" id="modalProductSku">SKU-000</p>
             </div>
             <button class="w-10 h-10 flex items-center justify-center rounded-full text-secondary hover:bg-surface-container-low transition-colors" id="closeModalBtn" type="button">
@@ -47,7 +54,7 @@ import Layout from '../layouts/Layout.astro';
               <span class="material-symbols-outlined text-[28px]">remove</span>
             </button>
             <div class="flex flex-col items-center">
-              <span class="font-display text-display text-on-surface" id="modalStockDisplay">3</span>
+              <span class="font-display text-display text-on-surface font-bold" id="modalStockDisplay">3</span>
               <span class="font-label-sm text-label-sm text-on-surface-variant">de 10 max.</span>
             </div>
             <button class="w-14 h-14 rounded-xl bg-primary text-on-primary shadow-sm flex items-center justify-center active:scale-95 transition-transform" id="modalIncBtn" type="button">
@@ -66,15 +73,47 @@ import Layout from '../layouts/Layout.astro';
         </div>
       </div>
 
-      <!-- Add New Product Modal -->
+      <!-- Modal de Nueva Categoría -->
+      <div class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-on-surface/40 backdrop-blur-sm transition-all duration-200" id="newCategoryModal">
+        <div class="w-full max-w-md bg-surface-container-lowest rounded-t-2xl sm:rounded-2xl p-space-lg shadow-2xl flex flex-col gap-space-md">
+          <div class="flex items-center justify-between border-b border-surface-container pb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-9 h-9 rounded-xl bg-primary-container text-on-primary flex items-center justify-center">
+                <span class="material-symbols-outlined text-[20px]">category</span>
+              </div>
+              <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Nueva Categoría</h3>
+            </div>
+            <button class="w-9 h-9 flex items-center justify-center rounded-full text-secondary hover:bg-surface-container transition-colors" id="closeCatModalBtn" type="button">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <form class="flex flex-col gap-space-sm" id="newCategoryForm">
+            <div>
+              <label class="block font-label-sm text-label-sm text-on-surface mb-1" for="newCategoryName">Nombre de la Categoría <span class="text-error">*</span></label>
+              <input class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="newCategoryName" placeholder="Ej. Smartwatches &amp; Correas" required type="text"/>
+            </div>
+            <div class="flex gap-space-sm pt-2">
+              <button class="flex-1 h-11 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md" id="cancelCatModalBtn" type="button">
+                Cancelar
+              </button>
+              <button class="flex-1 h-11 rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-md flex items-center justify-center gap-1.5" type="submit">
+                <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                <span>Crear Categoría</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal de Añadir Producto (Sin Ubicación de Vitrina, con Imagen) -->
       <div class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-on-surface/40 backdrop-blur-sm transition-all duration-200" id="newProductModal">
-        <div class="w-full max-w-lg bg-surface-container-lowest rounded-t-2xl sm:rounded-2xl p-space-lg shadow-2xl flex flex-col gap-space-md max-h-[90vh] overflow-y-auto">
+        <div class="w-full max-w-lg bg-surface-container-lowest rounded-t-2xl sm:rounded-2xl p-space-lg shadow-2xl flex flex-col gap-space-md max-h-[92vh] overflow-y-auto">
           <div class="flex items-center justify-between border-b border-surface-container pb-3">
             <div class="flex items-center gap-2">
               <div class="w-9 h-9 rounded-xl bg-primary-container text-on-primary flex items-center justify-center">
                 <span class="material-symbols-outlined text-[20px]">add_box</span>
               </div>
-              <h3 class="font-headline-sm text-headline-sm text-on-surface">Añadir Accesorio a Estante</h3>
+              <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Añadir Accesorio al Inventario</h3>
             </div>
             <button class="w-9 h-9 flex items-center justify-center rounded-full text-secondary hover:bg-surface-container transition-colors" id="closeNewModalBtn" type="button">
               <span class="material-symbols-outlined">close</span>
@@ -85,37 +124,60 @@ import Layout from '../layouts/Layout.astro';
               <label class="block font-label-sm text-label-sm text-on-surface mb-1" for="newProdName">Nombre del accesorio <span class="text-error">*</span></label>
               <input class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="newProdName" placeholder="Ej. Funda MagSafe Silicona iPhone 16" required type="text"/>
             </div>
+            
             <div class="grid grid-cols-2 gap-space-sm">
               <div>
                 <label class="block font-label-sm text-label-sm text-on-surface mb-1" for="newProdSku">Código SKU</label>
-                <input class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-sku-code text-sku-code focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="newProdSku" placeholder="SKU-888" type="text"/>
+                <input class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-sku-code text-sku-code focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all uppercase" id="newProdSku" placeholder="Opcional (Ej. FND-IP16)" type="text"/>
               </div>
               <div>
-                <label class="block font-label-sm text-label-sm text-on-surface mb-1" for="newProdCat">Categoría</label>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="block font-label-sm text-label-sm text-on-surface" for="newProdCat">Categoría</label>
+                  <button type="button" class="text-primary text-[11px] font-semibold hover:underline" id="btnOpenCatModalFromProd">+ Crear</button>
+                </div>
                 <select class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:outline-none" id="newProdCat">
-                  <option value="Fundas">Fundas</option>
-                  <option value="Cargas">Cargas &amp; Cables</option>
-                  <option value="Micas">Micas 9D</option>
-                  <option value="Audio">Audio</option>
-                  <option value="Auto">Auto</option>
+                  <!-- Llenado dinámicamente con las categorías -->
                 </select>
               </div>
             </div>
-            <div class="grid grid-cols-2 gap-space-sm">
-              <div>
-                <label class="block font-label-sm text-label-sm text-on-surface mb-1" for="newProdStock">Conteo Físico Inicial</label>
-                <input class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none opacity-80 cursor-not-allowed" id="newProdStock" readonly title="Stock inicial estándar asignado a 10 unidades por defecto" type="number" value="10"/>
+
+            <!-- Campo de Imagen con Previsualización y Presets Rápidos -->
+            <div class="space-y-1.5 pt-1">
+              <label class="block font-label-sm text-label-sm text-on-surface" for="newProdImg">Imagen del Producto (URL o Preajuste)</label>
+              <div class="flex items-center gap-2">
+                <div class="w-14 h-14 rounded-xl bg-surface-container-low border border-surface-container overflow-hidden flex items-center justify-center shrink-0">
+                  <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww" alt="Preview" class="w-full h-full object-cover" id="newProdImgPreview" />
+                </div>
+                <input class="flex-1 h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="newProdImg" placeholder="https://ejemplo.com/imagen.jpg" type="url" value="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww"/>
               </div>
-              <div>
-                <label class="block font-label-sm text-label-sm text-on-surface mb-1" for="newProdLoc">Ubicación / Estante</label>
-                <input class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:outline-none" id="newProdLoc" placeholder="Vitrina A-1" type="text"/>
+              <!-- Presets Rápidos de Accesorios -->
+              <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1">
+                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww">Funda</button>
+                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuDwBW1Tnz4ox8TJimQ2nNWfY6o33DXFVI_9hnHGKzzl3XJhpYMd92sEX1p-M2182e_5P1T9-E8ueXBhioGF4oy264i2UoGbNDW_wFjgwrSNzAJjJhAlRcLwnmRjbP3lOMSy1dM0qSLvxcPA4Wzeciz7TUTmcvBPhWTMLu9gKEJNK5yXbrAMIG8EdaCNX49rw4X2MbQ7za9LNvHHrL-orE8zBLnoZbp1y9YNu2Jb_lniNxeofy9PERKBGA">Cable</button>
+                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuBrfDhd7aPs8GoEZkbA-xzj03A0JGJv23NKGhczYuRs8EJYYf_q4gvPULwdu7W8msYzasXSZ5CRFCaiereQb0MBGmy_2rZyX803yRgihTlaUjdsvBhZ43BV5z9VhWzAtBp5NCT6sMqRZH17UfXJqbpvnnAVKBFI_dqtFRl2c6VUhREY7ilvtDMv5-2DsAZhazqG9qhIVZnFgDAxPizJb5ovXT5omGmRTXTgZYwc5QvkWW6J76B2YiQrvw">Cargador</button>
+                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuDArc9PQMZMX60YZdL2HuhroEsYV6UgzSH87z-kJS4ARnnmSqmNSHgA9qBp7g6F6dHgZFFqTSVgq2gdJp58wHONkBxTxsO8hE0qtwatBHzLpB31H6chYL2O8S5CJSDi-z88o0vFq5sZcG3tsWBWISuppZf-tVqo03v5gno6pOC0TkrrhFGhyhCHAt7jP4NM9ZHobv-4beNobhEKe-UBtNC0__DBtmC90qfTOgVDh-SgPW_fPqxi2Q1q1g">Mica</button>
+                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuBEddAYibZMjqLmVbQYfK77Qtk_GR18aEIxR3iZD-Z2oh2vBwMBHO4f5rmtUUOpsECq0Ki6-5kKq2rrbOwb5qTeegm3mwiaDth6G9WXs1pYgShhoy9AIo62Yi2tPtSAwuB9NT8Xg1cpDcF-6cJyQ2S_WpLWIWQIu2INbGpBjXUA7YtOlsTuVV3M7ipH2vBUeAEuuoP8SCLpb0_EussBUxFkyspxVV1X9GEiyd9dr9O0HJLNk35vxy8HOA">Audio</button>
+                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuCoO16TT-tR-wlBrTApCGHxTpxWYKIILFh-fa-B9ONyuxDC7S0ZXI1xdRds3NS2MAjynS8X2uxtjbBTZFQOx3cu80HN_IChP6er-zID8eNdtHMdl2IaINz3QBd6WqP7XAeWK_-CkFA6KuSLUQ3uYW8aLVdzLA0HU-wJ4SV3_opoxIxnm0ropW05_gKwnufdKjkZCa6ege8rRfS1fIRvvjUVG7PXm7gqADoptCJ87melL-SZW9KfqE8rfw">Soporte</button>
               </div>
             </div>
+
+            <!-- Stock Inicial Estándar -->
+            <div class="grid grid-cols-2 gap-space-sm">
+              <div>
+                <label class="block font-label-sm text-label-sm text-on-surface mb-1" for="newProdStock">Stock Inicial</label>
+                <input class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none opacity-90 font-bold" id="newProdStock" readonly type="number" value="10"/>
+              </div>
+              <div>
+                <label class="block font-label-sm text-label-sm text-on-surface mb-1" for="newProdMinStock">Umbral Alerta Stock</label>
+                <input class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none" id="newProdMinStock" type="number" value="5" min="1" max="10"/>
+              </div>
+            </div>
+
             <div class="flex gap-space-sm pt-3">
               <button class="flex-1 h-12 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md" id="cancelNewModalBtn" type="button">
                 Cancelar
               </button>
-              <button class="flex-1 h-12 rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-md flex items-center justify-center gap-1.5" type="submit">
+              <button class="flex-1 h-12 rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-md flex items-center justify-center gap-1.5 hover:opacity-95" type="submit">
                 <span class="material-symbols-outlined text-[20px]">save</span>
                 <span>Guardar Producto</span>
               </button>
@@ -124,7 +186,7 @@ import Layout from '../layouts/Layout.astro';
         </div>
       </div>
 
-      <!-- Search & Barcode Quick Access Bar -->
+      <!-- Barra de Búsqueda y Filtros -->
       <div class="flex flex-col gap-space-sm mb-space-md">
         <div class="flex items-center gap-space-xs">
           <div class="relative flex-1 flex items-center">
@@ -134,57 +196,44 @@ import Layout from '../layouts/Layout.astro';
               <span class="material-symbols-outlined text-[18px]">cancel</span>
             </button>
           </div>
-          <button class="h-touch-min w-touch-min flex-shrink-0 flex items-center justify-center rounded-xl bg-surface-container-lowest text-secondary shadow-sm active:bg-surface-container transition-colors" id="btnFilterToggle" title="Filtros avanzados" type="button">
-            <span class="material-symbols-outlined text-[22px]">tune</span>
-          </button>
         </div>
-        <!-- Category Filter Chips -->
-        <div class="flex items-center gap-space-2xs overflow-x-auto no-scrollbar py-0.5" id="categoryChips">
-          <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-on-surface text-surface-container-lowest shadow-sm flex items-center gap-1 flex-shrink-0 transition-colors" data-category="all" type="button">
-            <span>Todos</span>
-            <span class="px-1.5 py-0.2 rounded-full bg-surface-container-lowest/20 text-[11px]" id="badgeCountAll">8</span>
-          </button>
-          <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors" data-category="Fundas" type="button">
-            <span>Fundas</span>
-          </button>
-          <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors" data-category="Cargas" type="button">
-            <span>Cargas &amp; Cables</span>
-          </button>
-          <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors" data-category="Micas" type="button">
-            <span>Micas 9D</span>
-          </button>
-          <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors" data-category="Audio" type="button">
-            <span>Audio</span>
-          </button>
-          <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors" data-category="Auto" type="button">
-            <span>Auto</span>
+
+        <!-- Barra de Categorías Dinámica con Botón "+ Nueva" -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+          <div class="flex items-center gap-1.5 shrink-0" id="categoryChips">
+            <!-- Chips renderizados dinámicamente -->
+          </div>
+          <!-- Botón Agregar Nueva Categoría -->
+          <button class="px-3.5 py-1.5 rounded-full font-label-sm text-label-sm bg-primary-container text-on-primary shadow-sm flex items-center gap-1.5 flex-shrink-0 hover:opacity-95 active:scale-95 transition-all font-semibold" id="btnOpenAddCategory" type="button" title="Crear nueva categoría">
+            <span class="material-symbols-outlined text-[16px]">add</span>
+            <span>+ Categoría</span>
           </button>
         </div>
       </div>
 
-      <!-- Operational Metrics & Count Summary -->
+      <!-- Resumen Operativo -->
       <div class="bg-surface-container-low rounded-xl p-space-sm mb-space-md flex items-center justify-between shadow-sm">
         <div class="flex items-center gap-space-xs">
           <div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
             <span class="material-symbols-outlined text-[20px]">layers</span>
           </div>
           <div class="flex flex-col">
-            <span class="font-label-md text-label-md text-on-surface leading-snug">Stock de Piso</span>
-            <span class="font-body-sm text-body-sm text-on-surface-variant" id="productCountSubtitle">Mostrando 8 productos · 3 en estado revisable</span>
+            <span class="font-label-md text-label-md text-on-surface font-semibold leading-snug">Inventario de Piso</span>
+            <span class="font-body-sm text-body-sm text-on-surface-variant" id="productCountSubtitle">Cargando productos...</span>
           </div>
         </div>
         <span class="px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-error-container text-on-error-container font-semibold flex items-center gap-1 shadow-sm" id="topAlertPill">
           <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-          <span id="topAlertText">3 Alertas</span>
+          <span id="topAlertText">0 Alertas</span>
         </span>
       </div>
 
-      <!-- Inventory Items List -->
+      <!-- Lista de Productos en Estilo de Listas Claras -->
       <div class="flex flex-col gap-space-sm" id="inventoryList">
-        <!-- Rendered dynamically -->
+        <!-- Renderizado dinámicamente -->
       </div>
 
-      <!-- Empty Search State -->
+      <!-- Estado Vacío -->
       <div class="hidden flex-col items-center justify-center py-space-2xl text-center" id="emptyInventoryState">
         <div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center text-secondary mb-space-sm">
           <span class="material-symbols-outlined text-[32px]">inventory_2</span>
@@ -196,14 +245,14 @@ import Layout from '../layouts/Layout.astro';
         </button>
       </div>
 
-      <!-- Floating Action Button (FAB) -->
+      <!-- Botón Flotante (FAB) -->
       <div class="fixed right-4 bottom-20 z-40">
-        <button aria-label="Añadir producto a estante" class="w-14 h-14 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-lg active:scale-95 transition-transform hover:shadow-xl focus:outline-none" id="fabBtn" title="Añadir producto a estante" type="button">
+        <button aria-label="Añadir producto" class="w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-lg active:scale-95 transition-transform hover:shadow-xl focus:outline-none" id="fabBtn" title="Añadir producto" type="button">
           <span class="material-symbols-outlined text-[30px]">add</span>
         </button>
       </div>
 
-      <!-- Micro-interaction Toast -->
+      <!-- Toast de Retroalimentación -->
       <div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-on-surface text-surface px-4 py-2.5 rounded-full shadow-lg font-label-sm text-label-sm flex items-center gap-2 opacity-0 pointer-events-none transition-opacity duration-200" id="stockToast">
         <span class="material-symbols-outlined text-tertiary-fixed text-[18px]" id="stockToastIcon">check_circle</span>
         <span id="stockToastText">Stock actualizado correctamente</span>
@@ -212,7 +261,7 @@ import Layout from '../layouts/Layout.astro';
   </main>
 
   <script>
-    import { getStoredInventory, saveInventory, deactivateProduct, createProduct } from '../utils/inventoryStore.js';
+    import { getStoredInventory, saveInventory, deactivateProduct, createProduct, getCategories, addCategory } from '../utils/inventoryStore.js';
     import type { Product } from '../types/inventory';
 
     let inventory: Product[] = getStoredInventory(false);
@@ -233,6 +282,49 @@ import Layout from '../layouts/Layout.astro';
       }, 2600);
     }
 
+    // --- CATEGORÍAS DINÁMICAS ---
+    function renderCategoryChips() {
+      const container = document.getElementById('categoryChips');
+      const selectModal = document.getElementById('newProdCat') as HTMLSelectElement | null;
+      if (!container) return;
+
+      const categories = getCategories();
+
+      // Render chips
+      container.innerHTML = `
+        <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm ${currentCategory === 'all' ? 'bg-on-surface text-surface-container-lowest' : 'bg-surface-container-lowest text-secondary hover:text-on-surface'} shadow-sm flex items-center gap-1.5 flex-shrink-0 transition-colors font-medium" data-category="all" type="button">
+          <span>Todos</span>
+          <span class="px-1.5 py-0.2 rounded-full bg-surface-container/60 text-[11px] font-bold" id="badgeCountAll">${inventory.length}</span>
+        </button>
+      `;
+
+      categories.forEach(cat => {
+        const isSelected = currentCategory === cat;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.setAttribute('data-category', cat);
+        btn.className = `chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm ${isSelected ? 'bg-on-surface text-surface-container-lowest' : 'bg-surface-container-lowest text-secondary hover:text-on-surface'} shadow-sm flex items-center gap-1 flex-shrink-0 transition-colors font-medium`;
+        btn.innerHTML = `<span>${cat}</span>`;
+        container.appendChild(btn);
+      });
+
+      // Update Modal Select Options
+      if (selectModal) {
+        selectModal.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+      }
+
+      // Attach chip click listeners
+      container.querySelectorAll('.chip-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const target = e.currentTarget as HTMLElement;
+          currentCategory = target.getAttribute('data-category') || 'all';
+          renderCategoryChips();
+          applyFilters();
+        });
+      });
+    }
+
+    // --- RENDER LISTA DE PRODUCTOS ---
     function renderInventoryList() {
       inventory = getStoredInventory(false);
       const container = document.getElementById('inventoryList');
@@ -242,52 +334,65 @@ import Layout from '../layouts/Layout.astro';
       inventory.forEach(item => {
         const isLow = item.stock < (item.minStock || 5);
         const card = document.createElement('div');
-        card.className = 'inventory-card bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col gap-space-xs relative overflow-hidden transition-all duration-150 active:scale-[0.99]';
+        card.className = 'inventory-card bg-surface-container-lowest rounded-2xl p-3 sm:p-4 shadow-sm border border-surface-container/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative overflow-hidden transition-all duration-150 hover:shadow-md';
         card.setAttribute('data-id', item.id);
         card.setAttribute('data-sku', item.sku);
         card.setAttribute('data-name', item.name);
         card.setAttribute('data-category', item.category);
         card.setAttribute('data-stock', item.stock.toString());
 
+        const defaultFallbackImg = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww';
+
         card.innerHTML = `
+          <!-- Indicador de estado lateral -->
           <div class="absolute top-0 left-0 bottom-0 w-1.5 ${isLow ? 'bg-error' : 'bg-tertiary'}"></div>
-          <div class="flex items-center gap-space-sm pl-2">
-            <div class="w-14 h-14 rounded-xl bg-surface-container-low overflow-hidden flex-shrink-0 flex items-center justify-center shadow-inner">
-              <img alt="${item.name}" title="${item.name}" class="w-full h-full object-cover" src="${item.img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'}"/>
+          
+          <!-- Información Principal (Imagen + Nombre + Categoría) -->
+          <div class="flex items-center gap-3 pl-2 min-w-0 flex-1">
+            <div class="w-16 h-16 rounded-xl bg-surface-container-low overflow-hidden flex-shrink-0 flex items-center justify-center shadow-inner border border-surface-container">
+              <img alt="${item.name}" title="${item.name}" class="w-full h-full object-cover" src="${item.img || defaultFallbackImg}" onerror="this.src='${defaultFallbackImg}'"/>
             </div>
-            <div class="flex-1 min-w-0 flex flex-col">
+            <div class="flex-1 min-w-0">
               <div class="flex items-start justify-between gap-1">
-                <h4 class="font-label-md text-label-md text-on-surface truncate">${item.name}</h4>
-                <div class="flex items-center gap-1">
-                  <span class="status-badge px-2 py-0.5 rounded-full font-label-sm text-label-sm ${isLow ? 'bg-error-container text-on-error-container' : 'bg-tertiary-fixed text-on-tertiary-fixed'} font-bold flex-shrink-0">
-                    ${isLow ? 'Revisable' : 'OK'}
-                  </span>
-                  <button class="btn-deactivate p-1 rounded-md text-secondary hover:bg-error-container hover:text-error transition-colors" data-sku="${item.sku}" title="Desactivar producto (Soft delete)" type="button">
-                    <span class="material-symbols-outlined text-[18px]">visibility_off</span>
-                  </button>
-                </div>
+                <h4 class="font-label-lg text-label-lg text-on-surface font-bold truncate leading-snug">${item.name}</h4>
+                <button class="btn-deactivate p-1 rounded-lg text-secondary hover:bg-error-container hover:text-error transition-colors" data-sku="${item.sku}" title="Desactivar accesorio" type="button">
+                  <span class="material-symbols-outlined text-[18px]">visibility_off</span>
+                </button>
               </div>
-              <span class="font-body-sm text-body-sm text-on-surface-variant truncate mt-0.5">${item.category} · ${item.sku}</span>
-              <div class="flex items-center justify-between mt-2 gap-2 flex-wrap sm:flex-nowrap">
-                <div class="flex items-center gap-2">
-                  <span class="stock-text font-sku-code text-sku-code ${isLow ? 'text-error font-bold' : 'text-on-surface font-semibold'}">${item.stock} / ${item.maxStock || 10}</span>
-                  <div class="w-16 sm:w-20 h-1.5 bg-surface-container rounded-full overflow-hidden">
-                    <div class="stock-bar h-full ${isLow ? 'bg-error' : 'bg-tertiary'} rounded-full" style="width: ${Math.min(100, item.stock * 10)}%"></div>
-                  </div>
-                </div>
-                <div class="flex items-center gap-1 shrink-0">
-                  <button class="btn-card-dec w-8 h-8 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high flex items-center justify-center active:scale-95 transition-all" data-sku="${item.sku}" title="Descontar 1 unidad" type="button">
-                    <span class="material-symbols-outlined text-[16px]">remove</span>
-                  </button>
-                  <button class="btn-card-inc w-8 h-8 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high flex items-center justify-center active:scale-95 transition-all" data-sku="${item.sku}" title="Sumar 1 unidad" type="button">
-                    <span class="material-symbols-outlined text-[16px]">add</span>
-                  </button>
-                  <button class="btn-adjust px-2.5 py-1 rounded-lg bg-surface-container-low text-primary hover:bg-surface-container font-label-sm text-label-sm flex items-center gap-1 active:bg-primary active:text-on-primary transition-colors" data-sku="${item.sku}" type="button">
-                    <span class="material-symbols-outlined text-[16px]">edit</span>
-                    <span>Ajustar</span>
-                  </button>
-                </div>
+              <div class="flex items-center gap-2 mt-0.5">
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-surface-container text-secondary">${item.category}</span>
+                <span class="font-sku-code text-sku-code text-[11px] text-on-surface-variant">${item.sku}</span>
               </div>
+            </div>
+          </div>
+
+          <!-- Unidades en Stock y Acciones Rápidas -->
+          <div class="flex items-center justify-between sm:justify-end gap-3 pl-2 sm:pl-0 border-t sm:border-t-0 border-surface-container/60 pt-2 sm:pt-0">
+            <div class="flex flex-col items-start sm:items-end">
+              <div class="flex items-center gap-1.5">
+                <span class="font-display text-headline-sm font-bold ${isLow ? 'text-error' : 'text-on-surface'}">${item.stock}</span>
+                <span class="text-[12px] text-on-surface-variant font-medium">/ ${item.maxStock || 10} unid.</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${isLow ? 'bg-error-container text-on-error-container' : 'bg-emerald-100 text-emerald-800'}">
+                  ${isLow ? 'Revisable' : 'OK'}
+                </span>
+              </div>
+              <div class="w-24 h-1.5 bg-surface-container rounded-full overflow-hidden mt-1">
+                <div class="h-full ${isLow ? 'bg-error' : 'bg-tertiary'} rounded-full" style="width: ${Math.min(100, item.stock * 10)}%"></div>
+              </div>
+            </div>
+
+            <!-- Botones de incremento / decremento -->
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button class="btn-card-dec w-9 h-9 rounded-xl bg-surface-container text-on-surface hover:bg-surface-container-high flex items-center justify-center active:scale-95 transition-all shadow-sm" data-sku="${item.sku}" title="Descontar 1 unidad" type="button">
+                <span class="material-symbols-outlined text-[18px]">remove</span>
+              </button>
+              <button class="btn-card-inc w-9 h-9 rounded-xl bg-primary text-on-primary hover:opacity-90 flex items-center justify-center active:scale-95 transition-all shadow-sm" data-sku="${item.sku}" title="Sumar 1 unidad" type="button">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+              </button>
+              <button class="btn-adjust px-3 py-1.5 rounded-xl bg-surface-container-low text-primary hover:bg-surface-container font-label-sm text-label-sm font-semibold flex items-center gap-1 active:bg-primary active:text-on-primary transition-colors border border-primary/20" data-sku="${item.sku}" type="button">
+                <span class="material-symbols-outlined text-[16px]">tune</span>
+                <span>Ajustar</span>
+              </button>
             </div>
           </div>
         `;
@@ -319,12 +424,10 @@ import Layout from '../layouts/Layout.astro';
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           const sku = btn.getAttribute('data-sku');
-          if (!sku) return;
-          const item = inventory.find(i => i.sku === sku);
-          if (item && confirm(`¿Deseas desactivar "${item.name}"? El producto se mantendrá en el sistema con su historial intacto.`)) {
+          if (sku && confirm(`¿Deseas desactivar este accesorio del catálogo activo?`)) {
             deactivateProduct(sku);
             renderInventoryList();
-            showToast(`Producto "${item.name}" desactivado correctamente.`);
+            showToast('Accesorio desactivado.');
           }
         });
       });
@@ -336,7 +439,7 @@ import Layout from '../layouts/Layout.astro';
           const item = inventory.find(i => i.sku === sku);
           if (!item) return;
 
-          activeCardSku = sku;
+          activeCardSku = item.sku;
           currentModalStock = item.stock;
 
           const modalName = document.getElementById('modalProductName');
@@ -344,7 +447,7 @@ import Layout from '../layouts/Layout.astro';
           const modalDisplay = document.getElementById('modalStockDisplay');
 
           if (modalName) modalName.textContent = item.name;
-          if (modalSku) modalSku.textContent = item.sku;
+          if (modalSku) modalSku.textContent = `${item.category} · ${item.sku}`;
           if (modalDisplay) modalDisplay.textContent = currentModalStock.toString();
 
           document.getElementById('quickAdjustModal')?.classList.remove('hidden');
@@ -407,12 +510,15 @@ import Layout from '../layouts/Layout.astro';
       closeModal();
     });
 
+    // --- MODAL NUEVO PRODUCTO ---
     const fabBtn = document.getElementById('fabBtn');
     const btnHeaderAddProd = document.getElementById('btnHeaderAddProd');
     const newProductModal = document.getElementById('newProductModal');
     const closeNewModalBtn = document.getElementById('closeNewModalBtn');
     const cancelNewModalBtn = document.getElementById('cancelNewModalBtn');
     const newProductForm = document.getElementById('newProductForm') as HTMLFormElement | null;
+    const newProdImgInput = document.getElementById('newProdImg') as HTMLInputElement | null;
+    const newProdImgPreview = document.getElementById('newProdImgPreview') as HTMLImageElement | null;
 
     function openNewModal() {
       newProductModal?.classList.remove('hidden');
@@ -429,12 +535,30 @@ import Layout from '../layouts/Layout.astro';
     closeNewModalBtn?.addEventListener('click', closeNewModal);
     cancelNewModalBtn?.addEventListener('click', closeNewModal);
 
+    // Live image preview
+    newProdImgInput?.addEventListener('input', (e) => {
+      if (newProdImgPreview) {
+        newProdImgPreview.src = (e.target as HTMLInputElement).value || '';
+      }
+    });
+
+    // Image presets
+    document.querySelectorAll('.btn-preset-img').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const imgUrl = btn.getAttribute('data-img');
+        if (imgUrl && newProdImgInput && newProdImgPreview) {
+          newProdImgInput.value = imgUrl;
+          newProdImgPreview.src = imgUrl;
+        }
+      });
+    });
+
     newProductForm?.addEventListener('submit', (e) => {
       e.preventDefault();
       const name = (document.getElementById('newProdName') as HTMLInputElement | null)?.value.trim();
       let sku = (document.getElementById('newProdSku') as HTMLInputElement | null)?.value.trim();
-      const category = (document.getElementById('newProdCat') as HTMLSelectElement | null)?.value;
-      const location = (document.getElementById('newProdLoc') as HTMLInputElement | null)?.value.trim() || 'Estante Principal';
+      const category = (document.getElementById('newProdCat') as HTMLSelectElement | null)?.value || 'Otros';
+      const img = newProdImgInput?.value.trim() || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww';
 
       if (!name) return;
 
@@ -442,7 +566,7 @@ import Layout from '../layouts/Layout.astro';
         name,
         sku,
         category,
-        location
+        img
       });
 
       closeNewModal();
@@ -450,6 +574,42 @@ import Layout from '../layouts/Layout.astro';
       showToast(`¡Accesorio ${newItem.sku} creado con stock estándar de 10 unid.!`);
     });
 
+    // --- MODAL NUEVA CATEGORÍA ---
+    const newCategoryModal = document.getElementById('newCategoryModal');
+    const btnOpenAddCategory = document.getElementById('btnOpenAddCategory');
+    const btnOpenCatModalFromProd = document.getElementById('btnOpenCatModalFromProd');
+    const closeCatModalBtn = document.getElementById('closeCatModalBtn');
+    const cancelCatModalBtn = document.getElementById('cancelCatModalBtn');
+    const newCategoryForm = document.getElementById('newCategoryForm') as HTMLFormElement | null;
+    const newCategoryNameInput = document.getElementById('newCategoryName') as HTMLInputElement | null;
+
+    function openCatModal() {
+      newCategoryModal?.classList.remove('hidden');
+      newCategoryNameInput?.focus();
+    }
+
+    function closeCatModal() {
+      newCategoryModal?.classList.add('hidden');
+      newCategoryForm?.reset();
+    }
+
+    btnOpenAddCategory?.addEventListener('click', openCatModal);
+    btnOpenCatModalFromProd?.addEventListener('click', openCatModal);
+    closeCatModalBtn?.addEventListener('click', closeCatModal);
+    cancelCatModalBtn?.addEventListener('click', closeCatModal);
+
+    newCategoryForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const catName = newCategoryNameInput?.value.trim();
+      if (!catName) return;
+
+      addCategory(catName);
+      renderCategoryChips();
+      closeCatModal();
+      showToast(`Categoría "${catName}" agregada exitosamente.`);
+    });
+
+    // --- FILTROS Y BÚSQUEDA ---
     function applyFilters() {
       const searchInput = document.getElementById('inventorySearchInput') as HTMLInputElement | null;
       const query = (searchInput?.value || '').toLowerCase().trim();
@@ -469,10 +629,12 @@ import Layout from '../layouts/Layout.astro';
 
         if (matchesCat && matchesSearch) {
           card.classList.remove('hidden');
+          card.classList.add('flex');
           visibleCount++;
           if (stock < 5) revisableCount++;
         } else {
           card.classList.add('hidden');
+          card.classList.remove('flex');
         }
       });
 
@@ -481,7 +643,7 @@ import Layout from '../layouts/Layout.astro';
         subtitle.textContent = `Mostrando ${visibleCount} productos · ${revisableCount} en estado revisable`;
       }
 
-      const totalAlerts = inventory.filter(i => i.stock < 5).length;
+      const totalAlerts = inventory.filter(i => i.stock < (i.minStock || 5)).length;
       const topAlertText = document.getElementById('topAlertText');
       if (topAlertText) topAlertText.textContent = `${totalAlerts} Alertas`;
 
@@ -499,20 +661,6 @@ import Layout from '../layouts/Layout.astro';
         }
       }
     }
-
-    document.querySelectorAll('#categoryChips .chip-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const target = e.currentTarget as HTMLElement;
-        currentCategory = target.getAttribute('data-category') || 'all';
-
-        document.querySelectorAll('#categoryChips .chip-btn').forEach(b => {
-          b.className = 'chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-surface-container-lowest text-secondary shadow-sm flex items-center gap-1 flex-shrink-0 hover:text-on-surface transition-colors';
-        });
-        target.className = 'chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm bg-on-surface text-surface-container-lowest shadow-sm flex items-center gap-1 flex-shrink-0 transition-colors';
-
-        applyFilters();
-      });
-    });
 
     const searchInput = document.getElementById('inventorySearchInput') as HTMLInputElement | null;
     const clearBtn = document.getElementById('clearSearchBtn');
@@ -538,9 +686,16 @@ import Layout from '../layouts/Layout.astro';
     });
 
     window.addEventListener('inventory-updated', () => {
+      renderCategoryChips();
       renderInventoryList();
     });
 
+    window.addEventListener('categories-updated', () => {
+      renderCategoryChips();
+    });
+
+    // Initial render
+    renderCategoryChips();
     renderInventoryList();
   </script>
 </Layout>

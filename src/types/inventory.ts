@@ -17,11 +17,13 @@ export interface Movement {
   id: string;
   productoId: string;
   sku: string;
+  productName?: string;
   tipo: 'entrada' | 'salida' | 'ajuste' | 'reposicion' | 'reversion';
   cantidad: number;
   stockResultante: number;
   fechaHora: string;
   nota?: string;
+  operador?: string;
   revertido: boolean;
   movimientoReversionId?: string | null;
 }

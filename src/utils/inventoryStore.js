@@ -8,10 +8,11 @@ import {
   serverTimestamp 
 } from 'firebase/firestore';
 
-// Store keys for physical inventory, movements, and configuration
+// Store keys for physical inventory, movements, categories and configuration
 const STORE_KEY = 'stock_movil_inventory_v1';
 const MOVEMENTS_KEY = 'stock_movil_movements_v1';
 const CONFIG_KEY = 'stock_movil_config_v1';
+const CATEGORIES_KEY = 'stock_movil_categories_v1';
 
 export const defaultConfig = {
   dia_semanal_reposicion: 'Lunes',
@@ -19,6 +20,15 @@ export const defaultConfig = {
   umbral_alerta_stock: 5,
   umbral_venta_anomala_multiplicador: 3
 };
+
+export const defaultCategories = [
+  'Fundas',
+  'Cargas & Cables',
+  'Micas 9D',
+  'Audio',
+  'Auto',
+  'Otros'
+];
 
 export const defaultInventory = [
   { id: 'JOBMBrrx2yjN3ytoKtGD', sku: 'CBL-C2C-15M', name: 'Cable USB-C a USB-C Trenzado 1.5m', category: 'Cargadores y Cables', stock: 10, minStock: 5, maxStock: 10, location: 'Estante C-2', activo: true, lastUpdated: '2026-09-03', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDwBW1Tnz4ox8TJimQ2nNWfY6o33DXFVI_9hnHGKzzl3XJhpYMd92sEX1p-M2182e_5P1T9-E8ueXBhioGF4oy264i2UoGbNDW_wFjgwrSNzAJjJhAlRcLwnmRjbP3lOMSy1dM0qSLvxcPA4Wzeciz7TUTmcvBPhWTMLu9gKEJNK5yXbrAMIG8EdaCNX49rw4X2MbQ7za9LNvHHrL-orE8zBLnoZbp1y9YNu2Jb_lniNxeofy9PERKBGA' },
@@ -28,6 +38,39 @@ export const defaultInventory = [
   { id: 'kLX8MNqSi9VYf42MmErG', sku: 'CRST-9H-SAM', name: 'Mica Cristal Templado 9H Samsung S24', category: 'Protección de Pantalla', stock: 8, minStock: 5, maxStock: 10, location: 'Estante M-3', activo: true, lastUpdated: '2026-09-02', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDArc9PQMZMX60YZdL2HuhroEsYV6UgzSH87z-kJS4ARnnmSqmNSHgA9qBp7g6F6dHgZFFqTSVgq2gdJp58wHONkBxTxsO8hE0qtwatBHzLpB31H6chYL2O8S5CJSDi-z88o0vFq5sZcG3tsWBWISuppZf-tVqo03v5gno6pOC0TkrrhFGhyhCHAt7jP4NM9ZHobv-4beNobhEKe-UBtNC0__DBtmC90qfTOgVDh-SgPW_fPqxi2Q1q1g' },
   { id: 'nhoXtymGrJuiK4gHUBNd', sku: 'AUD-TWS-PRO', name: 'Audífonos Bluetooth Inalámbricos TWS-5', category: 'Audio y Audífonos', stock: 0, minStock: 3, maxStock: 10, location: 'Cajón A-4', activo: true, lastUpdated: '2026-09-01', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBEddAYibZMjqLmVbQYfK77Qtk_GR18aEIxR3iZD-Z2oh2vBwMBHO4f5rmtUUOpsECq0Ki6-5kKq2rrbOwb5qTeegm3mwiaDth6G9WXs1pYgShhoy9AIo62Yi2tPtSAwuB9NT8Xg1cpDcF-6cJyQ2S_WpLWIWQIu2INbGpBjXUA7YtOlsTuVV3M7ipH2vBUeAEuuoP8SCLpb0_EussBUxFkyspxVV1X9GEiyd9dr9O0HJLNk35vxy8HOA' }
 ];
+
+// --- CATEGORIES MANAGEMENT ---
+export function getCategories() {
+  if (typeof window === 'undefined') return defaultCategories;
+  const raw = localStorage.getItem(CATEGORIES_KEY);
+  if (!raw) {
+    localStorage.setItem(CATEGORIES_KEY, JSON.stringify(defaultCategories));
+    return defaultCategories;
+  }
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : defaultCategories;
+  } catch (e) {
+    return defaultCategories;
+  }
+}
+
+export function saveCategories(categories) {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
+  window.dispatchEvent(new CustomEvent('categories-updated', { detail: categories }));
+}
+
+export function addCategory(name) {
+  const cleanName = (name || '').trim();
+  if (!cleanName) return getCategories();
+  const current = getCategories();
+  if (!current.some(c => c.toLowerCase() === cleanName.toLowerCase())) {
+    current.push(cleanName);
+    saveCategories(current);
+  }
+  return current;
+}
 
 export function getConfig() {
   if (typeof window === 'undefined') return defaultConfig;
@@ -69,7 +112,8 @@ export function initFirestoreSync() {
           minStock: Number(doc.data().minStock) || 5,
           maxStock: Number(doc.data().maxStock) || 10,
           location: doc.data().location || 'Estante Principal',
-          lastUpdated: doc.data().lastUpdated || '2026-09-03'
+          lastUpdated: doc.data().lastUpdated || '2026-09-03',
+          img: doc.data().img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'
         }));
 
         localStorage.setItem(STORE_KEY, JSON.stringify(firestoreItems));
@@ -105,7 +149,8 @@ export function getStoredInventory(includeInactive = false) {
     ...item,
     activo: item.activo !== false,
     location: item.location || 'Estante Principal',
-    lastUpdated: item.lastUpdated || '2026-09-03'
+    lastUpdated: item.lastUpdated || '2026-09-03',
+    img: item.img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'
   }));
   if (includeInactive) return items;
   return items.filter(item => item.activo !== false);
@@ -127,11 +172,12 @@ export function saveInventory(items) {
           activo: item.activo !== false,
           name: item.name,
           category: item.category,
+          img: item.img || '',
           location: item.location || 'Estante Principal',
           lastUpdated: item.lastUpdated || new Date().toISOString().split('T')[0]
         });
       } catch (err) {
-        // Document might not exist by this ID yet, ignore or setDoc if needed
+        // Ignore or continue
       }
     }
   });
@@ -236,7 +282,7 @@ export function saveMovements(movs) {
   window.dispatchEvent(new CustomEvent('movements-updated', { detail: movs }));
 }
 
-export function recordMovement({ sku, tipo, cantidad, nota }) {
+export function recordMovement({ sku, tipo, cantidad, nota = '', operador = 'Alejandro (Admin)' }) {
   const inventory = getStoredInventory(true);
   const product = inventory.find(i => i.sku === sku);
   if (!product) throw new Error(`Producto con SKU ${sku} no encontrado.`);
@@ -262,11 +308,13 @@ export function recordMovement({ sku, tipo, cantidad, nota }) {
     id: 'mov-' + Date.now(),
     productoId: product.id,
     sku: product.sku,
+    productName: product.name,
     tipo: tipo,
     cantidad: cantidad,
     stockResultante: newStock,
     fechaHora: new Date().toISOString(),
     nota: nota || '',
+    operador: operador || 'Alejandro (Admin)',
     revertido: false,
     movimientoReversionId: null
   };
@@ -304,7 +352,7 @@ export function revertirMovimiento(movimientoId) {
 
   const now = new Date();
   if (!isSameCalendarDay(mov.fechaHora, now)) {
-    throw new Error("No es posible revertir movimientos de días anteriores. Para corregir este stock, registra un nuevo movimiento tipo 'Ajuste'.");
+    throw new Error("No es posible revertir movimientos de días anteriores.");
   }
 
   const inventory = getStoredInventory(true);
@@ -335,11 +383,13 @@ export function revertirMovimiento(movimientoId) {
     id: inverseMovId,
     productoId: product.id,
     sku: product.sku,
+    productName: product.name,
     tipo: 'reversion',
     cantidad: Math.abs(inverseDelta),
     stockResultante: newStock,
     fechaHora: new Date().toISOString(),
     nota: `Reversión automática del movimiento ${mov.id}`,
+    operador: mov.operador || 'Alejandro (Admin)',
     revertido: false,
     movimientoReversionId: null
   };
