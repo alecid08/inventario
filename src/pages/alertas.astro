@@ -82,7 +82,7 @@ import Layout from '../layouts/Layout.astro';
   </main>
 
   <script>
-    import { getStoredInventory, recordMovement } from '../utils/inventoryStore.js';
+    import { getStoredInventory, recordMovement, getCurrentOperator } from '../utils/inventoryStore.js';
     import type { Product } from '../types/inventory';
 
     const toast = document.getElementById('toast');
@@ -277,7 +277,7 @@ import Layout from '../layouts/Layout.astro';
             tipo: 'reposicion',
             cantidad: addQty,
             nota: `Reposición individual desde Alertas (+${addQty} unid.)`,
-            operador: 'Alejandro (Admin)'
+            operador: getCurrentOperator()
           });
 
           showToast(`¡${name}: Se repusieron +${addQty} unidades exitosamente!`);

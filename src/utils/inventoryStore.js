@@ -13,6 +13,37 @@ const STORE_KEY = 'stock_movil_inventory_v1';
 const MOVEMENTS_KEY = 'stock_movil_movements_v1';
 const CONFIG_KEY = 'stock_movil_config_v1';
 const CATEGORIES_KEY = 'stock_movil_categories_v1';
+const OPERATOR_KEY = 'stock_movil_current_operator_v1';
+const SHIFT_KEY = 'stock_movil_current_shift_v1';
+
+export const defaultOperators = [
+  'Alejandro (Admin)',
+  'Carlos (Ventas)',
+  'María (Turno Tarde)',
+  'Cajero Mostrador'
+];
+
+export function getCurrentOperator() {
+  if (typeof window === 'undefined') return 'Alejandro (Admin)';
+  return localStorage.getItem(OPERATOR_KEY) || 'Alejandro (Admin)';
+}
+
+export function getCurrentShift() {
+  if (typeof window === 'undefined') return 'mañana';
+  return localStorage.getItem(SHIFT_KEY) || 'mañana';
+}
+
+export function setCurrentOperator(operator, shift = 'mañana') {
+  if (typeof window === 'undefined') return;
+  const cleanOperator = (operator || 'Alejandro (Admin)').trim();
+  localStorage.setItem(OPERATOR_KEY, cleanOperator);
+  localStorage.setItem(SHIFT_KEY, shift || 'mañana');
+  window.dispatchEvent(new CustomEvent('operator-changed', { detail: { operator: cleanOperator, shift } }));
+}
+
+export function getAvailableOperators() {
+  return defaultOperators;
+}
 
 export const defaultConfig = {
   dia_semanal_reposicion: 'Lunes',
@@ -282,7 +313,10 @@ export function saveMovements(movs) {
   window.dispatchEvent(new CustomEvent('movements-updated', { detail: movs }));
 }
 
-export function recordMovement({ sku, tipo, cantidad, nota = '', operador = 'Alejandro (Admin)' }) {
+/**
+ * @param {{ sku: string, tipo: 'entrada' | 'salida' | 'ajuste' | 'reposicion' | 'reversion', cantidad: number, nota?: string, operador?: string }} params
+ */
+export function recordMovement({ sku, tipo, cantidad, nota = '', operador = '' }) {
   const inventory = getStoredInventory(true);
   const product = inventory.find(i => i.sku === sku);
   if (!product) throw new Error(`Producto con SKU ${sku} no encontrado.`);
@@ -303,6 +337,8 @@ export function recordMovement({ sku, tipo, cantidad, nota = '', operador = 'Ale
   product.lastUpdated = new Date().toISOString().split('T')[0];
   saveInventory(inventory);
 
+  const activeOperator = operador || getCurrentOperator();
+
   const movements = getStoredMovements();
   const newMov = {
     id: 'mov-' + Date.now(),
@@ -314,7 +350,7 @@ export function recordMovement({ sku, tipo, cantidad, nota = '', operador = 'Ale
     stockResultante: newStock,
     fechaHora: new Date().toISOString(),
     nota: nota || '',
-    operador: operador || 'Alejandro (Admin)',
+    operador: activeOperator,
     revertido: false,
     movimientoReversionId: null
   };
@@ -389,7 +425,7 @@ export function revertirMovimiento(movimientoId) {
     stockResultante: newStock,
     fechaHora: new Date().toISOString(),
     nota: `Reversión automática del movimiento ${mov.id}`,
-    operador: mov.operador || 'Alejandro (Admin)',
+    operador: getCurrentOperator() || mov.operador || 'Alejandro (Admin)',
     revertido: false,
     movimientoReversionId: null
   };

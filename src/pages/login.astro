@@ -6,61 +6,60 @@ import Layout from '../layouts/Layout.astro';
   <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile">
     <div class="flex flex-col w-full max-w-md mx-auto py-space-xl px-space-xs">
       <!-- Brand & Store Identity Header -->
-      <header class="flex flex-col items-center text-center mb-space-2xl">
+      <header class="flex flex-col items-center text-center mb-space-xl">
         <!-- Branch Chip -->
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 mb-space-lg rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 mb-space-md rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm">
           <span class="material-symbols-outlined text-primary text-[16px]">storefront</span>
           <span>Tienda Tu Cell Express</span>
-          <span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
-          <span class="text-tertiary text-label-sm font-label-sm">En línea</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="text-emerald-700 font-bold text-label-sm">En línea</span>
         </div>
-        <!-- App Identity -->
-        <div class="relative mb-space-md">
-          <div class="w-16 h-16 rounded-xl bg-primary-container text-on-primary shadow-sm flex items-center justify-center p-2.5 font-bold text-2xl">
-            TC
-          </div>
-          <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-tertiary flex items-center justify-center text-on-tertiary shadow-sm">
-            <span class="material-symbols-outlined text-[12px]">inventory_2</span>
-          </div>
+        
+        <!-- Official Logo Tu Cell Express -->
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-700 via-primary to-blue-500 text-white flex items-center justify-center shadow-lg shadow-primary/25 p-3.5 mb-space-xs">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
+            <rect width="14" height="20" x="5" y="2" rx="3" ry="3"/>
+            <path d="M12 18h.01"/>
+            <path d="M9 6h6"/>
+          </svg>
         </div>
-        <h1 class="font-headline-lg text-headline-lg text-on-surface mb-1">Tu Cell Express</h1>
-        <p class="font-body-md text-body-md text-on-surface-variant max-w-[280px]">
-          Sistema de Control de Inventario y Auditoría de Piso
+        <h1 class="font-headline-lg text-headline-lg text-on-surface font-bold">Tu Cell Express</h1>
+        <p class="font-body-md text-body-md text-on-surface-variant max-w-[300px] mt-1 font-medium">
+          Control de Inventario y Registro de Operaciones
         </p>
       </header>
 
       <!-- Authentication Form Section -->
-      <section class="w-full bg-surface-container-lowest p-space-xl rounded-2xl shadow-sm border border-outline-variant/30">
-        <form class="flex flex-col gap-space-lg" id="loginForm">
+      <section class="w-full bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm border border-surface-container">
+        <form class="flex flex-col gap-space-md" id="loginForm">
           <!-- Form Header -->
           <div class="flex items-center justify-between pb-space-xs border-b border-surface-container">
-            <span class="font-label-md text-label-md text-on-surface">Ingreso de Operador</span>
-            <span class="font-sku-code text-sku-code text-on-surface-variant uppercase text-[11px]">ID-POS-01</span>
+            <span class="font-label-md text-label-md text-on-surface font-bold flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-primary text-[18px]">badge</span>
+              <span>Identificación de Operador</span>
+            </span>
+            <span class="font-sku-code text-sku-code text-secondary uppercase text-[11px] font-semibold">TERMINAL-01</span>
           </div>
 
-          <!-- Pin / Code Input -->
-          <div class="flex flex-col gap-space-xs">
-            <label class="font-label-sm text-label-sm text-on-surface flex items-center justify-between" for="operatorPin">
-              <span>PIN de Acceso o Código de Personal</span>
-              <span class="text-secondary text-[11px]">4 dígitos</span>
-            </label>
-            <div class="relative flex items-center">
-              <span class="material-symbols-outlined absolute left-3.5 text-secondary text-[20px] pointer-events-none">lock</span>
-              <input autocomplete="current-password" class="w-full h-touch-min pl-11 pr-12 rounded-xl bg-surface-container-low text-on-surface font-headline-sm text-headline-sm tracking-widest placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all" id="operatorPin" maxlength="6" placeholder="••••" required type="password"/>
-              <button aria-label="Mostrar u ocultar PIN" class="absolute right-1 w-11 h-11 flex items-center justify-center text-secondary hover:text-on-surface transition-colors" id="btnTogglePin" type="button">
-                <span class="material-symbols-outlined text-[20px]" id="pinEyeIcon">visibility</span>
-              </button>
+          <!-- Operator Name Select / Input -->
+          <div class="flex flex-col gap-space-2xs">
+            <label class="font-label-sm text-label-sm text-on-surface font-semibold" for="operatorSelect">Operador Responsable</label>
+            <div class="relative flex items-center bg-surface-container-low rounded-xl px-3 h-12 shadow-sm focus-within:ring-2 focus-within:ring-primary focus-within:bg-surface-container-lowest transition-all">
+              <span class="material-symbols-outlined text-secondary text-[20px] mr-2">person</span>
+              <select class="w-full bg-transparent text-on-surface font-body-md text-body-md focus:outline-none cursor-pointer" id="operatorSelect">
+                <!-- Poblado dinámicamente con operadores disponibles -->
+              </select>
             </div>
-            <p class="hidden font-body-sm text-body-sm text-error mt-1 flex items-center gap-1" id="loginErrorMsg">
-              <span class="material-symbols-outlined text-[16px]">error</span>
-              <span>PIN no reconocido. Intente nuevamente.</span>
-            </p>
+            <!-- Campo para nombre personalizado si se requiere -->
+            <div class="hidden mt-1" id="customOperatorContainer">
+              <input class="w-full h-10 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md border border-surface-container focus:outline-none focus:ring-2 focus:ring-primary" id="customOperatorInput" placeholder="Escribe tu nombre y cargo..." type="text"/>
+            </div>
           </div>
 
           <!-- Shift & Role Select -->
-          <div class="flex flex-col gap-space-xs">
-            <label class="font-label-sm text-label-sm text-on-surface" for="shiftRole">Turno de Atención</label>
-            <div class="relative flex items-center bg-surface-container-low rounded-xl px-3 h-touch-min">
+          <div class="flex flex-col gap-space-2xs">
+            <label class="font-label-sm text-label-sm text-on-surface font-semibold" for="shiftRole">Turno de Trabajo</label>
+            <div class="relative flex items-center bg-surface-container-low rounded-xl px-3 h-12 shadow-sm focus-within:ring-2 focus-within:ring-primary focus-within:bg-surface-container-lowest transition-all">
               <span class="material-symbols-outlined text-secondary text-[20px] mr-2">schedule</span>
               <select class="w-full bg-transparent text-on-surface font-body-md text-body-md focus:outline-none cursor-pointer" id="shiftRole">
                 <option value="mañana">Turno Mañana (09:00 - 14:00)</option>
@@ -70,53 +69,90 @@ import Layout from '../layouts/Layout.astro';
             </div>
           </div>
 
+          <!-- Pin / Code Input -->
+          <div class="flex flex-col gap-space-2xs">
+            <label class="font-label-sm text-label-sm text-on-surface flex items-center justify-between font-semibold" for="operatorPin">
+              <span>PIN de Acceso</span>
+              <span class="text-secondary text-[11px] font-normal">Cualquier PIN de 4 dígitos (Demo: 1234)</span>
+            </label>
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-3.5 text-secondary text-[20px] pointer-events-none">lock</span>
+              <input autocomplete="current-password" class="w-full h-12 pl-11 pr-12 rounded-xl bg-surface-container-low text-on-surface font-headline-sm text-headline-sm tracking-widest placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all" id="operatorPin" maxlength="6" placeholder="••••" required type="password" value="1234"/>
+              <button aria-label="Mostrar u ocultar PIN" class="absolute right-1 w-11 h-11 flex items-center justify-center text-secondary hover:text-on-surface transition-colors" id="btnTogglePin" type="button">
+                <span class="material-symbols-outlined text-[20px]" id="pinEyeIcon">visibility</span>
+              </button>
+            </div>
+            <p class="hidden font-body-sm text-body-sm text-error mt-1 flex items-center gap-1 font-semibold" id="loginErrorMsg">
+              <span class="material-symbols-outlined text-[16px]">error</span>
+              <span>Por favor ingresa un PIN de al menos 4 dígitos.</span>
+            </p>
+          </div>
+
           <!-- Submit Button -->
-          <button class="w-full h-14 mt-space-xs rounded-xl bg-primary text-on-primary font-headline-sm text-headline-sm font-semibold shadow-md hover:bg-primary/95 active:scale-[0.99] transition-all flex items-center justify-center gap-space-xs group" id="btnLoginSubmit" type="submit">
-            <span>Iniciar Sesión de Conteo</span>
-            <span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+          <button class="w-full h-13 mt-1 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg font-bold shadow-md shadow-primary/20 hover:opacity-95 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer" id="btnLoginSubmit" type="submit">
+            <span>Iniciar Sesión de Trabajo</span>
+            <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
           </button>
         </form>
       </section>
 
-      <!-- Quick Store Badge / Device Category Highlights -->
-      <div class="mt-space-xl grid grid-cols-3 gap-2 px-1 text-center">
-        <div class="flex flex-col items-center p-2.5 rounded-lg bg-surface-container-low">
-          <span class="material-symbols-outlined text-secondary text-[20px] mb-1">cases</span>
-          <span class="font-label-sm text-label-sm text-on-surface">Fundas</span>
-          <span class="font-body-sm text-body-sm text-secondary text-[11px]">iOS &amp; Android</span>
-        </div>
-        <div class="flex flex-col items-center p-2.5 rounded-lg bg-surface-container-low">
-          <span class="material-symbols-outlined text-secondary text-[20px] mb-1">bolt</span>
-          <span class="font-label-sm text-label-sm text-on-surface">Cargas</span>
-          <span class="font-body-sm text-body-sm text-secondary text-[11px]">GaN / MagSafe</span>
-        </div>
-        <div class="flex flex-col items-center p-2.5 rounded-lg bg-surface-container-low">
-          <span class="material-symbols-outlined text-secondary text-[20px] mb-1">screen_lock_portrait</span>
-          <span class="font-label-sm text-label-sm text-on-surface">Micas 9D</span>
-          <span class="font-body-sm text-body-sm text-secondary text-[11px]">Vidrio templado</span>
-        </div>
-      </div>
-
       <!-- Quick Demo Credentials Hint & Security Footer -->
       <footer class="mt-space-lg text-center flex flex-col items-center gap-space-xs">
-        <div class="p-3 bg-surface-container-low rounded-xl text-body-sm font-body-sm text-on-surface-variant max-w-xs">
-          <p class="font-label-sm text-label-sm text-on-surface font-semibold mb-0.5">Acceso Demostración:</p>
-          <p>Cualquier PIN de 4 dígitos (Ej. <strong class="text-primary">1234</strong>)</p>
-        </div>
-        <div class="flex items-center gap-1 text-outline text-xs mt-2">
-          <span class="material-symbols-outlined text-[16px]">verified_user</span>
-          <span>Uso exclusivo para personal autorizado · Tu Cell Express</span>
+        <div class="flex items-center gap-1 text-secondary text-xs mt-2 font-medium">
+          <span class="material-symbols-outlined text-[16px] text-emerald-600">verified_user</span>
+          <span>Personal Autorizado · Tu Cell Express</span>
         </div>
       </footer>
     </div>
   </main>
 
   <script>
+    import { getCurrentOperator, getCurrentShift, setCurrentOperator, getAvailableOperators } from '../utils/inventoryStore.js';
+
     const pinInput = document.getElementById('operatorPin') as HTMLInputElement | null;
     const togglePinBtn = document.getElementById('btnTogglePin');
     const eyeIcon = document.getElementById('pinEyeIcon');
     const loginForm = document.getElementById('loginForm');
     const errorMsg = document.getElementById('loginErrorMsg');
+    const operatorSelect = document.getElementById('operatorSelect') as HTMLSelectElement | null;
+    const shiftSelect = document.getElementById('shiftRole') as HTMLSelectElement | null;
+    const customContainer = document.getElementById('customOperatorContainer');
+    const customInput = document.getElementById('customOperatorInput') as HTMLInputElement | null;
+
+    // Inicializar operadores disponibles
+    if (operatorSelect) {
+      const currentOp = getCurrentOperator();
+      const currentShift = getCurrentShift();
+      const available = getAvailableOperators();
+
+      operatorSelect.innerHTML = '';
+      available.forEach(op => {
+        const opt = document.createElement('option');
+        opt.value = op;
+        opt.textContent = op;
+        if (op === currentOp) opt.selected = true;
+        operatorSelect.appendChild(opt);
+      });
+
+      // Opción personalizada
+      const otherOpt = document.createElement('option');
+      otherOpt.value = '__custom__';
+      otherOpt.textContent = '+ Otro operador...';
+      operatorSelect.appendChild(otherOpt);
+
+      if (shiftSelect) {
+        shiftSelect.value = currentShift || 'mañana';
+      }
+
+      operatorSelect.addEventListener('change', () => {
+        if (operatorSelect.value === '__custom__') {
+          customContainer?.classList.remove('hidden');
+          customInput?.focus();
+        } else {
+          customContainer?.classList.add('hidden');
+        }
+      });
+    }
 
     togglePinBtn?.addEventListener('click', () => {
       if (!pinInput || !eyeIcon) return;
@@ -131,6 +167,15 @@ import Layout from '../layouts/Layout.astro';
 
       if (pin.length >= 4) {
         if (errorMsg) errorMsg.classList.add('hidden');
+        
+        let finalOperator = operatorSelect?.value || 'Alejandro (Admin)';
+        if (finalOperator === '__custom__') {
+          finalOperator = customInput?.value.trim() || 'Operador Mostrador';
+        }
+        const finalShift = shiftSelect?.value || 'mañana';
+
+        setCurrentOperator(finalOperator, finalShift);
+
         const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/';
         window.location.href = baseUrl;
       } else {
@@ -139,3 +184,4 @@ import Layout from '../layouts/Layout.astro';
     });
   </script>
 </Layout>
+
