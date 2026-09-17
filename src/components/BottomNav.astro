@@ -47,7 +47,7 @@ const isReportes = pathname.includes('/reportes');
       const raw = localStorage.getItem('stock_movil_inventory_v1');
       if (raw) {
         const items = JSON.parse(raw);
-        const alertCount = items.filter(i => (parseInt(i.stock, 10) || 0) < (parseInt(i.minStock, 10) || 5)).length;
+        const alertCount = items.filter(i => i.activo !== false && (parseInt(i.stock, 10) || 0) < (parseInt(i.minStock, 10) || 5)).length;
         if (alertCount === 0) {
           badge.classList.add('hidden');
         } else {

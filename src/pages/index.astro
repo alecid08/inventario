@@ -146,23 +146,33 @@ import Layout from '../layouts/Layout.astro';
               </div>
             </div>
 
-            <!-- Campo de Imagen con Previsualización y Presets Rápidos -->
+            <!-- Campo de Imagen con Previsualización, Subida Local y Presets Rápidos -->
             <div class="space-y-1.5 pt-1">
-              <label class="block font-label-sm text-label-sm text-on-surface" for="newProdImg">Imagen del Producto (URL o Preajuste)</label>
+              <div class="flex items-center justify-between">
+                <label class="block font-label-sm text-label-sm text-on-surface font-semibold" for="newProdImg">Fotografía del Producto</label>
+                <button type="button" class="text-xs text-primary font-bold hover:underline flex items-center gap-1 cursor-pointer" id="btnUploadNewProdImg">
+                  <span class="material-symbols-outlined text-[16px]">upload_file</span>
+                  <span>Subir desde dispositivo</span>
+                </button>
+              </div>
+              <input type="file" id="newProdFileInput" accept="image/*" class="hidden" />
               <div class="flex items-center gap-2">
-                <div class="w-14 h-14 rounded-xl bg-surface-container-low border border-surface-container overflow-hidden flex items-center justify-center shrink-0">
+                <div class="relative w-14 h-14 rounded-xl bg-surface-container-low border border-surface-container overflow-hidden flex items-center justify-center shrink-0 cursor-pointer group shadow-xs" id="newProdImgContainer" title="Haz clic para seleccionar una foto de tu dispositivo">
                   <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww" alt="Preview" class="w-full h-full object-cover" id="newProdImgPreview" />
+                  <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity">
+                    <span class="material-symbols-outlined text-[18px]">photo_camera</span>
+                  </div>
                 </div>
-                <input class="flex-1 h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="newProdImg" placeholder="https://ejemplo.com/imagen.jpg" type="url" value="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww"/>
+                <input class="flex-1 h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="newProdImg" placeholder="https://ejemplo.com/imagen.jpg o sube archivo" type="text" value="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww"/>
               </div>
               <!-- Presets Rápidos de Accesorios -->
               <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1">
-                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww">Funda</button>
-                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuDwBW1Tnz4ox8TJimQ2nNWfY6o33DXFVI_9hnHGKzzl3XJhpYMd92sEX1p-M2182e_5P1T9-E8ueXBhioGF4oy264i2UoGbNDW_wFjgwrSNzAJjJhAlRcLwnmRjbP3lOMSy1dM0qSLvxcPA4Wzeciz7TUTmcvBPhWTMLu9gKEJNK5yXbrAMIG8EdaCNX49rw4X2MbQ7za9LNvHHrL-orE8zBLnoZbp1y9YNu2Jb_lniNxeofy9PERKBGA">Cable</button>
-                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuBrfDhd7aPs8GoEZkbA-xzj03A0JGJv23NKGhczYuRs8EJYYf_q4gvPULwdu7W8msYzasXSZ5CRFCaiereQb0MBGmy_2rZyX803yRgihTlaUjdsvBhZ43BV5z9VhWzAtBp5NCT6sMqRZH17UfXJqbpvnnAVKBFI_dqtFRl2c6VUhREY7ilvtDMv5-2DsAZhazqG9qhIVZnFgDAxPizJb5ovXT5omGmRTXTgZYwc5QvkWW6J76B2YiQrvw">Cargador</button>
-                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuDArc9PQMZMX60YZdL2HuhroEsYV6UgzSH87z-kJS4ARnnmSqmNSHgA9qBp7g6F6dHgZFFqTSVgq2gdJp58wHONkBxTxsO8hE0qtwatBHzLpB31H6chYL2O8S5CJSDi-z88o0vFq5sZcG3tsWBWISuppZf-tVqo03v5gno6pOC0TkrrhFGhyhCHAt7jP4NM9ZHobv-4beNobhEKe-UBtNC0__DBtmC90qfTOgVDh-SgPW_fPqxi2Q1q1g">Mica</button>
-                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuBEddAYibZMjqLmVbQYfK77Qtk_GR18aEIxR3iZD-Z2oh2vBwMBHO4f5rmtUUOpsECq0Ki6-5kKq2rrbOwb5qTeegm3mwiaDth6G9WXs1pYgShhoy9AIo62Yi2tPtSAwuB9NT8Xg1cpDcF-6cJyQ2S_WpLWIWQIu2INbGpBjXUA7YtOlsTuVV3M7ipH2vBUeAEuuoP8SCLpb0_EussBUxFkyspxVV1X9GEiyd9dr9O0HJLNk35vxy8HOA">Audio</button>
-                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuCoO16TT-tR-wlBrTApCGHxTpxWYKIILFh-fa-B9ONyuxDC7S0ZXI1xdRds3NS2MAjynS8X2uxtjbBTZFQOx3cu80HN_IChP6er-zID8eNdtHMdl2IaINz3QBd6WqP7XAeWK_-CkFA6KuSLUQ3uYW8aLVdzLA0HU-wJ4SV3_opoxIxnm0ropW05_gKwnufdKjkZCa6ege8rRfS1fIRvvjUVG7PXm7gqADoptCJ87melL-SZW9KfqE8rfw">Soporte</button>
+                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0 cursor-pointer" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww">Funda</button>
+                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0 cursor-pointer" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuDwBW1Tnz4ox8TJimQ2nNWfY6o33DXFVI_9hnHGKzzl3XJhpYMd92sEX1p-M2182e_5P1T9-E8ueXBhioGF4oy264i2UoGbNDW_wFjgwrSNzAJjJhAlRcLwnmRjbP3lOMSy1dM0qSLvxcPA4Wzeciz7TUTmcvBPhWTMLu9gKEJNK5yXbrAMIG8EdaCNX49rw4X2MbQ7za9LNvHHrL-orE8zBLnoZbp1y9YNu2Jb_lniNxeofy9PERKBGA">Cable</button>
+                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0 cursor-pointer" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuBrfDhd7aPs8GoEZkbA-xzj03A0JGJv23NKGhczYuRs8EJYYf_q4gvPULwdu7W8msYzasXSZ5CRFCaiereQb0MBGmy_2rZyX803yRgihTlaUjdsvBhZ43BV5z9VhWzAtBp5NCT6sMqRZH17UfXJqbpvnnAVKBFI_dqtFRl2c6VUhREY7ilvtDMv5-2DsAZhazqG9qhIVZnFgDAxPizJb5ovXT5omGmRTXTgZYwc5QvkWW6J76B2YiQrvw">Cargador</button>
+                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0 cursor-pointer" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuDArc9PQMZMX60YZdL2HuhroEsYV6UgzSH87z-kJS4ARnnmSqmNSHgA9qBp7g6F6dHgZFFqTSVgq2gdJp58wHONkBxTxsO8hE0qtwatBHzLpB31H6chYL2O8S5CJSDi-z88o0vFq5sZcG3tsWBWISuppZf-tVqo03v5gno6pOC0TkrrhFGhyhCHAt7jP4NM9ZHobv-4beNobhEKe-UBtNC0__DBtmC90qfTOgVDh-SgPW_fPqxi2Q1q1g">Mica</button>
+                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0 cursor-pointer" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuBEddAYibZMjqLmVbQYfK77Qtk_GR18aEIxR3iZD-Z2oh2vBwMBHO4f5rmtUUOpsECq0Ki6-5kKq2rrbOwb5qTeegm3mwiaDth6G9WXs1pYgShhoy9AIo62Yi2tPtSAwuB9NT8Xg1cpDcF-6cJyQ2S_WpLWIWQIu2INbGpBjXUA7YtOlsTuVV3M7ipH2vBUeAEuuoP8SCLpb0_EussBUxFkyspxVV1X9GEiyd9dr9O0HJLNk35vxy8HOA">Audio</button>
+                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0 cursor-pointer" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuCoO16TT-tR-wlBrTApCGHxTpxWYKIILFh-fa-B9ONyuxDC7S0ZXI1xdRds3NS2MAjynS8X2uxtjbBTZFQOx3cu80HN_IChP6er-zID8eNdtHMdl2IaINz3QBd6WqP7XAeWK_-CkFA6KuSLUQ3uYW8aLVdzLA0HU-wJ4SV3_opoxIxnm0ropW05_gKwnufdKjkZCa6ege8rRfS1fIRvvjUVG7PXm7gqADoptCJ87melL-SZW9KfqE8rfw">Soporte</button>
               </div>
             </div>
 
@@ -272,7 +282,7 @@ import Layout from '../layouts/Layout.astro';
   </main>
 
   <script>
-    import { getStoredInventory, deactivateProduct, createProduct, getCategories, addCategory, getCurrentOperator, recordMovement } from '../utils/inventoryStore.js';
+    import { getStoredInventory, deactivateProduct, createProduct, getCategories, addCategory, getCurrentOperator, recordMovement, compressImageFile } from '../utils/inventoryStore.js';
     import type { Product } from '../types/inventory';
 
     const baseEditUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/';
@@ -491,7 +501,7 @@ import Layout from '../layouts/Layout.astro';
       const qty = Math.abs(delta);
 
       try {
-        recordMovement({
+        const newMov = recordMovement({
           sku: item.sku,
           tipo: tipo,
           cantidad: qty,
@@ -500,7 +510,13 @@ import Layout from '../layouts/Layout.astro';
         });
         inventory = getStoredInventory(false);
         renderInventoryList();
-        showToast(`${item.name}: Stock actualizado a ${item.stock} unid.`);
+        
+        const newStock = newMov.stockResultante;
+        if (newStock < (item.minStock || 5)) {
+          showToast(`⚠️ Alerta: ${item.name} en nivel crítico (${newStock} unid.)`, false);
+        } else {
+          showToast(`${item.name}: Stock actualizado a ${newStock} unid.`);
+        }
       } catch (err: any) {
         showToast(err.message || 'Error al actualizar stock', true);
       }
@@ -583,6 +599,28 @@ import Layout from '../layouts/Layout.astro';
 
     closeNewModalBtn?.addEventListener('click', closeNewModal);
     cancelNewModalBtn?.addEventListener('click', closeNewModal);
+
+    // Subida de imagen local desde el dispositivo
+    const newProdFileInput = document.getElementById('newProdFileInput') as HTMLInputElement | null;
+    const btnUploadNewProdImg = document.getElementById('btnUploadNewProdImg');
+    const newProdImgContainer = document.getElementById('newProdImgContainer');
+
+    btnUploadNewProdImg?.addEventListener('click', () => newProdFileInput?.click());
+    newProdImgContainer?.addEventListener('click', () => newProdFileInput?.click());
+
+    newProdFileInput?.addEventListener('change', async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      try {
+        showToast('Procesando imagen del dispositivo...');
+        const compressedDataUrl = await compressImageFile(file, 480, 0.8);
+        if (newProdImgInput) newProdImgInput.value = compressedDataUrl;
+        if (newProdImgPreview) newProdImgPreview.src = compressedDataUrl;
+        showToast('Foto cargada y lista para guardar');
+      } catch (err: any) {
+        showToast(err.message || 'Error al procesar la imagen seleccionada.', true);
+      }
+    });
 
     // Live image preview
     newProdImgInput?.addEventListener('input', (e) => {

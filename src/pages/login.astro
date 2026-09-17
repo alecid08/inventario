@@ -2,186 +2,345 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Tu Cell Express - Acceso de Personal" showNav={false}>
-  <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile">
-    <div class="flex flex-col w-full max-w-md mx-auto py-space-xl px-space-xs">
+<Layout title="Tu Cell Express - Acceso Seguro" showNav={false}>
+  <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile justify-center min-h-screen py-8">
+    <div class="flex flex-col w-full max-w-md mx-auto">
       <!-- Brand & Store Identity Header -->
-      <header class="flex flex-col items-center text-center mb-space-xl">
+      <header class="flex flex-col items-center text-center mb-6">
         <!-- Branch Chip -->
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 mb-space-md rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 mb-3 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm shadow-2xs">
           <span class="material-symbols-outlined text-primary text-[16px]">storefront</span>
-          <span>Tienda Tu Cell Express</span>
+          <span class="font-semibold">Tu Cell Express</span>
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span class="text-emerald-700 font-bold text-label-sm">En línea</span>
+          <span class="text-emerald-700 font-bold text-label-sm">Servidor Activo</span>
         </div>
         
         <!-- Official Logo Tu Cell Express -->
-        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-700 via-primary to-blue-500 text-white flex items-center justify-center shadow-lg shadow-primary/25 p-3.5 mb-space-xs">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-700 via-primary to-blue-500 text-white flex items-center justify-center shadow-lg shadow-primary/25 p-3.5 mb-2">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
             <rect width="14" height="20" x="5" y="2" rx="3" ry="3"/>
             <path d="M12 18h.01"/>
             <path d="M9 6h6"/>
           </svg>
         </div>
-        <h1 class="font-headline-lg text-headline-lg text-on-surface font-bold">Tu Cell Express</h1>
-        <p class="font-body-md text-body-md text-on-surface-variant max-w-[300px] mt-1 font-medium">
-          Control de Inventario y Registro de Operaciones
+        <h1 class="font-headline-lg text-headline-lg text-on-surface font-black tracking-tight">Acceso al Sistema</h1>
+        <p class="font-body-sm text-body-sm text-on-surface-variant max-w-[320px] mt-1 font-medium">
+          Control de Inventario y Operaciones · Exclusivo Personal Autorizado
         </p>
       </header>
 
-      <!-- Authentication Form Section -->
-      <section class="w-full bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm border border-surface-container">
-        <form class="flex flex-col gap-space-md" id="loginForm">
-          <!-- Form Header -->
-          <div class="flex items-center justify-between pb-space-xs border-b border-surface-container">
-            <span class="font-label-md text-label-md text-on-surface font-bold flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-primary text-[18px]">badge</span>
-              <span>Identificación de Operador</span>
-            </span>
-            <span class="font-sku-code text-sku-code text-secondary uppercase text-[11px] font-semibold">TERMINAL-01</span>
-          </div>
+      <!-- Security Notice Banner -->
+      <div class="mb-4 bg-blue-50/80 border border-blue-200/80 rounded-2xl p-3.5 flex items-start gap-2.5 shadow-xs">
+        <span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">verified_user</span>
+        <div class="text-[11px] text-blue-900 leading-snug">
+          <p class="font-bold">Acceso Estrictamente Restringido:</p>
+          <p class="text-blue-800 mt-0.5">
+            Solo el <strong>Dueño</strong> y el <strong>Administrador (Alejandro)</strong> cuentan con autorización para ver y modificar el inventario.
+          </p>
+        </div>
+      </div>
 
-          <!-- Operator Name Select / Input -->
-          <div class="flex flex-col gap-space-2xs">
-            <label class="font-label-sm text-label-sm text-on-surface font-semibold" for="operatorSelect">Operador Responsable</label>
-            <div class="relative flex items-center bg-surface-container-low rounded-xl px-3 h-12 shadow-sm focus-within:ring-2 focus-within:ring-primary focus-within:bg-surface-container-lowest transition-all">
-              <span class="material-symbols-outlined text-secondary text-[20px] mr-2">person</span>
-              <select class="w-full bg-transparent text-on-surface font-body-md text-body-md focus:outline-none cursor-pointer" id="operatorSelect">
-                <!-- Poblado dinámicamente con operadores disponibles -->
-              </select>
-            </div>
-            <!-- Campo para nombre personalizado si se requiere -->
-            <div class="hidden mt-1" id="customOperatorContainer">
-              <input class="w-full h-10 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md border border-surface-container focus:outline-none focus:ring-2 focus:ring-primary" id="customOperatorInput" placeholder="Escribe tu nombre y cargo..." type="text"/>
-            </div>
-          </div>
+      <!-- Authentication Container Section -->
+      <section class="w-full bg-surface-container-lowest p-5 sm:p-6 rounded-3xl shadow-sm border border-surface-container relative overflow-hidden">
+        <!-- Tabs Selector: Iniciar Sesión vs Crear / Registrar Contraseña -->
+        <div class="flex items-center p-1 bg-surface-container rounded-2xl mb-5">
+          <button 
+            id="tabLogin" 
+            type="button" 
+            class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-on-surface bg-surface-container-lowest shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            <span class="material-symbols-outlined text-[16px]">login</span>
+            <span>Iniciar Sesión</span>
+          </button>
+          <button 
+            id="tabRegister" 
+            type="button" 
+            class="flex-1 py-2 rounded-xl text-xs font-semibold text-secondary hover:text-on-surface transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            <span class="material-symbols-outlined text-[16px]">how_to_reg</span>
+            <span>Registrar Acceso</span>
+          </button>
+        </div>
 
-          <!-- Shift & Role Select -->
-          <div class="flex flex-col gap-space-2xs">
-            <label class="font-label-sm text-label-sm text-on-surface font-semibold" for="shiftRole">Turno de Trabajo</label>
-            <div class="relative flex items-center bg-surface-container-low rounded-xl px-3 h-12 shadow-sm focus-within:ring-2 focus-within:ring-primary focus-within:bg-surface-container-lowest transition-all">
-              <span class="material-symbols-outlined text-secondary text-[20px] mr-2">schedule</span>
-              <select class="w-full bg-transparent text-on-surface font-body-md text-body-md focus:outline-none cursor-pointer" id="shiftRole">
-                <option value="mañana">Turno Mañana (09:00 - 14:00)</option>
-                <option value="tarde">Turno Tarde (14:00 - 19:00)</option>
-                <option value="auditoria">Auditoría / Conteo de Cierre</option>
-              </select>
-            </div>
-          </div>
+        <!-- Quick Credentials Switcher (Acceso Rápido) -->
+        <div class="mb-4">
+          <label class="block font-label-sm text-label-sm text-secondary font-semibold mb-1.5">
+            Selección Rápida de Cuenta:
+          </label>
+          <div class="grid grid-cols-2 gap-2">
+            <button 
+              type="button" 
+              class="btn-quick-user flex items-center gap-2 p-2.5 rounded-xl border border-surface-container bg-surface-container-low hover:bg-surface-container hover:border-primary/50 transition-all text-left group cursor-pointer"
+              data-email="admin@tucellexpress.com"
+              data-name="Alejandro (Admin)"
+            >
+              <div class="w-7 h-7 rounded-lg bg-blue-100 text-primary flex items-center justify-center font-bold text-xs shrink-0 group-hover:bg-primary group-hover:text-white transition-colors">
+                A
+              </div>
+              <div class="flex flex-col min-w-0">
+                <span class="text-xs font-bold text-on-surface truncate">Alejandro</span>
+                <span class="text-[10px] text-secondary font-medium truncate">Administrador</span>
+              </div>
+            </button>
 
-          <!-- Pin / Code Input -->
-          <div class="flex flex-col gap-space-2xs">
-            <label class="font-label-sm text-label-sm text-on-surface flex items-center justify-between font-semibold" for="operatorPin">
-              <span>PIN de Acceso</span>
-              <span class="text-secondary text-[11px] font-normal">Cualquier PIN de 4 dígitos (Demo: 1234)</span>
+            <button 
+              type="button" 
+              class="btn-quick-user flex items-center gap-2 p-2.5 rounded-xl border border-surface-container bg-surface-container-low hover:bg-surface-container hover:border-primary/50 transition-all text-left group cursor-pointer"
+              data-email="dueno@tucellexpress.com"
+              data-name="Dueño (Propietario)"
+            >
+              <div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xs shrink-0 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                D
+              </div>
+              <div class="flex flex-col min-w-0">
+                <span class="text-xs font-bold text-on-surface truncate">El Dueño</span>
+                <span class="text-[10px] text-secondary font-medium truncate">Propietario</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <form class="flex flex-col gap-4" id="authForm">
+          <!-- Email Input -->
+          <div class="flex flex-col gap-1">
+            <label class="font-label-sm text-label-sm text-on-surface font-semibold" for="userEmail">
+              Correo Electrónico Autorizado
             </label>
             <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-3.5 text-secondary text-[20px] pointer-events-none">mail</span>
+              <input 
+                id="userEmail" 
+                type="email" 
+                required 
+                placeholder="ej: admin@tucellexpress.com" 
+                class="w-full h-12 pl-11 pr-4 rounded-xl bg-surface-container-low text-on-surface font-body-sm text-body-sm border border-surface-container focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all font-medium"
+              />
+            </div>
+          </div>
+
+          <!-- Password Input -->
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center justify-between">
+              <label class="font-label-sm text-label-sm text-on-surface font-semibold" for="userPassword">
+                Contraseña de Seguridad
+              </label>
+              <span class="text-[11px] text-secondary" id="passwordHint">Mínimo 6 caracteres</span>
+            </div>
+            <div class="relative flex items-center">
               <span class="material-symbols-outlined absolute left-3.5 text-secondary text-[20px] pointer-events-none">lock</span>
-              <input autocomplete="current-password" class="w-full h-12 pl-11 pr-12 rounded-xl bg-surface-container-low text-on-surface font-headline-sm text-headline-sm tracking-widest placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all" id="operatorPin" maxlength="6" placeholder="••••" required type="password" value="1234"/>
-              <button aria-label="Mostrar u ocultar PIN" class="absolute right-1 w-11 h-11 flex items-center justify-center text-secondary hover:text-on-surface transition-colors" id="btnTogglePin" type="button">
-                <span class="material-symbols-outlined text-[20px]" id="pinEyeIcon">visibility</span>
+              <input 
+                id="userPassword" 
+                type="password" 
+                required 
+                minlength="6"
+                placeholder="••••••••" 
+                class="w-full h-12 pl-11 pr-12 rounded-xl bg-surface-container-low text-on-surface font-body-sm text-body-sm border border-surface-container focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all font-medium tracking-wide"
+              />
+              <button 
+                id="btnTogglePassword" 
+                type="button" 
+                aria-label="Mostrar u ocultar contraseña"
+                class="absolute right-1 w-10 h-10 flex items-center justify-center text-secondary hover:text-on-surface transition-colors cursor-pointer"
+              >
+                <span class="material-symbols-outlined text-[20px]" id="passwordEyeIcon">visibility</span>
               </button>
             </div>
-            <p class="hidden font-body-sm text-body-sm text-error mt-1 flex items-center gap-1 font-semibold" id="loginErrorMsg">
-              <span class="material-symbols-outlined text-[16px]">error</span>
-              <span>Por favor ingresa un PIN de al menos 4 dígitos.</span>
+          </div>
+
+          <!-- Inline Error Message Banner -->
+          <div class="hidden bg-error-container/80 border border-error/30 text-on-error-container p-3 rounded-xl flex items-start gap-2 text-xs font-semibold" id="authErrorBanner">
+            <span class="material-symbols-outlined text-[18px] text-error shrink-0 mt-0.5">error</span>
+            <span id="authErrorText" class="leading-snug">Error de autenticación</span>
+          </div>
+
+          <!-- Helper Explanatory Text for Register Mode -->
+          <div class="hidden text-[11px] text-secondary bg-surface-container-low p-2.5 rounded-xl border border-surface-container leading-relaxed" id="registerHelpBox">
+            <p>
+              💡 <strong>Primera vez:</strong> Si aún no has creado tu contraseña en Firebase, escribe tu correo autorizado arriba y la contraseña que deseas asignar. Quedará registrada inmediatamente para tus próximos inicios de sesión.
             </p>
           </div>
 
           <!-- Submit Button -->
-          <button class="w-full h-13 mt-1 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg font-bold shadow-md shadow-primary/20 hover:opacity-95 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer" id="btnLoginSubmit" type="submit">
-            <span>Iniciar Sesión de Trabajo</span>
-            <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+          <button 
+            id="btnAuthSubmit" 
+            type="submit" 
+            class="w-full h-12 mt-2 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-bold shadow-md shadow-primary/25 hover:opacity-95 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+          >
+            <span id="btnAuthIcon" class="material-symbols-outlined text-[20px]">lock_open</span>
+            <span id="btnAuthText">Entrar al Inventario</span>
           </button>
         </form>
       </section>
 
-      <!-- Quick Demo Credentials Hint & Security Footer -->
-      <footer class="mt-space-lg text-center flex flex-col items-center gap-space-xs">
-        <div class="flex items-center gap-1 text-secondary text-xs mt-2 font-medium">
-          <span class="material-symbols-outlined text-[16px] text-emerald-600">verified_user</span>
-          <span>Personal Autorizado · Tu Cell Express</span>
+      <!-- Security Guarantee Footer -->
+      <footer class="mt-6 text-center flex flex-col items-center gap-1">
+        <div class="flex items-center gap-1.5 text-secondary text-xs font-medium">
+          <span class="material-symbols-outlined text-[16px] text-emerald-600">shield</span>
+          <span>Autenticación Cifrada · Firebase Cloud Security</span>
         </div>
+        <p class="text-[11px] text-secondary/70">
+          Cualquier intento de acceso por cuentas no autorizadas queda registrado y bloqueado.
+        </p>
       </footer>
+    </div>
+
+    <!-- Success Feedback Toast -->
+    <div class="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-emerald-800 text-white px-5 py-3 rounded-2xl shadow-xl text-xs font-bold flex items-center gap-2.5 opacity-0 pointer-events-none transition-all duration-300" id="loginSuccessToast">
+      <span class="material-symbols-outlined text-[20px] text-emerald-300">check_circle</span>
+      <span id="loginSuccessText">¡Sesión iniciada exitosamente!</span>
     </div>
   </main>
 
   <script>
-    import { getCurrentOperator, getCurrentShift, setCurrentOperator, getAvailableOperators } from '../utils/inventoryStore.js';
+    import { loginWithEmail, registerAuthorizedUser, isUserAuthorized } from '../utils/authStore.js';
+    import { setCurrentOperator } from '../utils/inventoryStore.js';
 
-    const pinInput = document.getElementById('operatorPin') as HTMLInputElement | null;
-    const togglePinBtn = document.getElementById('btnTogglePin');
-    const eyeIcon = document.getElementById('pinEyeIcon');
-    const loginForm = document.getElementById('loginForm');
-    const errorMsg = document.getElementById('loginErrorMsg');
-    const operatorSelect = document.getElementById('operatorSelect') as HTMLSelectElement | null;
-    const shiftSelect = document.getElementById('shiftRole') as HTMLSelectElement | null;
-    const customContainer = document.getElementById('customOperatorContainer');
-    const customInput = document.getElementById('customOperatorInput') as HTMLInputElement | null;
+    let currentMode: 'login' | 'register' = 'login';
 
-    // Inicializar operadores disponibles
-    if (operatorSelect) {
-      const currentOp = getCurrentOperator();
-      const currentShift = getCurrentShift();
-      const available = getAvailableOperators();
+    const tabLogin = document.getElementById('tabLogin');
+    const tabRegister = document.getElementById('tabRegister');
+    const authForm = document.getElementById('authForm') as HTMLFormElement | null;
+    const emailInput = document.getElementById('userEmail') as HTMLInputElement | null;
+    const passwordInput = document.getElementById('userPassword') as HTMLInputElement | null;
+    const togglePasswordBtn = document.getElementById('btnTogglePassword');
+    const eyeIcon = document.getElementById('passwordEyeIcon');
+    const errorBanner = document.getElementById('authErrorBanner');
+    const errorText = document.getElementById('authErrorText');
+    const registerHelpBox = document.getElementById('registerHelpBox');
+    const btnSubmit = document.getElementById('btnAuthSubmit') as HTMLButtonElement | null;
+    const btnText = document.getElementById('btnAuthText');
+    const btnIcon = document.getElementById('btnAuthIcon');
+    const toast = document.getElementById('loginSuccessToast');
+    const toastText = document.getElementById('loginSuccessText');
 
-      operatorSelect.innerHTML = '';
-      available.forEach(op => {
-        const opt = document.createElement('option');
-        opt.value = op;
-        opt.textContent = op;
-        if (op === currentOp) opt.selected = true;
-        operatorSelect.appendChild(opt);
-      });
-
-      // Opción personalizada
-      const otherOpt = document.createElement('option');
-      otherOpt.value = '__custom__';
-      otherOpt.textContent = '+ Otro operador...';
-      operatorSelect.appendChild(otherOpt);
-
-      if (shiftSelect) {
-        shiftSelect.value = currentShift || 'mañana';
-      }
-
-      operatorSelect.addEventListener('change', () => {
-        if (operatorSelect.value === '__custom__') {
-          customContainer?.classList.remove('hidden');
-          customInput?.focus();
-        } else {
-          customContainer?.classList.add('hidden');
+    // Preset selector buttons
+    document.querySelectorAll('.btn-quick-user').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const email = btn.getAttribute('data-email');
+        if (email && emailInput) {
+          emailInput.value = email;
+          hideError();
+          passwordInput?.focus();
         }
       });
+    });
+
+    // Toggle Tab Modes
+    function setMode(mode: 'login' | 'register') {
+      currentMode = mode;
+      hideError();
+      if (mode === 'login') {
+        tabLogin?.classList.add('bg-surface-container-lowest', 'text-on-surface', 'shadow-xs');
+        tabLogin?.classList.remove('text-secondary');
+        tabRegister?.classList.remove('bg-surface-container-lowest', 'text-on-surface', 'shadow-xs');
+        tabRegister?.classList.add('text-secondary');
+
+        registerHelpBox?.classList.add('hidden');
+        if (btnText) btnText.textContent = 'Entrar al Inventario';
+        if (btnIcon) btnIcon.textContent = 'lock_open';
+      } else {
+        tabRegister?.classList.add('bg-surface-container-lowest', 'text-on-surface', 'shadow-xs');
+        tabRegister?.classList.remove('text-secondary');
+        tabLogin?.classList.remove('bg-surface-container-lowest', 'text-on-surface', 'shadow-xs');
+        tabLogin?.classList.add('text-secondary');
+
+        registerHelpBox?.classList.remove('hidden');
+        if (btnText) btnText.textContent = 'Crear Contraseña y Registrar';
+        if (btnIcon) btnIcon.textContent = 'how_to_reg';
+      }
     }
 
-    togglePinBtn?.addEventListener('click', () => {
-      if (!pinInput || !eyeIcon) return;
-      const isPassword = pinInput.type === 'password';
-      pinInput.type = isPassword ? 'text' : 'password';
+    tabLogin?.addEventListener('click', () => setMode('login'));
+    tabRegister?.addEventListener('click', () => setMode('register'));
+
+    // Toggle Password Visibility
+    togglePasswordBtn?.addEventListener('click', () => {
+      if (!passwordInput || !eyeIcon) return;
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
       eyeIcon.textContent = isPassword ? 'visibility_off' : 'visibility';
     });
 
-    loginForm?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const pin = pinInput?.value || '';
+    function showError(msg: string) {
+      if (!errorBanner || !errorText) return;
+      errorText.textContent = msg;
+      errorBanner.classList.remove('hidden');
+    }
 
-      if (pin.length >= 4) {
-        if (errorMsg) errorMsg.classList.add('hidden');
-        
-        let finalOperator = operatorSelect?.value || 'Alejandro (Admin)';
-        if (finalOperator === '__custom__') {
-          finalOperator = customInput?.value.trim() || 'Operador Mostrador';
+    function hideError() {
+      errorBanner?.classList.add('hidden');
+    }
+
+    function showToast(msg: string) {
+      if (!toast || !toastText) return;
+      toastText.textContent = msg;
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      toast.classList.add('opacity-100');
+    }
+
+    // Set Loading State
+    function setLoading(isLoading: boolean) {
+      if (!btnSubmit) return;
+      btnSubmit.disabled = isLoading;
+      if (isLoading) {
+        if (btnIcon) {
+          btnIcon.textContent = 'sync';
+          btnIcon.classList.add('animate-spin');
         }
-        const finalShift = shiftSelect?.value || 'mañana';
-
-        setCurrentOperator(finalOperator, finalShift);
-
-        const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/';
-        window.location.href = baseUrl;
+        if (btnText) btnText.textContent = 'Comprobando credenciales...';
       } else {
-        if (errorMsg) errorMsg.classList.remove('hidden');
+        if (btnIcon) {
+          btnIcon.classList.remove('animate-spin');
+          btnIcon.textContent = currentMode === 'login' ? 'lock_open' : 'how_to_reg';
+        }
+        if (btnText) {
+          btnText.textContent = currentMode === 'login' ? 'Entrar al Inventario' : 'Crear Contraseña y Registrar';
+        }
+      }
+    }
+
+    // Auth Submission
+    authForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideError();
+
+      const email = emailInput?.value.trim().toLowerCase() || '';
+      const password = passwordInput?.value || '';
+
+      if (!email || !password) {
+        showError('Por favor completa todos los campos.');
+        return;
+      }
+
+      // Verificación previa de Lista Blanca en el cliente
+      if (!isUserAuthorized(email)) {
+        showError('Acceso Denegado: Este correo no está autorizado. Solo el Dueño y el Administrador pueden ingresar al sistema.');
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        if (currentMode === 'login') {
+          await loginWithEmail(email, password);
+        } else {
+          await registerAuthorizedUser(email, password);
+        }
+
+        const isOwner = email.includes('dueno');
+        const roleLabel = isOwner ? 'Dueño (Propietario)' : 'Alejandro (Admin)';
+        setCurrentOperator(roleLabel);
+
+        showToast(`¡Bienvenido, ${roleLabel}! Cargando inventario...`);
+
+        setTimeout(() => {
+          const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/';
+          window.location.replace(baseUrl);
+        }, 800);
+      } catch (err: any) {
+        showError(err.message || 'Error al procesar la autenticación.');
+        setLoading(false);
       }
     });
   </script>
 </Layout>
-

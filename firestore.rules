@@ -1,8 +1,18 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    
+    // Función de autorización exclusiva para Dueño y Administrador
+    function isAuthorizedUser() {
+      return request.auth != null && (
+        request.auth.token.email.lower() == 'admin@tucellexpress.com' ||
+        request.auth.token.email.lower() == 'dueno@tucellexpress.com'
+      );
+    }
+
+    // Regla global para todas las colecciones (products, movements, config)
     match /{document=**} {
-      allow read, write: if true;
+      allow read, write: if isAuthorizedUser();
     }
   }
 }

@@ -18,14 +18,21 @@ const SHIFT_KEY = 'stock_movil_current_shift_v1';
 
 export const defaultOperators = [
   'Alejandro (Admin)',
-  'Carlos (Ventas)',
-  'María (Turno Tarde)',
-  'Cajero Mostrador'
+  'Dueño (Propietario)'
 ];
 
 export function getCurrentOperator() {
   if (typeof window === 'undefined') return 'Alejandro (Admin)';
-  return localStorage.getItem(OPERATOR_KEY) || 'Alejandro (Admin)';
+  const explicit = localStorage.getItem(OPERATOR_KEY);
+  if (explicit) return explicit;
+  const authSession = localStorage.getItem('stock_movil_auth_session_v1');
+  if (authSession) {
+    try {
+      const s = JSON.parse(authSession);
+      if (s?.displayName) return s.displayName;
+    } catch (e) {}
+  }
+  return 'Alejandro (Admin)';
 }
 
 export function getCurrentShift() {
@@ -137,13 +144,76 @@ export function saveConfig(cfg) {
 // Memory cache for active listener
 let isFirestoreListening = false;
 
+/**
+ * Normaliza cualquier valor de fecha (Timestamp de Firestore, string ISO, objeto Date, etc.)
+ * a una instancia válida de JavaScript Date.
+ */
+export function normalizeDate(dateVal) {
+  if (!dateVal) return new Date();
+  if (typeof dateVal === 'object' && typeof dateVal.toDate === 'function') {
+    return dateVal.toDate();
+  }
+  if (typeof dateVal === 'object' && typeof dateVal.seconds === 'number') {
+    return new Date(dateVal.seconds * 1000);
+  }
+  const d = new Date(dateVal);
+  return isNaN(d.getTime()) ? new Date() : d;
+}
+
+/**
+ * Comprime un archivo de imagen a Base64 ligero (DataURL) usando Canvas HTML5.
+ * Reduce el tamaño de 5-10MB a unos 25-35KB ideales para Firestore y localStorage.
+ * @param {File} file
+ * @param {number} maxWidth
+ * @param {number} quality
+ * @returns {Promise<string>}
+ */
+export function compressImageFile(file, maxWidth = 480, quality = 0.8) {
+  return new Promise((resolve, reject) => {
+    if (!file || !file.type.startsWith('image/')) {
+      return reject(new Error('El archivo seleccionado no es una imagen válida.'));
+    }
+    const reader = new FileReader();
+    reader.onload = (readerEvent) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(String(readerEvent.target?.result || ''));
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = () => reject(new Error('Error al decodificar la imagen.'));
+      img.src = String(readerEvent.target?.result || '');
+    };
+    reader.onerror = () => reject(new Error('Error al leer el archivo de la imagen.'));
+    reader.readAsDataURL(file);
+  });
+}
+
 // Initialize real-time synchronization with Cloud Firestore
 export function initFirestoreSync() {
   if (typeof window === 'undefined' || isFirestoreListening) return;
   isFirestoreListening = true;
 
   try {
-    // Listener de productos
+    // 1. Listener de productos en tiempo real
     const productsRef = collection(db, 'products');
     onSnapshot(productsRef, (snapshot) => {
       if (!snapshot.empty) {
@@ -159,14 +229,59 @@ export function initFirestoreSync() {
           img: doc.data().img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'
         }));
 
-        localStorage.setItem(STORE_KEY, JSON.stringify(firestoreItems));
-        window.dispatchEvent(new CustomEvent('inventory-updated', { detail: firestoreItems }));
+        // Fusión por SKU priorizando datos actualizados de Firestore
+        const currentLocal = getStoredInventory(true);
+        const mapBySku = new Map();
+        currentLocal.forEach(item => mapBySku.set(item.sku, item));
+        firestoreItems.forEach(item => mapBySku.set(item.sku, item));
+        const mergedProducts = Array.from(mapBySku.values());
+
+        localStorage.setItem(STORE_KEY, JSON.stringify(mergedProducts));
+        window.dispatchEvent(new CustomEvent('inventory-updated', { detail: mergedProducts }));
       }
     }, (err) => {
       console.warn('Advertencia en sincronización en tiempo real de Firestore:', err);
     });
 
-    // Listener de categorías en tiempo real
+    // 2. Listener de movimientos en tiempo real
+    const movsRef = collection(db, 'movements');
+    onSnapshot(movsRef, (snap) => {
+      if (!snap.empty) {
+        const firestoreMovs = snap.docs.map(doc => {
+          const data = doc.data();
+          const normalizedDate = normalizeDate(data.fechaHora || data.createdAt);
+          return {
+            id: doc.id,
+            productoId: data.productoId || '',
+            sku: data.sku || '',
+            productName: data.productName || data.sku || 'Accesorio',
+            tipo: data.tipo || 'ajuste',
+            cantidad: Number(data.cantidad) || 0,
+            stockResultante: Number(data.stockResultante) || 0,
+            fechaHora: normalizedDate.toISOString(),
+            nota: data.nota || '',
+            operador: data.operador || 'Alejandro (Admin)',
+            revertido: data.revertido === true,
+            movimientoReversionId: data.movimientoReversionId || null
+          };
+        });
+
+        // Combinar con movimientos locales evitando duplicados
+        const localMovs = getStoredMovements();
+        const mergedMap = new Map();
+        localMovs.forEach(m => mergedMap.set(m.id, m));
+        firestoreMovs.forEach(m => mergedMap.set(m.id, m));
+        const merged = Array.from(mergedMap.values());
+        merged.sort((a, b) => new Date(b.fechaHora).getTime() - new Date(a.fechaHora).getTime());
+
+        localStorage.setItem(MOVEMENTS_KEY, JSON.stringify(merged));
+        window.dispatchEvent(new CustomEvent('movements-updated', { detail: merged }));
+      }
+    }, (err) => {
+      console.warn('Advertencia en sincronización de movimientos Firestore:', err);
+    });
+
+    // 3. Listener de categorías en tiempo real
     const catDocRef = doc(db, 'config', 'categories');
     onSnapshot(catDocRef, (snap) => {
       if (snap.exists() && Array.isArray(snap.data()?.list)) {
@@ -443,8 +558,8 @@ export function recordMovement({ sku, tipo, cantidad, nota = '', operador = '' }
 }
 
 export function isSameCalendarDay(d1, d2) {
-  const date1 = new Date(d1);
-  const date2 = new Date(d2);
+  const date1 = normalizeDate(d1);
+  const date2 = normalizeDate(d2);
   return date1.getFullYear() === date2.getFullYear() &&
          date1.getMonth() === date2.getMonth() &&
          date1.getDate() === date2.getDate();

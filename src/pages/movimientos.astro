@@ -244,7 +244,9 @@ import Layout from '../layouts/Layout.astro';
         const opt = document.createElement('option');
         opt.value = item.sku;
         const statusText = item.activo === false ? ' [Inactivo]' : '';
-        opt.textContent = `${item.name} (${item.sku}) - Stock actual: ${item.stock}${statusText}`;
+        const isCritical = item.activo !== false && item.stock < (item.minStock || 5);
+        const alertPrefix = isCritical ? '⚠️ [EN ALERTA: ' + item.stock + ' unid.] ' : '';
+        opt.textContent = `${alertPrefix}${item.name} (${item.sku}) - Stock actual: ${item.stock}${statusText}`;
         dropdown.appendChild(opt);
       });
 
@@ -430,13 +432,19 @@ import Layout from '../layouts/Layout.astro';
         // Actualizar vistas
         populateDropdown();
         updateSelectedCardDisplay();
-        showToast(`¡Movimiento guardado exitosamente! Nuevo stock: ${newMov.stockResultante} unid.`);
+        renderMovementsHistory();
+
+        if (newMov.stockResultante < (item.minStock || 5)) {
+          showToast(`⚠️ ¡Movimiento guardado! Alerta de reposición: ${item.name} quedó en nivel crítico (${newMov.stockResultante} unid.)`);
+        } else {
+          showToast(`¡Movimiento guardado exitosamente! Nuevo stock: ${newMov.stockResultante} unid.`);
+        }
       } catch (err: any) {
         showToast(err.message || 'Error al guardar el movimiento.', true);
       }
     });
 
-    // Renderizar Historial de Hoy
+    // Renderizar Historial de Hoy y Recientes
     function renderMovementsHistory() {
       const container = document.getElementById('movementsHistoryContainer');
       if (!container) return;
@@ -445,18 +453,19 @@ import Layout from '../layouts/Layout.astro';
       const movements: Movement[] = getStoredMovements();
       const now = new Date();
       const todayMovements = movements.filter(m => isSameCalendarDay(m.fechaHora, now));
+      const displayMovements = todayMovements.length > 0 ? todayMovements : movements.slice(0, 10);
 
-      if (todayMovements.length === 0) {
+      if (displayMovements.length === 0) {
         container.innerHTML = `
           <div class="py-6 text-center text-secondary text-body-sm flex flex-col items-center">
             <span class="material-symbols-outlined text-[32px] mb-1 opacity-40">receipt_long</span>
-            <span>No se han registrado movimientos hoy</span>
+            <span>No se han registrado movimientos todavía</span>
           </div>
         `;
         return;
       }
 
-      todayMovements.forEach(m => {
+      displayMovements.forEach(m => {
         const isEntry = m.tipo === 'entrada' || m.tipo === 'reposicion';
         const isReversion = m.tipo === 'reversion';
         const isAjuste = m.tipo === 'ajuste';
@@ -499,6 +508,7 @@ import Layout from '../layouts/Layout.astro';
               revertirMovimiento(id);
               populateDropdown();
               updateSelectedCardDisplay();
+              renderMovementsHistory();
               showToast('Movimiento revertido exitosamente.');
             } catch (err: any) {
               showToast(err.message, true);
@@ -511,6 +521,7 @@ import Layout from '../layouts/Layout.astro';
     // Inicialización
     populateDropdown();
     updateSelectedCardDisplay();
+    renderMovementsHistory();
 
     window.addEventListener('inventory-updated', () => {
       populateDropdown();

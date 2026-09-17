@@ -40,19 +40,28 @@ import Layout from '../layouts/Layout.astro';
           <span class="text-[11px] font-medium text-blue-600">Total rebajado por ventas de piso</span>
         </div>
 
-        <!-- KPI 2: Unidades por Reponer (Ámbar Alerta Enmarcado) -->
-        <div class="bg-amber-50/70 border-2 border-amber-200/80 rounded-2xl p-4 shadow-sm flex flex-col justify-between relative overflow-hidden">
+        <!-- KPI 2: Unidades por Reponer (Ámbar Alerta Enmarcado - Cliqueable para ver detalle) -->
+        <div class="bg-amber-50/70 border-2 border-amber-200/80 hover:border-amber-400 hover:shadow-md active:scale-[0.99] transition-all rounded-2xl p-4 shadow-sm flex flex-col justify-between relative overflow-hidden cursor-pointer group" id="kpiToRestockCard" title="Haz clic para ver el desglose de unidades por reponer por accesorio">
           <div class="flex items-center justify-between mb-1">
-            <span class="text-xs font-bold uppercase tracking-wider text-amber-800">Unidades por Reponer</span>
-            <div class="w-8 h-8 rounded-xl bg-amber-600 text-white flex items-center justify-center shadow-xs">
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1">
+              <span>Unidades por Reponer</span>
+              <span class="material-symbols-outlined text-[15px] opacity-60 group-hover:opacity-100 transition-opacity">open_in_new</span>
+            </span>
+            <div class="w-8 h-8 rounded-xl bg-amber-600 text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
               <span class="material-symbols-outlined text-[18px]">warning</span>
             </div>
           </div>
           <div class="flex items-baseline gap-1.5 my-1">
-            <span class="text-3xl font-extrabold text-amber-900 font-display" id="kpiToRestockUnits">0</span>
+            <span class="text-3xl font-extrabold text-amber-900 font-display" id="kpiToRestockUnits">+0</span>
             <span class="text-xs font-semibold text-amber-700">unid. faltantes</span>
           </div>
-          <span class="text-[11px] font-medium text-amber-700" id="kpiToRestockSubtitle">Para completar capacidad de 10 max</span>
+          <div class="flex items-center justify-between text-[11px] font-medium text-amber-800 mt-0.5">
+            <span id="kpiToRestockSubtitle">Total faltante para completar capacidad 10</span>
+            <span class="font-bold underline text-amber-900 flex items-center gap-0.5">
+              <span>Ver detalle</span>
+              <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+            </span>
+          </div>
         </div>
 
         <!-- KPI 3: Stock Real en Piso (Existencias Activas - Verde Esmeralda Enmarcado) -->
@@ -130,6 +139,58 @@ import Layout from '../layouts/Layout.astro';
         </div>
       </div>
 
+      <!-- Modal Detalle de Unidades por Reponer -->
+      <div class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-on-surface/40 backdrop-blur-sm transition-all duration-200" id="restockDetailModal">
+        <div class="w-full max-w-lg bg-surface-container-lowest rounded-t-2xl sm:rounded-2xl p-space-md sm:p-space-lg shadow-2xl flex flex-col gap-3 max-h-[88vh] overflow-hidden">
+          <!-- Cabecera del Modal -->
+          <div class="flex items-center justify-between border-b border-surface-container pb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-sm">
+                <span class="material-symbols-outlined text-[22px]">inventory_2</span>
+              </div>
+              <div>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">Unidades por Reponer</h3>
+                <p class="font-body-sm text-body-sm text-secondary" id="restockModalSubtitle">Detalle producto por producto</p>
+              </div>
+            </div>
+            <button class="w-9 h-9 flex items-center justify-center rounded-full text-secondary hover:bg-surface-container transition-colors cursor-pointer" id="closeRestockModalBtn" type="button">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+
+          <!-- Totalizador & Indicador de Regla de Negocio -->
+          <div class="flex items-center justify-between bg-amber-50/80 border border-amber-200/80 rounded-xl px-3.5 py-2.5">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-amber-600 animate-pulse"></span>
+              <span class="text-xs font-bold text-amber-900 uppercase tracking-wide">Faltante Total en Tienda:</span>
+            </div>
+            <span class="text-sm font-extrabold text-amber-900 px-2.5 py-0.5 rounded-lg bg-amber-200/70" id="restockModalTotalPill">+0 unid.</span>
+          </div>
+
+          <!-- Buscador rápido dentro del modal -->
+          <div class="relative flex items-center">
+            <span class="material-symbols-outlined absolute left-3 text-secondary text-[18px] pointer-events-none">search</span>
+            <input class="w-full h-10 pl-9 pr-3 rounded-xl bg-surface-container-low text-on-surface text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary border border-surface-container" id="restockSearchInput" placeholder="Buscar por accesorio, SKU o categoría..." type="text"/>
+          </div>
+
+          <!-- Lista con scroll de accesorios y faltantes -->
+          <div class="flex flex-col gap-2 overflow-y-auto max-h-[48vh] pr-1 py-1" id="restockModalList">
+            <!-- Renderizado dinámicamente -->
+          </div>
+
+          <!-- Pie del modal -->
+          <div class="border-t border-surface-container pt-3 flex items-center justify-between gap-2">
+            <button class="h-11 px-4 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md font-semibold cursor-pointer hover:bg-surface-container-high transition-colors" id="closeRestockModalFooterBtn" type="button">
+              Cerrar
+            </button>
+            <a href={`${import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/'}alertas/`} class="h-11 px-5 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-bold shadow-md shadow-primary/20 flex items-center gap-1.5 hover:opacity-95 active:scale-95 transition-all">
+              <span class="material-symbols-outlined text-[18px]">touch_app</span>
+              <span>Ir a Reponer en Alertas</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
       <!-- Feedback Toast -->
       <div class="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-on-surface text-surface px-4 py-2.5 rounded-full shadow-lg text-xs font-bold flex items-center gap-2 opacity-0 pointer-events-none transition-opacity duration-200" id="reportToast">
         <span class="material-symbols-outlined text-tertiary-fixed text-[18px]" id="reportToastIcon">check_circle</span>
@@ -144,10 +205,22 @@ import Layout from '../layouts/Layout.astro';
 
     let allMovements: Movement[] = [];
     let filteredMovements: Movement[] = [];
+    let currentRestockItems: { product: Product, missing: number }[] = [];
+    let totalRestockUnitsCount = 0;
 
     const toast = document.getElementById('reportToast');
     const toastText = document.getElementById('reportToastText');
     const toastIcon = document.getElementById('reportToastIcon');
+
+    // Elementos del Modal de Reposición
+    const restockModal = document.getElementById('restockDetailModal');
+    const closeRestockModalBtn = document.getElementById('closeRestockModalBtn');
+    const closeRestockModalFooterBtn = document.getElementById('closeRestockModalFooterBtn');
+    const restockModalList = document.getElementById('restockModalList');
+    const restockSearchInput = document.getElementById('restockSearchInput') as HTMLInputElement | null;
+    const restockModalTotalPill = document.getElementById('restockModalTotalPill');
+    const kpiToRestockCard = document.getElementById('kpiToRestockCard');
+    const restockModalSubtitle = document.getElementById('restockModalSubtitle');
 
     function showToast(msg: string, icon = 'check_circle') {
       if (!toast || !toastText) return;
@@ -156,6 +229,103 @@ import Layout from '../layouts/Layout.astro';
       toast.classList.remove('opacity-0', 'pointer-events-none');
       setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none'), 2200);
     }
+
+    function renderRestockList(items: { product: Product, missing: number }[]) {
+      if (!restockModalList) return;
+      restockModalList.innerHTML = '';
+
+      if (items.length === 0) {
+        restockModalList.innerHTML = `
+          <div class="py-10 text-center text-secondary">
+            <span class="material-symbols-outlined text-4xl text-emerald-500 mb-1">check_circle</span>
+            <p class="font-bold text-on-surface text-sm">¡Inventario completo!</p>
+            <p class="text-xs text-secondary mt-0.5">No hay productos que coincidan con la búsqueda o requieran reposición.</p>
+          </div>
+        `;
+        return;
+      }
+
+      items.forEach(({ product, missing }) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low/70 border border-surface-container hover:bg-surface-container transition-all';
+        
+        const prodName = product.name || (product as any).nombre || product.sku;
+        const imgSrc = product.img || (product as any).imagen || '';
+        const prodCatLoc = product.location || product.category || 'Sin ubic.';
+        const imgHtml = imgSrc 
+          ? `<img src="${imgSrc}" alt="${prodName}" class="w-11 h-11 rounded-lg object-cover bg-surface-container border border-surface-container-high" onerror="this.outerHTML='<div class=\\'w-11 h-11 rounded-lg bg-surface-container flex items-center justify-center text-secondary\\'><span class=\\'material-symbols-outlined text-[20px]\\'>inventory_2</span></div>'"/>`
+          : `<div class="w-11 h-11 rounded-lg bg-surface-container flex items-center justify-center text-secondary"><span class="material-symbols-outlined text-[20px]">inventory_2</span></div>`;
+
+        itemDiv.innerHTML = `
+          <div class="flex items-center gap-2.5 min-w-0">
+            ${imgHtml}
+            <div class="flex flex-col min-w-0">
+              <span class="font-bold text-xs text-on-surface truncate" title="${prodName}">${prodName}</span>
+              <div class="flex items-center gap-1.5 text-[11px] text-secondary">
+                <span class="font-mono font-semibold bg-surface-container px-1 rounded text-[10px] text-on-surface">${product.sku}</span>
+                <span>•</span>
+                <span class="truncate">${prodCatLoc}</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 shrink-0 ml-2">
+            <div class="flex flex-col items-end">
+              <span class="text-[10px] text-secondary font-medium">Stock: <strong class="text-on-surface">${product.stock}</strong> / 10</span>
+              <span class="text-xs font-black text-amber-700 bg-amber-100/90 border border-amber-300 px-2 py-0.5 rounded-lg">
+                Faltan +${missing}
+              </span>
+            </div>
+          </div>
+        `;
+        restockModalList.appendChild(itemDiv);
+      });
+    }
+
+    function openRestockModal() {
+      if (!restockModal) return;
+      if (restockSearchInput) restockSearchInput.value = '';
+      if (restockModalTotalPill) restockModalTotalPill.textContent = `+${totalRestockUnitsCount} unid.`;
+      if (restockModalSubtitle) {
+        restockModalSubtitle.textContent = `${currentRestockItems.length} accesorio${currentRestockItems.length !== 1 ? 's' : ''} requieren reposición (tope 10)`;
+      }
+      renderRestockList(currentRestockItems);
+      restockModal.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function closeRestockModal() {
+      if (!restockModal) return;
+      restockModal.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    kpiToRestockCard?.addEventListener('click', openRestockModal);
+    closeRestockModalBtn?.addEventListener('click', closeRestockModal);
+    closeRestockModalFooterBtn?.addEventListener('click', closeRestockModal);
+    restockModal?.addEventListener('click', (e) => {
+      if (e.target === restockModal) closeRestockModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && restockModal && !restockModal.classList.contains('hidden')) {
+        closeRestockModal();
+      }
+    });
+
+    restockSearchInput?.addEventListener('input', (e) => {
+      const q = ((e.target as HTMLInputElement).value || '').toLowerCase().trim();
+      if (!q) {
+        renderRestockList(currentRestockItems);
+        return;
+      }
+      const filtered = currentRestockItems.filter(item => {
+        const name = (item.product.name || (item.product as any).nombre || '').toLowerCase();
+        const sku = (item.product.sku || '').toLowerCase();
+        const cat = (item.product.category || (item.product as any).categoria || '').toLowerCase();
+        const loc = (item.product.location || (item.product as any).ubicacion || '').toLowerCase();
+        return name.includes(q) || sku.includes(q) || cat.includes(q) || loc.includes(q);
+      });
+      renderRestockList(filtered);
+    });
 
     function refreshData() {
       allMovements = getStoredMovements();
@@ -169,24 +339,36 @@ import Layout from '../layouts/Layout.astro';
         }
       });
 
-      let toRestockCount = 0;
+      let totalToRestockAll = 0;
       let totalStockReal = 0;
+      let restockBreakdown: { product: Product, missing: number }[] = [];
+
       inventory.forEach(i => {
         const stock = Number(i.stock) || 0;
         const max = Number(i.maxStock) || 10;
         totalStockReal += stock;
-        if (stock < (Number(i.minStock) || 5)) {
-          toRestockCount += Math.max(0, max - stock);
+        const missing = Math.max(0, max - stock);
+        totalToRestockAll += missing;
+        if (missing > 0) {
+          restockBreakdown.push({ product: i, missing });
         }
       });
+
+      restockBreakdown.sort((a, b) => b.missing - a.missing);
+      currentRestockItems = restockBreakdown;
+      totalRestockUnitsCount = totalToRestockAll;
 
       const kpiSales = document.getElementById('kpiSalesUnits');
       const kpiToRestock = document.getElementById('kpiToRestockUnits');
       const kpiTotalStock = document.getElementById('kpiTotalStockUnits');
+      const kpiToRestockSubtitle = document.getElementById('kpiToRestockSubtitle');
 
       if (kpiSales) kpiSales.textContent = salesCount.toString();
-      if (kpiToRestock) kpiToRestock.textContent = `+${toRestockCount}`;
+      if (kpiToRestock) kpiToRestock.textContent = `+${totalToRestockAll}`;
       if (kpiTotalStock) kpiTotalStock.textContent = totalStockReal.toString();
+      if (kpiToRestockSubtitle) {
+        kpiToRestockSubtitle.textContent = `${restockBreakdown.length} accesorio${restockBreakdown.length !== 1 ? 's' : ''} requieren reposición (tope 10)`;
+      }
 
       filteredMovements = [...allMovements];
       renderTable(filteredMovements);
