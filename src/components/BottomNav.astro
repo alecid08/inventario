@@ -8,7 +8,7 @@ const isAlertas = pathname.includes('/alertas');
 const isReportes = pathname.includes('/reportes');
 ---
 
-<nav class="fixed bottom-0 left-0 right-0 max-w-lg mx-auto bg-surface-container-lowest shadow-lg px-2 py-1.5 flex justify-around items-center z-40 border-t border-surface-container">
+<nav class="fixed bottom-0 left-0 right-0 max-w-lg mx-auto bg-surface-container-lowest/95 backdrop-blur-lg shadow-lg px-2 pt-1.5 pb-safe flex justify-around items-center z-40 border-t border-surface-container select-none app-chrome">
   <!-- 1. Inventario -->
   <a href={`${base}/`} class={`flex flex-col items-center justify-center min-h-[48px] min-w-[48px] px-2 rounded-xl transition-colors active:scale-95 ${isInventario ? 'text-primary' : 'text-secondary hover:text-on-surface'}`}>
     <span class="material-symbols-outlined text-2xl" style={isInventario ? "font-variation-settings: 'FILL' 1;" : ""}>inventory_2</span>

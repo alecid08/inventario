@@ -3,41 +3,18 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="Tu Cell Express - Gestión de Inventario">
-  <!-- Cabecera Oficial Tu Cell Express -->
-  <header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-sm border-b border-surface-container">
-    <div class="h-16 px-gutter-mobile flex items-center justify-between">
-      <div class="flex items-center gap-space-sm min-w-0">
-        <!-- Logo Oficial Tu Cell Express -->
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-700 via-primary to-blue-500 text-white flex items-center justify-center flex-shrink-0 shadow-md shadow-primary/20 p-2">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
-            <rect width="14" height="20" x="5" y="2" rx="3" ry="3"/>
-            <path d="M12 18h.01"/>
-            <path d="M9 6h6"/>
-          </svg>
-        </div>
-        <div class="flex flex-col min-w-0">
-          <span class="font-headline-sm text-headline-sm text-on-surface truncate leading-tight font-bold tracking-tight">Tu Cell Express</span>
-          <span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1.5 truncate">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0"></span>
-            <span class="truncate font-medium">Gestión de Inventario</span>
-          </span>
-        </div>
-      </div>
-      <div class="flex items-center gap-space-xs">
-        <a href={`${import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/'}login/`} class="h-10 px-2.5 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-xl font-label-sm text-label-sm flex items-center gap-1.5 shadow-sm transition-all border border-surface-container-highest cursor-pointer" id="headerOperatorLink" title="Cambiar operador o turno">
-          <span class="w-6 h-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-[11px]" id="headerOperatorInitial">A</span>
-          <span class="hidden sm:inline font-semibold text-xs max-w-[120px] truncate" id="headerOperatorName">Alejandro (Admin)</span>
-          <span class="material-symbols-outlined text-[16px] text-secondary">swap_horiz</span>
-        </a>
-        <button aria-label="Añadir producto" class="h-10 px-space-sm bg-primary-container text-on-primary rounded-xl font-label-sm text-label-sm flex items-center gap-1 shadow-sm hover:opacity-95 active:scale-95 transition-all" id="btnHeaderAddProd" type="button">
-          <span class="material-symbols-outlined text-[18px]">add</span>
-          <span>Nuevo</span>
-        </button>
-      </div>
-    </div>
-  </header>
+  <button 
+    slot="header-actions" 
+    aria-label="Añadir producto" 
+    class="h-8 px-2.5 bg-primary text-on-primary rounded-xl font-label-sm text-xs font-bold flex items-center gap-1 shadow-xs hover:opacity-95 active:scale-95 transition-all cursor-pointer" 
+    id="btnHeaderAddProd" 
+    type="button"
+  >
+    <span class="material-symbols-outlined text-[16px]">add</span>
+    <span>Nuevo</span>
+  </button>
 
-  <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile pt-16 pb-20">
+  <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile pt-3 pb-20">
     <div class="flex flex-col w-full pb-24">
 
       <!-- Modal Rápido de Conteo / Ajuste -->

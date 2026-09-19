@@ -1,0 +1,184 @@
+---
+// Componente de Instalación Inteligente PWA (Android / iOS / Desktop)
+---
+
+<div id="pwaInstallContainer" class="hidden fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom,0px))] left-0 right-0 max-w-lg mx-auto px-4 z-40 animate-in fade-in slide-in-from-bottom-4 duration-300 pointer-events-none">
+  <div class="pointer-events-auto bg-surface-container-lowest/95 backdrop-blur-xl border border-primary/20 shadow-2xl rounded-2xl p-3.5 flex items-center justify-between gap-3 ring-1 ring-black/5">
+    <!-- Icono y Texto -->
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-blue-600 text-white flex items-center justify-center flex-shrink-0 shadow-md shadow-primary/25 font-black text-sm">
+        TC
+      </div>
+      <div class="flex flex-col min-w-0">
+        <span class="text-xs font-bold text-on-surface truncate leading-tight">Instalar Tu Cell Express</span>
+        <span class="text-[11px] text-secondary truncate" id="pwaInstallSubtitle">Abrir a pantalla completa sin navegador</span>
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="flex items-center gap-1.5 flex-shrink-0">
+      <button 
+        id="btnDismissPwaPrompt" 
+        type="button" 
+        aria-label="Cerrar aviso de instalación"
+        class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-container transition-colors cursor-pointer"
+      >
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+      
+      <button 
+        id="btnTriggerPwaInstall" 
+        type="button" 
+        class="h-9 px-3 rounded-xl bg-primary text-on-primary font-label-sm text-xs font-bold shadow-md shadow-primary/20 hover:opacity-95 active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
+      >
+        <span class="material-symbols-outlined text-[16px]">download</span>
+        <span id="btnPwaActionText">Instalar</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Guía de Instalación para iPhone / iOS Safari -->
+<div id="iosInstallModal" class="hidden fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-xs transition-opacity duration-200">
+  <div class="w-full max-w-lg bg-surface-container-lowest rounded-t-3xl p-5 pb-[max(1.75rem,calc(env(safe-area-inset-bottom,0px)+0.75rem))] shadow-2xl flex flex-col gap-4 border-t border-surface-container animate-in slide-in-from-bottom duration-200">
+    <!-- Manija táctil -->
+    <div class="w-10 h-1 bg-outline-variant/60 rounded-full self-center"></div>
+
+    <div class="flex items-start justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-primary to-blue-600 text-white flex items-center justify-center shadow-md shadow-primary/25 font-bold text-base">
+          TC
+        </div>
+        <div>
+          <h3 class="font-headline-sm text-sm font-bold text-on-surface">Instalar en tu iPhone / iPad</h3>
+          <p class="text-xs text-secondary">Ejecuta la app a pantalla completa como una nativa</p>
+        </div>
+      </div>
+      <button id="btnCloseIosModal" type="button" class="w-8 h-8 rounded-full flex items-center justify-center text-secondary hover:bg-surface-container">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <!-- Pasos ilustrados para iOS -->
+    <div class="flex flex-col gap-2.5 bg-surface-container-low/60 rounded-2xl p-3.5 border border-surface-container">
+      <div class="flex items-start gap-3">
+        <div class="w-7 h-7 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 font-bold text-xs">
+          1
+        </div>
+        <p class="text-xs text-on-surface leading-relaxed pt-0.5">
+          Toca el botón <strong class="text-primary font-bold">Compartir</strong> de Safari (<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-surface-container text-primary font-bold text-[11px]"><span class="material-symbols-outlined text-[13px] mr-0.5">ios_share</span> Compartir</span>) en la barra de tu navegador.
+        </p>
+      </div>
+
+      <div class="w-full h-px bg-surface-container"></div>
+
+      <div class="flex items-start gap-3">
+        <div class="w-7 h-7 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 font-bold text-xs">
+          2
+        </div>
+        <p class="text-xs text-on-surface leading-relaxed pt-0.5">
+          Desliza hacia abajo y selecciona <strong class="text-primary font-bold">"Agregar a pantalla de inicio"</strong> (<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-surface-container text-primary font-bold text-[11px]"><span class="material-symbols-outlined text-[13px] mr-0.5">add_box</span> Agregar a inicio</span>).
+        </p>
+      </div>
+    </div>
+
+    <button id="btnGotItIos" type="button" class="w-full h-11 rounded-xl bg-primary text-on-primary font-label-md text-xs font-bold shadow-md shadow-primary/20 active:scale-98 transition-all flex items-center justify-center">
+      Entendido
+    </button>
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    let deferredPrompt = null;
+    const DISMISS_KEY = 'tucell_pwa_prompt_dismissed_until';
+    const container = document.getElementById('pwaInstallContainer');
+    const btnInstall = document.getElementById('btnTriggerPwaInstall');
+    const btnDismiss = document.getElementById('btnDismissPwaPrompt');
+    const btnActionText = document.getElementById('btnPwaActionText');
+    const iosModal = document.getElementById('iosInstallModal');
+    const btnCloseIos = document.getElementById('btnCloseIosModal');
+    const btnGotItIos = document.getElementById('btnGotItIos');
+
+    // Comprobar si ya se ejecuta en modo aplicación standalone
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                         window.navigator.standalone === true ||
+                         document.referrer.includes('android-app://');
+
+    if (isStandalone) {
+      // Si ya está instalada y corriendo como app nativa, no mostrar avisos
+      return;
+    }
+
+    // Comprobar si el usuario pospuso el aviso recientemente
+    const dismissedUntil = localStorage.getItem(DISMISS_KEY);
+    if (dismissedUntil && Date.now() < parseInt(dismissedUntil, 10)) {
+      return;
+    }
+
+    const isIOS = (/iPad|iPhone|iPod/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1)) && !window.MSStream;
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+    // 1. Manejo en Android y Navegadores compatibles con beforeinstallprompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (container) {
+        container.classList.remove('hidden');
+      }
+    });
+
+    // 2. Manejo en iOS (Safari en iPhone/iPad)
+    if (isIOS && isSafari && !isStandalone) {
+      // Mostrar el banner adaptado para iOS después de 2 segundos de navegación
+      setTimeout(() => {
+        const stillDismissed = localStorage.getItem(DISMISS_KEY);
+        if (!stillDismissed || Date.now() > parseInt(stillDismissed, 10)) {
+          if (container && btnActionText) {
+            btnActionText.textContent = 'Cómo Instalar';
+            container.classList.remove('hidden');
+          }
+        }
+      }, 2000);
+    }
+
+    // Acción del botón principal
+    btnInstall?.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        // Flujo Android / Chrome
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          console.log('Usuario instaló la PWA');
+        }
+        deferredPrompt = null;
+        if (container) container.classList.add('hidden');
+      } else if (isIOS) {
+        // Abrir modal de ayuda para iOS
+        if (iosModal) iosModal.classList.remove('hidden');
+      }
+    });
+
+    // Descartar temporalmente por 3 días
+    function dismissPrompt() {
+      const threeDays = 3 * 24 * 60 * 60 * 1000;
+      localStorage.setItem(DISMISS_KEY, (Date.now() + threeDays).toString());
+      if (container) container.classList.add('hidden');
+      if (iosModal) iosModal.classList.add('hidden');
+    }
+
+    btnDismiss?.addEventListener('click', dismissPrompt);
+    btnCloseIos?.addEventListener('click', () => {
+      if (iosModal) iosModal.classList.add('hidden');
+    });
+    btnGotItIos?.addEventListener('click', () => {
+      dismissPrompt();
+    });
+
+    // Cuando la app termina de instalarse
+    window.addEventListener('appinstalled', () => {
+      if (container) container.classList.add('hidden');
+      console.log('Tu Cell Express instalada con éxito en el dispositivo.');
+    });
+  })();
+</script>
