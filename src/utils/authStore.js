@@ -1,6 +1,5 @@
 import { 
   signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
   signOut, 
   onAuthStateChanged
 } from 'firebase/auth';
@@ -10,47 +9,70 @@ import { setCurrentOperator } from './inventoryStore.js';
 export const AUTH_SESSION_KEY = 'stock_movil_auth_session_v1';
 
 /**
- * Lista blanca de los únicos 2 usuarios autorizados en el sistema
- * con sus respectivas contraseñas maestras configuradas.
+ * Lista blanca de los correos autorizados en el sistema (sin contraseñas).
+ * Refleja exactamente la regla de seguridad de firestore.rules.
  */
-export const AUTHORIZED_USERS = [
-  {
+export const AUTHORIZED_EMAILS = [
+  'admin@tucellexpress.com',
+  'dueno@tucellexpress.com'
+];
+
+/**
+ * Metadatos descriptivos de los usuarios autorizados (rol y nombre para la UI).
+ */
+export const AUTHORIZED_USERS_METADATA = {
+  'admin@tucellexpress.com': {
     email: 'admin@tucellexpress.com',
     role: 'admin',
-    displayName: 'Alejandro (Admin)',
-    password: 'Ale.3710',
-    aliases: ['admin', 'alejandro', 'admin@tucellexpress.com']
+    displayName: 'Alejandro (Admin)'
   },
-  {
+  'dueno@tucellexpress.com': {
     email: 'dueno@tucellexpress.com',
     role: 'dueño',
-    displayName: 'Dueño (Propietario)',
-    password: 'Jehu2026',
-    aliases: ['dueno', 'dueño', 'jehu', 'dueno@tucellexpress.com']
+    displayName: 'Dueño (Propietario)'
   }
-];
+};
+
+const ALIAS_MAP = {
+  'admin': 'admin@tucellexpress.com',
+  'alejandro': 'admin@tucellexpress.com',
+  'admin@tucellexpress.com': 'admin@tucellexpress.com',
+  'dueno': 'dueno@tucellexpress.com',
+  'dueño': 'dueno@tucellexpress.com',
+  'jehu': 'dueno@tucellexpress.com',
+  'dueno@tucellexpress.com': 'dueno@tucellexpress.com'
+};
+
+/**
+ * Resuelve un correo o alias al correo autorizado canónico.
+ * @param {string} identifier 
+ * @returns {string | null}
+ */
+export function getAuthorizedEmail(identifier) {
+  if (!identifier) return null;
+  const clean = identifier.trim().toLowerCase();
+  if (AUTHORIZED_EMAILS.includes(clean)) return clean;
+  return ALIAS_MAP[clean] || null;
+}
 
 /**
  * Busca si un identificador o correo coincide con un usuario autorizado.
  * @param {string} identifier 
- * @returns {{ email: string, role: string, displayName: string, password: string } | null}
+ * @returns {{ email: string, role: string, displayName: string } | null}
  */
 export function getAuthorizedUserByIdentifier(identifier) {
-  if (!identifier) return null;
-  const clean = identifier.trim().toLowerCase();
-  return AUTHORIZED_USERS.find(u => 
-    u.email.toLowerCase() === clean || 
-    (u.aliases && u.aliases.includes(clean))
-  ) || null;
+  const email = getAuthorizedEmail(identifier);
+  if (!email) return null;
+  return AUTHORIZED_USERS_METADATA[email] || null;
 }
 
 /**
- * Verifica si un correo o identificador está en la lista blanca de autorizados.
+ * Verifica si un correo o identificador está en la lista de autorizados.
  * @param {string} identifier
  * @returns {boolean}
  */
 export function isUserAuthorized(identifier) {
-  return getAuthorizedUserByIdentifier(identifier) !== null;
+  return getAuthorizedEmail(identifier) !== null;
 }
 
 /**
@@ -92,7 +114,32 @@ function saveAuthSession(user, authDef) {
 }
 
 /**
- * Inicia sesión validando credenciales maestras y sincronizando con Firebase.
+ * Mapea errores de Firebase Auth a mensajes descriptivos en español manteniendo el código.
+ */
+function formatFirebaseAuthError(err) {
+  if (!err) return 'Error de autenticación en Firebase.';
+  switch (err.code) {
+    case 'auth/invalid-credential':
+    case 'auth/wrong-password':
+      return 'Contraseña o credenciales incorrectas en Firebase Auth.';
+    case 'auth/user-not-found':
+      return 'Usuario no encontrado en Firebase Auth. Crea la cuenta en Firebase Console.';
+    case 'auth/invalid-email':
+      return 'El formato del correo electrónico no es válido.';
+    case 'auth/user-disabled':
+      return 'Esta cuenta ha sido inhabilitada en Firebase Auth.';
+    case 'auth/too-many-requests':
+      return 'Demasiados intentos fallidos. Acceso temporalmente bloqueado por Firebase Auth.';
+    case 'auth/network-request-failed':
+      return 'Error de conexión de red al conectar con Firebase Auth.';
+    default:
+      return err.message || `Error de autenticación en Firebase (${err.code || 'desconocido'}).`;
+  }
+}
+
+/**
+ * Inicia sesión dependiendo EXCLUSIVAMENTE de signInWithEmailAndPassword de Firebase Auth.
+ * Valida adicionalmente que el correo pertenezca a la lista autorizada.
  * @param {string} emailOrUser 
  * @param {string} password 
  * @returns {Promise<any>}
@@ -104,43 +151,38 @@ export async function loginWithEmail(emailOrUser, password) {
     throw new Error('Acceso Denegado: Este usuario no está autorizado como Dueño ni Administrador en Tu Cell Express.');
   }
 
-  // Validación de contraseña maestra configurada
-  if (authDef.password !== password) {
-    throw new Error('Contraseña incorrecta. Por favor verifica tu clave de acceso.');
+  if (!auth) {
+    throw new Error('El servicio de autenticación de Firebase no está disponible.');
   }
 
-  // Intento de conexión y sincronización con Firebase Auth en segundo plano
-  let firebaseUser = null;
   try {
-    if (auth) {
-      const cred = await signInWithEmailAndPassword(auth, authDef.email, password).catch(async (err) => {
-        if (err.code === 'auth/user-not-found') {
-          return await createUserWithEmailAndPassword(auth, authDef.email, password);
-        }
-        return null;
-      });
-      if (cred?.user) {
-        firebaseUser = cred.user;
-      }
+    // Autenticación exclusiva con Firebase Auth
+    const cred = await signInWithEmailAndPassword(auth, authDef.email, password);
+    const firebaseUser = cred.user;
+
+    // Verificación adicional de que el email autenticado en Firebase es uno de los permitidos
+    const verifiedUserDef = getAuthorizedUserByIdentifier(firebaseUser.email || '');
+    if (!verifiedUserDef) {
+      await signOut(auth).catch(() => {});
+      throw new Error('Acceso Denegado: La cuenta autenticada en Firebase no pertenece a los correos autorizados.');
     }
-  } catch (cloudErr) {
-    // Si la consola de Firebase no tiene habilitado Email/Password aún,
-    // el sistema autentica de manera local sin trabar el acceso.
-    console.warn('Aviso de sincronización Firebase Auth:', cloudErr);
+
+    saveAuthSession(firebaseUser, verifiedUserDef);
+    return firebaseUser;
+  } catch (err) {
+    if (err.code) {
+      const friendlyMsg = formatFirebaseAuthError(err);
+      const authErr = new Error(friendlyMsg);
+      authErr.code = err.code;
+      throw authErr;
+    }
+    throw err;
   }
-
-  const activeUser = firebaseUser || {
-    uid: `${authDef.role}-${Date.now()}`,
-    email: authDef.email,
-    displayName: authDef.displayName
-  };
-
-  saveAuthSession(activeUser, authDef);
-  return activeUser;
 }
 
 /**
- * Registro o verificación de cuenta autorizada.
+ * Registro de cuenta: El auto-registro está deshabilitado por seguridad para evitar que cualquiera cree cuentas.
+ * Las cuentas autorizadas deben crearse directamente en Firebase Console.
  * @param {string} emailOrUser 
  * @param {string} password 
  * @returns {Promise<any>}
@@ -149,19 +191,10 @@ export async function registerAuthorizedUser(emailOrUser, password) {
   const authDef = getAuthorizedUserByIdentifier(emailOrUser);
 
   if (!authDef) {
-    throw new Error('Registro Bloqueado: Solo se permite registrar las cuentas autorizadas del Dueño y Administrador.');
+    throw new Error('Registro Bloqueado: Este correo no está autorizado en Tu Cell Express.');
   }
 
-  if (password.length < 6) {
-    throw new Error('La contraseña debe tener un mínimo de 6 caracteres.');
-  }
-
-  // Si la contraseña coincide con la maestra o se define nueva
-  if (password !== authDef.password) {
-    throw new Error(`Para esta cuenta, por favor utiliza la contraseña oficial asignada (${authDef.displayName}).`);
-  }
-
-  return await loginWithEmail(emailOrUser, password);
+  throw new Error('El registro automático está deshabilitado por seguridad. Las cuentas deben crearse en Firebase Console por el administrador. Inicia sesión con tu contraseña.');
 }
 
 /**
@@ -189,9 +222,7 @@ export function initAuthListener() {
 
   try {
     onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        // No forzamos cierre local si el login fue validado por credenciales maestras locales
-      } else {
+      if (user) {
         const authDef = getAuthorizedUserByIdentifier(user.email || '');
         if (!authDef) {
           console.warn('Usuario no autorizado detectado en Firebase Auth, cerrando sesión:', user.email);
