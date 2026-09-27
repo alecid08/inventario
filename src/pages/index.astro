@@ -667,6 +667,9 @@ import Layout from "../layouts/Layout.astro";
     // --- RENDER LISTA DE PRODUCTOS ---
     function renderInventoryList() {
       const container = document.getElementById("inventoryList");
+      const subtitle = document.getElementById("productCountSubtitle");
+      const loadingState = document.getElementById("loadingInventoryState");
+      const emptyState = document.getElementById("emptyInventoryState");
       if (!container) return;
 
       if (isInventoryLoading()) {
