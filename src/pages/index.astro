@@ -669,6 +669,10 @@ import Layout from "../layouts/Layout.astro";
       const container = document.getElementById("inventoryList");
       if (!container) return;
 
+      const loadingState = document.getElementById("loadingInventoryState");
+      const emptyState = document.getElementById("emptyInventoryState");
+      const subtitle = document.getElementById("productCountSubtitle");
+
       if (isInventoryLoading()) {
         container.innerHTML = `
           <div id="inventoryLoadingSpinner" class="flex flex-col items-center justify-center py-12 text-center text-secondary">
