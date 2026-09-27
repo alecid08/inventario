@@ -96,9 +96,47 @@ export function getCategories() {
   }
 }
 
+function safeLocalStorageSet(key, data) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (err) {
+    if (err.name === 'QuotaExceededError' || err.code === 22 || err.code === 1014) {
+      console.warn(`[localStorage] Cuota excedida guardando '${key}'. Aligerando caché local...`);
+      try {
+        if (key === STORE_KEY && Array.isArray(data)) {
+          // Si la cuota se excede, reemplaza las imágenes Base64 grandes en localStorage
+          // por el placeholder estándar para preservar el funcionamiento de la app.
+          const sanitized = data.map(item => {
+            if (item.img && item.img.startsWith('data:image/')) {
+              return {
+                ...item,
+                img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'
+              };
+            }
+            return item;
+          });
+          localStorage.setItem(key, JSON.stringify(sanitized));
+          return;
+        }
+        if (key === MOVEMENTS_KEY && Array.isArray(data)) {
+          // Conserva solo los 300 movimientos más recientes localmente si hay problemas de espacio
+          const trimmed = data.slice(0, 300);
+          localStorage.setItem(key, JSON.stringify(trimmed));
+          return;
+        }
+      } catch (retryErr) {
+        console.error(`[localStorage] No se pudo guardar incluso tras aligerar datos:`, retryErr);
+      }
+    } else {
+      console.error(`[localStorage] Error guardando '${key}':`, err);
+    }
+  }
+}
+
 export function saveCategories(categories) {
   if (typeof window === 'undefined') return;
-  localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
+  safeLocalStorageSet(CATEGORIES_KEY, categories);
   window.dispatchEvent(new CustomEvent('categories-updated', { detail: categories }));
 
   // Sincronizar categorías en Firestore
@@ -141,7 +179,7 @@ export function getConfig() {
 export function saveConfig(cfg) {
   if (typeof window === 'undefined') return;
   const updated = { ...getConfig(), ...cfg };
-  localStorage.setItem(CONFIG_KEY, JSON.stringify(updated));
+  safeLocalStorageSet(CONFIG_KEY, updated);
 }
 
 // Memory cache for active listener and snapshot status
@@ -245,7 +283,7 @@ export function initFirestoreSync() {
         firestoreItems.forEach(item => mapBySku.set(item.sku, item));
         const mergedProducts = Array.from(mapBySku.values());
 
-        localStorage.setItem(STORE_KEY, JSON.stringify(mergedProducts));
+        safeLocalStorageSet(STORE_KEY, mergedProducts);
         window.dispatchEvent(new CustomEvent('inventory-updated', { detail: mergedProducts }));
       }
     }, (err) => {
@@ -284,7 +322,7 @@ export function initFirestoreSync() {
         const merged = Array.from(mergedMap.values());
         merged.sort((a, b) => new Date(b.fechaHora).getTime() - new Date(a.fechaHora).getTime());
 
-        localStorage.setItem(MOVEMENTS_KEY, JSON.stringify(merged));
+        safeLocalStorageSet(MOVEMENTS_KEY, merged);
         window.dispatchEvent(new CustomEvent('movements-updated', { detail: merged }));
       }
     }, (err) => {
@@ -298,7 +336,7 @@ export function initFirestoreSync() {
         const firestoreCats = snap.data().list;
         const current = getCategories();
         const merged = Array.from(new Set([...current, ...firestoreCats]));
-        localStorage.setItem(CATEGORIES_KEY, JSON.stringify(merged));
+        safeLocalStorageSet(CATEGORIES_KEY, merged);
         window.dispatchEvent(new CustomEvent('categories-updated', { detail: merged }));
       }
     }, (err) => {
@@ -331,7 +369,7 @@ export function getStoredInventory(includeInactive = false) {
       items = fallbackInventory;
     }
   } else {
-    localStorage.setItem(STORE_KEY, JSON.stringify(fallbackInventory));
+    safeLocalStorageSet(STORE_KEY, fallbackInventory);
     items = fallbackInventory;
   }
   items = items.map(item => ({
@@ -348,7 +386,7 @@ export function getStoredInventory(includeInactive = false) {
 // Save local & sync changes to Firestore
 export function saveInventory(items) {
   if (typeof window === 'undefined') return;
-  localStorage.setItem(STORE_KEY, JSON.stringify(items));
+  safeLocalStorageSet(STORE_KEY, items);
   window.dispatchEvent(new CustomEvent('inventory-updated', { detail: items }));
 
   // Background sync for updated items
@@ -434,7 +472,7 @@ export function createProduct(prodData) {
 
   // Immediate optimistic update in UI
   allItems.unshift(newProduct);
-  localStorage.setItem(STORE_KEY, JSON.stringify(allItems));
+  safeLocalStorageSet(STORE_KEY, allItems);
   window.dispatchEvent(new CustomEvent('inventory-updated', { detail: allItems }));
 
   // Registrar movimiento inicial de ingreso para trazabilidad absoluta (+10 unidades)
@@ -510,7 +548,7 @@ export function getStoredMovements() {
 
 export function saveMovements(movs) {
   if (typeof window === 'undefined') return;
-  localStorage.setItem(MOVEMENTS_KEY, JSON.stringify(movs));
+  safeLocalStorageSet(MOVEMENTS_KEY, movs);
   window.dispatchEvent(new CustomEvent('movements-updated', { detail: movs }));
 }
 
