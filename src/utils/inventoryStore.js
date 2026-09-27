@@ -1,11 +1,11 @@
 import { db } from './firebase.js';
-import { 
-  collection, 
-  doc, 
-  onSnapshot, 
-  addDoc, 
+import {
+  collection,
+  doc,
+  onSnapshot,
+  addDoc,
   setDoc,
-  serverTimestamp 
+  serverTimestamp
 } from 'firebase/firestore';
 
 const env = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env : {};
@@ -33,7 +33,7 @@ export function getCurrentOperator() {
     try {
       const s = JSON.parse(authSession);
       if (s?.displayName) return s.displayName;
-    } catch (e) {}
+    } catch (e) { }
   }
   return 'Alejandro (Admin)';
 }
@@ -72,36 +72,13 @@ export const defaultCategories = [
 ];
 
 export const defaultInventory = [
-  { id: 'JOBMBrrx2yjN3ytoKtGD', sku: 'CBL-C2C-15M', name: 'Cable USB-C a USB-C Trenzado 1.5m', category: 'Cargadores y Cables', stock: 10, minStock: 5, maxStock: 10, location: 'Estante C-2', activo: true, lastUpdated: '2026-09-03', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDwBW1Tnz4ox8TJimQ2nNWfY6o33DXFVI_9hnHGKzzl3XJhpYMd92sEX1p-M2182e_5P1T9-E8ueXBhioGF4oy264i2UoGbNDW_wFjgwrSNzAJjJhAlRcLwnmRjbP3lOMSy1dM0qSLvxcPA4Wzeciz7TUTmcvBPhWTMLu9gKEJNK5yXbrAMIG8EdaCNX49rw4X2MbQ7za9LNvHHrL-orE8zBLnoZbp1y9YNu2Jb_lniNxeofy9PERKBGA' },
-  { id: 'KbPANtiKofSR8TqgJhZb', sku: 'FND-IP15-MGS', name: 'Funda MagSafe Transparente iPhone 15', category: 'Fundas y Casos', stock: 10, minStock: 5, maxStock: 10, location: 'Vitrina F-2', activo: true, lastUpdated: '2026-09-03', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww' },
-  { id: 'U10kFDUELnsyAiiVmJuX', sku: 'SPT-MGN-AUTO', name: 'Soporte Magnético Rejilla para Auto', category: 'Soportes y Accesorios', stock: 9, minStock: 3, maxStock: 10, location: 'Vitrina A-1', activo: true, lastUpdated: '2026-09-02', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCoO16TT-tR-wlBrTApCGHxTpxWYKIILFh-fa-B9ONyuxDC7S0ZXI1xdRds3NS2MAjynS8X2uxtjbBTZFQOx3cu80HN_IChP6er-zID8eNdtHMdl2IaINz3QBd6WqP7XAeWK_-CkFA6KuSLUQ3uYW8aLVdzLA0HU-wJ4SV3_opoxIxnm0ropW05_gKwnufdKjkZCa6ege8rRfS1fIRvvjUVG7PXm7gqADoptCJ87melL-SZW9KfqE8rfw' },
-  { id: 'b96IX1Uq6jboc81hklml', sku: 'CRG-20W-USBC', name: 'Cargador Carga Rápida 20W USB-C', category: 'Cargadores y Cables', stock: 2, minStock: 5, maxStock: 10, location: 'Estante C-1', activo: true, lastUpdated: '2026-09-03', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBrfDhd7aPs8GoEZkbA-xzj03A0JGJv23NKGhczYuRs8EJYYf_q4gvPULwdu7W8msYzasXSZ5CRFCaiereQb0MBGmy_2rZyX803yRgihTlaUjdsvBhZ43BV5z9VhWzAtBp5NCT6sMqRZH17UfXJqbpvnnAVKBFI_dqtFRl2c6VUhREY7ilvtDMv5-2DsAZhazqG9qhIVZnFgDAxPizJb5ovXT5omGmRTXTgZYwc5QvkWW6J76B2YiQrvw' },
-  { id: 'kLX8MNqSi9VYf42MmErG', sku: 'CRST-9H-SAM', name: 'Mica Cristal Templado 9H Samsung S24', category: 'Protección de Pantalla', stock: 8, minStock: 5, maxStock: 10, location: 'Estante M-3', activo: true, lastUpdated: '2026-09-02', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDArc9PQMZMX60YZdL2HuhroEsYV6UgzSH87z-kJS4ARnnmSqmNSHgA9qBp7g6F6dHgZFFqTSVgq2gdJp58wHONkBxTxsO8hE0qtwatBHzLpB31H6chYL2O8S5CJSDi-z88o0vFq5sZcG3tsWBWISuppZf-tVqo03v5gno6pOC0TkrrhFGhyhCHAt7jP4NM9ZHobv-4beNobhEKe-UBtNC0__DBtmC90qfTOgVDh-SgPW_fPqxi2Q1q1g' },
-  { id: 'nhoXtymGrJuiK4gHUBNd', sku: 'AUD-TWS-PRO', name: 'Audífonos Bluetooth Inalámbricos TWS-5', category: 'Audio y Audífonos', stock: 0, minStock: 3, maxStock: 10, location: 'Cajón A-4', activo: true, lastUpdated: '2026-09-01', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBEddAYibZMjqLmVbQYfK77Qtk_GR18aEIxR3iZD-Z2oh2vBwMBHO4f5rmtUUOpsECq0Ki6-5kKq2rrbOwb5qTeegm3mwiaDth6G9WXs1pYgShhoy9AIo62Yi2tPtSAwuB9NT8Xg1cpDcF-6cJyQ2S_WpLWIWQIu2INbGpBjXUA7YtOlsTuVV3M7ipH2vBUeAEuuoP8SCLpb0_EussBUxFkyspxVV1X9GEiyd9dr9O0HJLNk35vxy8HOA' }
+  { id: 'JOBMBrrx2yjN3ytoKtGD', sku: 'CBL-C2C-15M', name: 'Cable USB-C a USB-C Trenzado 1.5m', category: 'Cargadores y Cables', stock: 10, minStock: 5, maxStock: 10, location: 'Estante C-2', activo: true, lastUpdated: '2026-09-03', _seeded: true, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDwBW1Tnz4ox8TJimQ2nNWfY6o33DXFVI_9hnHGKzzl3XJhpYMd92sEX1p-M2182e_5P1T9-E8ueXBhioGF4oy264i2UoGbNDW_wFjgwrSNzAJjJhAlRcLwnmRjbP3lOMSy1dM0qSLvxcPA4Wzeciz7TUTmcvBPhWTMLu9gKEJNK5yXbrAMIG8EdaCNX49rw4X2MbQ7za9LNvHHrL-orE8zBLnoZbp1y9YNu2Jb_lniNxeofy9PERKBGA' },
+  { id: 'KbPANtiKofSR8TqgJhZb', sku: 'FND-IP15-MGS', name: 'Funda MagSafe Transparente iPhone 15', category: 'Fundas y Casos', stock: 10, minStock: 5, maxStock: 10, location: 'Vitrina F-2', activo: true, lastUpdated: '2026-09-03', _seeded: true, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww' },
+  { id: 'U10kFDUELnsyAiiVmJuX', sku: 'SPT-MGN-AUTO', name: 'Soporte Magnético Rejilla para Auto', category: 'Soportes y Accesorios', stock: 9, minStock: 3, maxStock: 10, location: 'Vitrina A-1', activo: true, lastUpdated: '2026-09-02', _seeded: true, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCoO16TT-tR-wlBrTApCGHxTpxWYKIILFh-fa-B9ONyuxDC7S0ZXI1xdRds3NS2MAjynS8X2uxtjbBTZFQOx3cu80HN_IChP6er-zID8eNdtHMdl2IaINz3QBd6WqP7XAeWK_-CkFA6KuSLUQ3uYW8aLVdzLA0HU-wJ4SV3_opoxIxnm0ropW05_gKwnufdKjkZCa6ege8rRfS1fIRvvjUVG7PXm7gqADoptCJ87melL-SZW9KfqE8rfw' },
+  { id: 'b96IX1Uq6jboc81hklml', sku: 'CRG-20W-USBC', name: 'Cargador Carga Rápida 20W USB-C', category: 'Cargadores y Cables', stock: 2, minStock: 5, maxStock: 10, location: 'Estante C-1', activo: true, lastUpdated: '2026-09-03', _seeded: true, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBrfDhd7aPs8GoEZkbA-xzj03A0JGJv23NKGhczYuRs8EJYYf_q4gvPULwdu7W8msYzasXSZ5CRFCaiereQb0MBGmy_2rZyX803yRgihTlaUjdsvBhZ43BV5z9VhWzAtBp5NCT6sMqRZH17UfXJqbpvnnAVKBFI_dqtFRl2c6VUhREY7ilvtDMv5-2DsAZhazqG9qhIVZnFgDAxPizJb5ovXT5omGmRTXTgZYwc5QvkWW6J76B2YiQrvw' },
+  { id: 'kLX8MNqSi9VYf42MmErG', sku: 'CRST-9H-SAM', name: 'Mica Cristal Templado 9H Samsung S24', category: 'Protección de Pantalla', stock: 8, minStock: 5, maxStock: 10, location: 'Estante M-3', activo: true, lastUpdated: '2026-09-02', _seeded: true, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDArc9PQMZMX60YZdL2HuhroEsYV6UgzSH87z-kJS4ARnnmSqmNSHgA9qBp7g6F6dHgZFFqTSVgq2gdJp58wHONkBxTxsO8hE0qtwatBHzLpB31H6chYL2O8S5CJSDi-z88o0vFq5sZcG3tsWBWISuppZf-tVqo03v5gno6pOC0TkrrhFGhyhCHAt7jP4NM9ZHobv-4beNobhEKe-UBtNC0__DBtmC90qfTOgVDh-SgPW_fPqxi2Q1q1g' },
+  { id: 'nhoXtymGrJuiK4gHUBNd', sku: 'AUD-TWS-PRO', name: 'Audífonos Bluetooth Inalámbricos TWS-5', category: 'Audio y Audífonos', stock: 0, minStock: 3, maxStock: 10, location: 'Cajón A-4', activo: true, lastUpdated: '2026-09-01', _seeded: true, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBEddAYibZMjqLmVbQYfK77Qtk_GR18aEIxR3iZD-Z2oh2vBwMBHO4f5rmtUUOpsECq0Ki6-5kKq2rrbOwb5qTeegm3mwiaDth6G9WXs1pYgShhoy9AIo62Yi2tPtSAwuB9NT8Xg1cpDcF-6cJyQ2S_WpLWIWQIu2INbGpBjXUA7YtOlsTuVV3M7ipH2vBUeAEuuoP8SCLpb0_EussBUxFkyspxVV1X9GEiyd9dr9O0HJLNk35vxy8HOA' }
 ];
-
-export const DEFAULT_PRODUCT_SKUS = new Set(defaultInventory.map(item => item.sku));
-export const DEFAULT_PRODUCT_IDS = new Set(defaultInventory.map(item => item.id));
-
-export function isDefaultInventoryProduct(item) {
-  if (!item) return false;
-  return DEFAULT_PRODUCT_SKUS.has(item.sku) || Boolean(item.id && DEFAULT_PRODUCT_IDS.has(item.id));
-}
-
-let isInitialFirestoreSyncDone = false;
-
-export function isInventoryLoading() {
-  if (typeof window === 'undefined') return false;
-  if (isDev) return false;
-  const raw = localStorage.getItem(STORE_KEY);
-  if (raw) {
-    try {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return false;
-    } catch (e) {}
-  }
-  return !isInitialFirestoreSyncDone;
-}
 
 // --- CATEGORIES MANAGEMENT ---
 export function getCategories() {
@@ -167,8 +144,14 @@ export function saveConfig(cfg) {
   localStorage.setItem(CONFIG_KEY, JSON.stringify(updated));
 }
 
-// Memory cache for active listener
+// Memory cache for active listener and snapshot status
 let isFirestoreListening = false;
+let isFirstSnapshotCompleted = false;
+
+export function isInventoryLoading() {
+  if (import.meta.env?.DEV) return false;
+  return !isFirstSnapshotCompleted;
+}
 
 /**
  * Normaliza cualquier valor de fecha (Timestamp de Firestore, string ISO, objeto Date, etc.)
@@ -242,46 +225,32 @@ export function initFirestoreSync() {
     // 1. Listener de productos en tiempo real
     const productsRef = collection(db, 'products');
     onSnapshot(productsRef, (snapshot) => {
-      const firestoreItems = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        activo: doc.data().activo !== false,
-        stock: Number(doc.data().stock) || 0,
-        minStock: Number(doc.data().minStock) || 5,
-        maxStock: Number(doc.data().maxStock) || 10,
-        location: doc.data().location || 'Estante Principal',
-        lastUpdated: doc.data().lastUpdated || '2026-09-03',
-        img: doc.data().img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'
-      }));
+      if (!snapshot.empty) {
+        const firestoreItems = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+          activo: doc.data().activo !== false,
+          stock: Number(doc.data().stock) || 0,
+          minStock: Number(doc.data().minStock) || 5,
+          maxStock: Number(doc.data().maxStock) || 10,
+          location: doc.data().location || 'Estante Principal',
+          lastUpdated: doc.data().lastUpdated || '2026-09-03',
+          img: doc.data().img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'
+        }));
 
-      const firestoreSkus = new Set(firestoreItems.map(item => item.sku));
-      const firestoreIds = new Set(firestoreItems.map(item => item.id));
+        // Fusión por SKU priorizando datos actualizados de Firestore
+        const currentLocal = getStoredInventory(true);
+        const mapBySku = new Map();
+        currentLocal.forEach(item => mapBySku.set(item.sku, item));
+        firestoreItems.forEach(item => mapBySku.set(item.sku, item));
+        const mergedProducts = Array.from(mapBySku.values());
 
-      // Leer inventario local actual
-      const currentLocal = getStoredInventory(true);
-
-      // Purgar productos locales sembrados por defaultInventory que NO existan en Firestore
-      const cleanedLocal = currentLocal.filter(item => {
-        if (isDefaultInventoryProduct(item)) {
-          return firestoreSkus.has(item.sku) || firestoreIds.has(item.id);
-        }
-        // Conservar productos creados por el usuario offline pendientes de sync
-        return true;
-      });
-
-      // Fusión por SKU priorizando datos de Firestore
-      const mapBySku = new Map();
-      cleanedLocal.forEach(item => mapBySku.set(item.sku, item));
-      firestoreItems.forEach(item => mapBySku.set(item.sku, item));
-      const mergedProducts = Array.from(mapBySku.values());
-
-      isInitialFirestoreSyncDone = true;
-      localStorage.setItem(STORE_KEY, JSON.stringify(mergedProducts));
-      window.dispatchEvent(new CustomEvent('inventory-updated', { detail: mergedProducts }));
+        localStorage.setItem(STORE_KEY, JSON.stringify(mergedProducts));
+        window.dispatchEvent(new CustomEvent('inventory-updated', { detail: mergedProducts }));
+      }
     }, (err) => {
       isInitialFirestoreSyncDone = true;
       console.warn('Advertencia en sincronización en tiempo real de Firestore:', err);
-      window.dispatchEvent(new CustomEvent('inventory-updated', { detail: getStoredInventory(true) }));
     });
 
     // 2. Listener de movimientos en tiempo real
@@ -346,9 +315,9 @@ if (typeof window !== 'undefined') {
 }
 
 export function getStoredInventory(includeInactive = false) {
-  if (typeof window === 'undefined') return isDev ? defaultInventory : [];
+  if (typeof window === 'undefined') return defaultInventory;
   const raw = localStorage.getItem(STORE_KEY);
-  let items = [];
+  let items = defaultInventory;
   if (raw) {
     try {
       const parsed = JSON.parse(raw);
@@ -358,15 +327,10 @@ export function getStoredInventory(includeInactive = false) {
         items = isDev ? defaultInventory : [];
       }
     } catch (e) {
-      items = isDev ? defaultInventory : [];
+      items = defaultInventory;
     }
   } else {
-    if (isDev) {
-      items = defaultInventory;
-      localStorage.setItem(STORE_KEY, JSON.stringify(defaultInventory));
-    } else {
-      items = [];
-    }
+    localStorage.setItem(STORE_KEY, JSON.stringify(defaultInventory));
   }
   items = items.map(item => ({
     ...item,
@@ -425,9 +389,9 @@ export async function deactivateProduct(sku) {
   if (targetItem && targetItem.id && !targetItem.id.startsWith('sku-temp-')) {
     try {
       const docRef = doc(db, 'products', targetItem.id);
-      await setDoc(docRef, { 
-        activo: false, 
-        lastUpdated: new Date().toISOString().split('T')[0] 
+      await setDoc(docRef, {
+        activo: false,
+        lastUpdated: new Date().toISOString().split('T')[0]
       }, { merge: true });
     } catch (err) {
       console.error('Error al desactivar en Firestore:', err);
@@ -451,11 +415,9 @@ export async function deactivateProduct(sku) {
 // Requirement 2 & 3: Create product with default stock = 10, max stock = 10 (Firestore synced)
 export function createProduct(prodData) {
   const allItems = getStoredInventory(true);
-  const productDocRef = (typeof window !== 'undefined') ? doc(collection(db, 'products')) : null;
-  const definitiveId = productDocRef ? productDocRef.id : ('sku-temp-' + Date.now());
-
+  const tempId = 'sku-temp-' + Date.now();
   const newProduct = {
-    id: definitiveId,
+    id: tempId,
     sku: (prodData.sku || ('SKU-' + Math.floor(100 + Math.random() * 900))).toUpperCase(),
     name: prodData.name,
     category: prodData.category || 'Otros',
@@ -609,8 +571,8 @@ export function isSameCalendarDay(d1, d2) {
   const date1 = normalizeDate(d1);
   const date2 = normalizeDate(d2);
   return date1.getFullYear() === date2.getFullYear() &&
-         date1.getMonth() === date2.getMonth() &&
-         date1.getDate() === date2.getDate();
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate();
 }
 
 // Requirement 4: Same-day Reversal
