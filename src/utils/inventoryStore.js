@@ -8,6 +8,9 @@ import {
   serverTimestamp 
 } from 'firebase/firestore';
 
+const env = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env : {};
+const isDev = Boolean(env.DEV);
+
 // Store keys for physical inventory, movements, categories and configuration
 const STORE_KEY = 'stock_movil_inventory_v1';
 const MOVEMENTS_KEY = 'stock_movil_movements_v1';
@@ -76,6 +79,29 @@ export const defaultInventory = [
   { id: 'kLX8MNqSi9VYf42MmErG', sku: 'CRST-9H-SAM', name: 'Mica Cristal Templado 9H Samsung S24', category: 'Protección de Pantalla', stock: 8, minStock: 5, maxStock: 10, location: 'Estante M-3', activo: true, lastUpdated: '2026-09-02', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDArc9PQMZMX60YZdL2HuhroEsYV6UgzSH87z-kJS4ARnnmSqmNSHgA9qBp7g6F6dHgZFFqTSVgq2gdJp58wHONkBxTxsO8hE0qtwatBHzLpB31H6chYL2O8S5CJSDi-z88o0vFq5sZcG3tsWBWISuppZf-tVqo03v5gno6pOC0TkrrhFGhyhCHAt7jP4NM9ZHobv-4beNobhEKe-UBtNC0__DBtmC90qfTOgVDh-SgPW_fPqxi2Q1q1g' },
   { id: 'nhoXtymGrJuiK4gHUBNd', sku: 'AUD-TWS-PRO', name: 'Audífonos Bluetooth Inalámbricos TWS-5', category: 'Audio y Audífonos', stock: 0, minStock: 3, maxStock: 10, location: 'Cajón A-4', activo: true, lastUpdated: '2026-09-01', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBEddAYibZMjqLmVbQYfK77Qtk_GR18aEIxR3iZD-Z2oh2vBwMBHO4f5rmtUUOpsECq0Ki6-5kKq2rrbOwb5qTeegm3mwiaDth6G9WXs1pYgShhoy9AIo62Yi2tPtSAwuB9NT8Xg1cpDcF-6cJyQ2S_WpLWIWQIu2INbGpBjXUA7YtOlsTuVV3M7ipH2vBUeAEuuoP8SCLpb0_EussBUxFkyspxVV1X9GEiyd9dr9O0HJLNk35vxy8HOA' }
 ];
+
+export const DEFAULT_PRODUCT_SKUS = new Set(defaultInventory.map(item => item.sku));
+export const DEFAULT_PRODUCT_IDS = new Set(defaultInventory.map(item => item.id));
+
+export function isDefaultInventoryProduct(item) {
+  if (!item) return false;
+  return DEFAULT_PRODUCT_SKUS.has(item.sku) || Boolean(item.id && DEFAULT_PRODUCT_IDS.has(item.id));
+}
+
+let isInitialFirestoreSyncDone = false;
+
+export function isInventoryLoading() {
+  if (typeof window === 'undefined') return false;
+  if (isDev) return false;
+  const raw = localStorage.getItem(STORE_KEY);
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return false;
+    } catch (e) {}
+  }
+  return !isInitialFirestoreSyncDone;
+}
 
 // --- CATEGORIES MANAGEMENT ---
 export function getCategories() {
@@ -216,31 +242,46 @@ export function initFirestoreSync() {
     // 1. Listener de productos en tiempo real
     const productsRef = collection(db, 'products');
     onSnapshot(productsRef, (snapshot) => {
-      if (!snapshot.empty) {
-        const firestoreItems = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          activo: doc.data().activo !== false,
-          stock: Number(doc.data().stock) || 0,
-          minStock: Number(doc.data().minStock) || 5,
-          maxStock: Number(doc.data().maxStock) || 10,
-          location: doc.data().location || 'Estante Principal',
-          lastUpdated: doc.data().lastUpdated || '2026-09-03',
-          img: doc.data().img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'
-        }));
+      const firestoreItems = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        activo: doc.data().activo !== false,
+        stock: Number(doc.data().stock) || 0,
+        minStock: Number(doc.data().minStock) || 5,
+        maxStock: Number(doc.data().maxStock) || 10,
+        location: doc.data().location || 'Estante Principal',
+        lastUpdated: doc.data().lastUpdated || '2026-09-03',
+        img: doc.data().img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'
+      }));
 
-        // Fusión por SKU priorizando datos actualizados de Firestore
-        const currentLocal = getStoredInventory(true);
-        const mapBySku = new Map();
-        currentLocal.forEach(item => mapBySku.set(item.sku, item));
-        firestoreItems.forEach(item => mapBySku.set(item.sku, item));
-        const mergedProducts = Array.from(mapBySku.values());
+      const firestoreSkus = new Set(firestoreItems.map(item => item.sku));
+      const firestoreIds = new Set(firestoreItems.map(item => item.id));
 
-        localStorage.setItem(STORE_KEY, JSON.stringify(mergedProducts));
-        window.dispatchEvent(new CustomEvent('inventory-updated', { detail: mergedProducts }));
-      }
+      // Leer inventario local actual
+      const currentLocal = getStoredInventory(true);
+
+      // Purgar productos locales sembrados por defaultInventory que NO existan en Firestore
+      const cleanedLocal = currentLocal.filter(item => {
+        if (isDefaultInventoryProduct(item)) {
+          return firestoreSkus.has(item.sku) || firestoreIds.has(item.id);
+        }
+        // Conservar productos creados por el usuario offline pendientes de sync
+        return true;
+      });
+
+      // Fusión por SKU priorizando datos de Firestore
+      const mapBySku = new Map();
+      cleanedLocal.forEach(item => mapBySku.set(item.sku, item));
+      firestoreItems.forEach(item => mapBySku.set(item.sku, item));
+      const mergedProducts = Array.from(mapBySku.values());
+
+      isInitialFirestoreSyncDone = true;
+      localStorage.setItem(STORE_KEY, JSON.stringify(mergedProducts));
+      window.dispatchEvent(new CustomEvent('inventory-updated', { detail: mergedProducts }));
     }, (err) => {
+      isInitialFirestoreSyncDone = true;
       console.warn('Advertencia en sincronización en tiempo real de Firestore:', err);
+      window.dispatchEvent(new CustomEvent('inventory-updated', { detail: getStoredInventory(true) }));
     });
 
     // 2. Listener de movimientos en tiempo real
@@ -305,17 +346,27 @@ if (typeof window !== 'undefined') {
 }
 
 export function getStoredInventory(includeInactive = false) {
-  if (typeof window === 'undefined') return defaultInventory;
+  if (typeof window === 'undefined') return isDev ? defaultInventory : [];
   const raw = localStorage.getItem(STORE_KEY);
-  let items = defaultInventory;
+  let items = [];
   if (raw) {
     try {
-      items = JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        items = parsed;
+      } else {
+        items = isDev ? defaultInventory : [];
+      }
     } catch (e) {
-      items = defaultInventory;
+      items = isDev ? defaultInventory : [];
     }
   } else {
-    localStorage.setItem(STORE_KEY, JSON.stringify(defaultInventory));
+    if (isDev) {
+      items = defaultInventory;
+      localStorage.setItem(STORE_KEY, JSON.stringify(defaultInventory));
+    } else {
+      items = [];
+    }
   }
   items = items.map(item => ({
     ...item,
@@ -400,9 +451,11 @@ export async function deactivateProduct(sku) {
 // Requirement 2 & 3: Create product with default stock = 10, max stock = 10 (Firestore synced)
 export function createProduct(prodData) {
   const allItems = getStoredInventory(true);
-  const tempId = 'sku-temp-' + Date.now();
+  const productDocRef = (typeof window !== 'undefined') ? doc(collection(db, 'products')) : null;
+  const definitiveId = productDocRef ? productDocRef.id : ('sku-temp-' + Date.now());
+
   const newProduct = {
-    id: tempId,
+    id: definitiveId,
     sku: (prodData.sku || ('SKU-' + Math.floor(100 + Math.random() * 900))).toUpperCase(),
     name: prodData.name,
     category: prodData.category || 'Otros',
@@ -424,7 +477,7 @@ export function createProduct(prodData) {
   const activeOp = getCurrentOperator();
   const initMov = {
     id: 'mov-' + Date.now(),
-    productoId: tempId,
+    productoId: definitiveId,
     sku: newProduct.sku,
     productName: newProduct.name,
     tipo: 'entrada',
@@ -440,9 +493,9 @@ export function createProduct(prodData) {
   movements.unshift(initMov);
   saveMovements(movements);
 
-  // Save to Firestore asynchronously
-  if (typeof window !== 'undefined') {
-    addDoc(collection(db, 'products'), {
+  // Save to Firestore asynchronously with native offline persistence
+  if (typeof window !== 'undefined' && productDocRef) {
+    setDoc(productDocRef, {
       sku: newProduct.sku,
       name: newProduct.name,
       category: newProduct.category,
@@ -454,21 +507,16 @@ export function createProduct(prodData) {
       img: newProduct.img,
       lastUpdated: newProduct.lastUpdated,
       createdAt: serverTimestamp()
-    }).then(docRef => {
-      newProduct.id = docRef.id;
-      initMov.productoId = docRef.id;
-      localStorage.setItem(STORE_KEY, JSON.stringify(allItems));
-      saveMovements(movements);
-
-      // Registrar también el movimiento inicial en Firestore
-      addDoc(collection(db, 'movements'), {
-        ...initMov,
-        productoId: docRef.id,
-        createdAt: serverTimestamp()
-      }).catch(err => console.warn('Error guardando movimiento inicial en Firestore:', err));
     }).catch(err => {
       console.error('Error guardando nuevo producto en Firestore:', err);
     });
+
+    // Registrar también el movimiento inicial en Firestore
+    addDoc(collection(db, 'movements'), {
+      ...initMov,
+      productoId: definitiveId,
+      createdAt: serverTimestamp()
+    }).catch(err => console.warn('Error guardando movimiento inicial en Firestore:', err));
   }
 
   return newProduct;

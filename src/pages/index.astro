@@ -259,7 +259,7 @@ import Layout from '../layouts/Layout.astro';
   </main>
 
   <script>
-    import { getStoredInventory, deactivateProduct, createProduct, getCategories, addCategory, getCurrentOperator, recordMovement, compressImageFile } from '../utils/inventoryStore.js';
+    import { getStoredInventory, deactivateProduct, createProduct, getCategories, addCategory, getCurrentOperator, recordMovement, compressImageFile, isInventoryLoading } from '../utils/inventoryStore.js';
     import type { Product } from '../types/inventory';
 
     const baseEditUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/';
@@ -337,9 +337,27 @@ import Layout from '../layouts/Layout.astro';
 
     // --- RENDER LISTA DE PRODUCTOS ---
     function renderInventoryList() {
-      inventory = getStoredInventory(false);
       const container = document.getElementById('inventoryList');
+      const emptyState = document.getElementById('emptyInventoryState');
+      const subtitle = document.getElementById('productCountSubtitle');
       if (!container) return;
+
+      if (isInventoryLoading()) {
+        container.innerHTML = `
+          <div id="inventoryLoadingSpinner" class="flex flex-col items-center justify-center py-12 text-center text-secondary">
+            <div class="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin mb-3"></div>
+            <p class="font-body-sm text-on-surface-variant">Sincronizando inventario con la nube...</p>
+          </div>
+        `;
+        if (subtitle) subtitle.textContent = 'Sincronizando productos...';
+        if (emptyState) {
+          emptyState.classList.add('hidden');
+          emptyState.classList.remove('flex');
+        }
+        return;
+      }
+
+      inventory = getStoredInventory(false);
       container.innerHTML = '';
 
       inventory.forEach(item => {
@@ -678,6 +696,8 @@ import Layout from '../layouts/Layout.astro';
 
     // --- FILTROS Y BÚSQUEDA ---
     function applyFilters() {
+      if (isInventoryLoading()) return;
+
       const searchInput = document.getElementById('inventorySearchInput') as HTMLInputElement | null;
       const query = (searchInput?.value || '').toLowerCase().trim();
       const cards = document.querySelectorAll('.inventory-card');
@@ -755,6 +775,7 @@ import Layout from '../layouts/Layout.astro';
     window.addEventListener('inventory-updated', () => {
       renderCategoryChips();
       renderInventoryList();
+      applyFilters();
     });
 
     window.addEventListener('categories-updated', () => {
@@ -764,5 +785,8 @@ import Layout from '../layouts/Layout.astro';
     // Initial render
     renderCategoryChips();
     renderInventoryList();
+    if (!isInventoryLoading()) {
+      applyFilters();
+    }
   </script>
 </Layout>
