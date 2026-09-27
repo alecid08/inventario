@@ -315,9 +315,10 @@ if (typeof window !== 'undefined') {
 }
 
 export function getStoredInventory(includeInactive = false) {
-  if (typeof window === 'undefined') return defaultInventory;
+  const fallbackInventory = (typeof import.meta !== 'undefined' && import.meta.env?.DEV) ? defaultInventory : [];
+  if (typeof window === 'undefined') return fallbackInventory;
   const raw = localStorage.getItem(STORE_KEY);
-  let items = defaultInventory;
+  let items;
   if (raw) {
     try {
       const parsed = JSON.parse(raw);
@@ -327,10 +328,11 @@ export function getStoredInventory(includeInactive = false) {
         items = isDev ? defaultInventory : [];
       }
     } catch (e) {
-      items = defaultInventory;
+      items = fallbackInventory;
     }
   } else {
-    localStorage.setItem(STORE_KEY, JSON.stringify(defaultInventory));
+    localStorage.setItem(STORE_KEY, JSON.stringify(fallbackInventory));
+    items = fallbackInventory;
   }
   items = items.map(item => ({
     ...item,
