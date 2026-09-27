@@ -419,10 +419,42 @@ export async function deactivateProduct(sku) {
 // Requirement 2 & 3: Create product with default stock = 10, max stock = 10 (Firestore synced)
 export function createProduct(prodData) {
   const allItems = getStoredInventory(true);
-  const tempId = 'sku-temp-' + Date.now();
+
+  let finalSku = '';
+  if (prodData.sku && prodData.sku.trim()) {
+    finalSku = prodData.sku.trim().toUpperCase();
+    const exists = allItems.some(
+      item => item.sku && item.sku.trim().toUpperCase() === finalSku
+    );
+    if (exists) {
+      throw new Error("Ese SKU ya existe, usa otro");
+    }
+  } else {
+    let attempts = 0;
+    let generated = '';
+    let isUnique = false;
+    while (attempts < 5 && !isUnique) {
+      attempts++;
+      generated = 'SKU-' + Math.floor(100 + Math.random() * 900);
+      const exists = allItems.some(
+        item => item.sku && item.sku.trim().toUpperCase() === generated
+      );
+      if (!exists) {
+        isUnique = true;
+      }
+    }
+    if (!isUnique) {
+      throw new Error("No se pudo generar un SKU único automáticamente tras 5 intentos. Por favor, especifica un SKU manualmente.");
+    }
+    finalSku = generated;
+  }
+
+  const productDocRef = doc(collection(db, 'products'));
+  const definitiveId = productDocRef.id;
+
   const newProduct = {
-    id: tempId,
-    sku: (prodData.sku || ('SKU-' + Math.floor(100 + Math.random() * 900))).toUpperCase(),
+    id: definitiveId,
+    sku: finalSku,
     name: prodData.name,
     category: prodData.category || 'Otros',
     stock: 10, // Stock inicial estándar de 10 unidades
@@ -436,8 +468,10 @@ export function createProduct(prodData) {
 
   // Immediate optimistic update in UI
   allItems.unshift(newProduct);
-  localStorage.setItem(STORE_KEY, JSON.stringify(allItems));
-  window.dispatchEvent(new CustomEvent('inventory-updated', { detail: allItems }));
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(STORE_KEY, JSON.stringify(allItems));
+    window.dispatchEvent(new CustomEvent('inventory-updated', { detail: allItems }));
+  }
 
   // Registrar movimiento inicial de ingreso para trazabilidad absoluta (+10 unidades)
   const activeOp = getCurrentOperator();
