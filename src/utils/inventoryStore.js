@@ -5,6 +5,8 @@ import {
   onSnapshot,
   addDoc,
   setDoc,
+  deleteDoc,
+  getDocs,
   serverTimestamp
 } from 'firebase/firestore';
 
@@ -12,12 +14,12 @@ const env = (typeof import.meta !== 'undefined' && import.meta.env) ? import.met
 const isDev = Boolean(env.DEV);
 
 // Store keys for physical inventory, movements, categories and configuration
-const STORE_KEY = 'stock_movil_inventory_v1';
-const MOVEMENTS_KEY = 'stock_movil_movements_v1';
-const CONFIG_KEY = 'stock_movil_config_v1';
-const CATEGORIES_KEY = 'stock_movil_categories_v1';
-const OPERATOR_KEY = 'stock_movil_current_operator_v1';
-const SHIFT_KEY = 'stock_movil_current_shift_v1';
+export const STORE_KEY = 'stock_movil_inventory_v1';
+export const MOVEMENTS_KEY = 'stock_movil_movements_v1';
+export const CONFIG_KEY = 'stock_movil_config_v1';
+export const CATEGORIES_KEY = 'stock_movil_categories_v1';
+export const OPERATOR_KEY = 'stock_movil_current_operator_v1';
+export const SHIFT_KEY = 'stock_movil_current_shift_v1';
 
 export const defaultOperators = [
   'Alejandro (Admin)',
@@ -172,10 +174,6 @@ export function normalizeDate(dateVal) {
 /**
  * Comprime un archivo de imagen a Base64 ligero (DataURL) usando Canvas HTML5.
  * Reduce el tamaño de 5-10MB a unos 25-35KB ideales para Firestore y localStorage.
- * @param {File} file
- * @param {number} maxWidth
- * @param {number} quality
- * @returns {Promise<string>}
  */
 export function compressImageFile(file, maxWidth = 480, quality = 0.8) {
   return new Promise((resolve, reject) => {
@@ -225,9 +223,9 @@ export function initFirestoreSync() {
     // 1. Listener de productos en tiempo real
     const productsRef = collection(db, 'products');
     onSnapshot(productsRef, (snapshot) => {
-      let mergedProducts = [];
+      let firestoreItems = [];
       if (!snapshot.empty) {
-        const firestoreItems = snapshot.docs.map(doc => ({
+        firestoreItems = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
           activo: doc.data().activo !== false,
@@ -238,15 +236,19 @@ export function initFirestoreSync() {
           lastUpdated: doc.data().lastUpdated || '2026-09-03',
           img: doc.data().img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'
         }));
-
-        // Fusión por SKU priorizando datos actualizados de Firestore
-        const currentLocal = getStoredInventory(true);
-        const mapBySku = new Map();
-        currentLocal.forEach(item => mapBySku.set(item.sku, item));
-        firestoreItems.forEach(item => mapBySku.set(item.sku, item));
-        mergedProducts = Array.from(mapBySku.values());
       }
 
+      // Si Firestore tiene datos, actualizar directamente localStorage respetando el estado en Firestore.
+      // Incluir solo elementos temporales un-synced si existieran.
+      const currentLocal = getStoredInventory(true);
+      const tempLocal = currentLocal.filter(item => item.id && item.id.startsWith('sku-temp-'));
+      const mapBySku = new Map();
+      firestoreItems.forEach(item => mapBySku.set(item.sku, item));
+      tempLocal.forEach(item => {
+        if (!mapBySku.has(item.sku)) mapBySku.set(item.sku, item);
+      });
+
+      const mergedProducts = Array.from(mapBySku.values());
       localStorage.setItem(STORE_KEY, JSON.stringify(mergedProducts));
       window.dispatchEvent(new CustomEvent('inventory-updated', { detail: mergedProducts }));
       isFirstSnapshotCompleted = true;
@@ -258,8 +260,9 @@ export function initFirestoreSync() {
     // 2. Listener de movimientos en tiempo real
     const movsRef = collection(db, 'movements');
     onSnapshot(movsRef, (snap) => {
+      let firestoreMovs = [];
       if (!snap.empty) {
-        const firestoreMovs = snap.docs.map(doc => {
+        firestoreMovs = snap.docs.map(doc => {
           const data = doc.data();
           const normalizedDate = normalizeDate(data.fechaHora || data.createdAt);
           return {
@@ -277,18 +280,11 @@ export function initFirestoreSync() {
             movimientoReversionId: data.movimientoReversionId || null
           };
         });
-
-        // Combinar con movimientos locales evitando duplicados
-        const localMovs = getStoredMovements();
-        const mergedMap = new Map();
-        localMovs.forEach(m => mergedMap.set(m.id, m));
-        firestoreMovs.forEach(m => mergedMap.set(m.id, m));
-        const merged = Array.from(mergedMap.values());
-        merged.sort((a, b) => new Date(b.fechaHora).getTime() - new Date(a.fechaHora).getTime());
-
-        localStorage.setItem(MOVEMENTS_KEY, JSON.stringify(merged));
-        window.dispatchEvent(new CustomEvent('movements-updated', { detail: merged }));
       }
+
+      firestoreMovs.sort((a, b) => new Date(b.fechaHora).getTime() - new Date(a.fechaHora).getTime());
+      localStorage.setItem(MOVEMENTS_KEY, JSON.stringify(firestoreMovs));
+      window.dispatchEvent(new CustomEvent('movements-updated', { detail: firestoreMovs }));
     }, (err) => {
       console.warn('Advertencia en sincronización de movimientos Firestore:', err);
     });
@@ -298,10 +294,8 @@ export function initFirestoreSync() {
     onSnapshot(catDocRef, (snap) => {
       if (snap.exists() && Array.isArray(snap.data()?.list)) {
         const firestoreCats = snap.data().list;
-        const current = getCategories();
-        const merged = Array.from(new Set([...current, ...firestoreCats]));
-        localStorage.setItem(CATEGORIES_KEY, JSON.stringify(merged));
-        window.dispatchEvent(new CustomEvent('categories-updated', { detail: merged }));
+        localStorage.setItem(CATEGORIES_KEY, JSON.stringify(firestoreCats));
+        window.dispatchEvent(new CustomEvent('categories-updated', { detail: firestoreCats }));
       }
     }, (err) => {
       console.warn('Advertencia en sincronización de categorías:', err);
@@ -333,7 +327,6 @@ export function getStoredInventory(includeInactive = false) {
       items = fallbackInventory;
     }
   } else {
-    localStorage.setItem(STORE_KEY, JSON.stringify(fallbackInventory));
     items = fallbackInventory;
   }
   items = items.map(item => ({
@@ -377,7 +370,7 @@ export function saveInventory(items) {
   });
 }
 
-// Requirement 1: Soft Delete (Firestore synced)
+// Soft Delete (Firestore synced)
 export async function deactivateProduct(sku) {
   const allItems = getStoredInventory(true);
   let targetItem = null;
@@ -402,7 +395,6 @@ export async function deactivateProduct(sku) {
     }
   }
 
-  // Registrar auditoría de desactivación
   try {
     recordMovement({
       sku: targetItem?.sku || sku,
@@ -416,30 +408,51 @@ export async function deactivateProduct(sku) {
   }
 }
 
-// Requirement 2 & 3: Create product with default stock = 10, max stock = 10 (Firestore synced)
+// Hard Delete Product (completely remove product from LocalStorage and Firestore)
+export async function deleteProduct(skuOrId) {
+  const allItems = getStoredInventory(true);
+  const targetItem = allItems.find(i => i.sku === skuOrId || i.id === skuOrId);
+  const updatedItems = allItems.filter(i => i.sku !== skuOrId && i.id !== skuOrId);
+
+  localStorage.setItem(STORE_KEY, JSON.stringify(updatedItems));
+  window.dispatchEvent(new CustomEvent('inventory-updated', { detail: updatedItems }));
+
+  if (targetItem && targetItem.id && !targetItem.id.startsWith('sku-temp-')) {
+    try {
+      const docRef = doc(db, 'products', targetItem.id);
+      await deleteDoc(docRef);
+    } catch (err) {
+      console.error('Error al eliminar producto en Firestore:', err);
+    }
+  }
+  return targetItem;
+}
+
+// Create product with default stock = 10, max stock = 10 (Firestore synced)
 export function createProduct(prodData) {
   const allItems = getStoredInventory(true);
   const tempId = 'sku-temp-' + Date.now();
+  const definitiveId = doc(collection(db, 'products')).id;
+  const productDocRef = doc(db, 'products', definitiveId);
+
   const newProduct = {
-    id: tempId,
+    id: definitiveId,
     sku: (prodData.sku || ('SKU-' + Math.floor(100 + Math.random() * 900))).toUpperCase(),
     name: prodData.name,
     category: prodData.category || 'Otros',
-    stock: 10, // Stock inicial estándar de 10 unidades
+    stock: 10,
     minStock: prodData.minStock || 5,
-    maxStock: 10, // Max 10 por defecto
+    maxStock: 10,
     location: prodData.location || 'Estante Principal',
     activo: true,
     img: prodData.img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww',
     lastUpdated: new Date().toISOString().split('T')[0]
   };
 
-  // Immediate optimistic update in UI
   allItems.unshift(newProduct);
   localStorage.setItem(STORE_KEY, JSON.stringify(allItems));
   window.dispatchEvent(new CustomEvent('inventory-updated', { detail: allItems }));
 
-  // Registrar movimiento inicial de ingreso para trazabilidad absoluta (+10 unidades)
   const activeOp = getCurrentOperator();
   const initMov = {
     id: 'mov-' + Date.now(),
@@ -459,7 +472,6 @@ export function createProduct(prodData) {
   movements.unshift(initMov);
   saveMovements(movements);
 
-  // Save to Firestore asynchronously with native offline persistence
   if (typeof window !== 'undefined' && productDocRef) {
     setDoc(productDocRef, {
       sku: newProduct.sku,
@@ -477,7 +489,6 @@ export function createProduct(prodData) {
       console.error('Error guardando nuevo producto en Firestore:', err);
     });
 
-    // Registrar también el movimiento inicial en Firestore
     addDoc(collection(db, 'movements'), {
       ...initMov,
       productoId: definitiveId,
@@ -488,7 +499,6 @@ export function createProduct(prodData) {
   return newProduct;
 }
 
-// Requirement 3: Hard limit max 10 validation for movements
 export function validateAndCalculateStockChange(currentStock, maxStock, qtyChange) {
   const maxAllowed = maxStock || 10;
   const projectedStock = currentStock + qtyChange;
@@ -514,6 +524,116 @@ export function saveMovements(movs) {
   if (typeof window === 'undefined') return;
   localStorage.setItem(MOVEMENTS_KEY, JSON.stringify(movs));
   window.dispatchEvent(new CustomEvent('movements-updated', { detail: movs }));
+}
+
+/**
+ * Hard delete a single movement by ID from local storage and Firestore
+ */
+export async function deleteMovement(movementId) {
+  const movs = getStoredMovements();
+  const updatedMovs = movs.filter(m => m.id !== movementId);
+  saveMovements(updatedMovs);
+
+  if (typeof window !== 'undefined' && movementId) {
+    try {
+      const docRef = doc(db, 'movements', movementId);
+      await deleteDoc(docRef);
+    } catch (e) {
+      console.warn('Error al eliminar movimiento en Firestore:', e);
+    }
+  }
+}
+
+/**
+ * Hard delete ALL movements from local storage and Firestore
+ */
+export async function clearAllMovements() {
+  localStorage.removeItem(MOVEMENTS_KEY);
+  window.dispatchEvent(new CustomEvent('movements-updated', { detail: [] }));
+
+  if (typeof window !== 'undefined') {
+    try {
+      const movsSnap = await getDocs(collection(db, 'movements'));
+      const deletePromises = movsSnap.docs.map(docSnap => deleteDoc(doc(db, 'movements', docSnap.id)));
+      await Promise.all(deletePromises);
+    } catch (e) {
+      console.warn('Error borrando movimientos en Firestore:', e);
+    }
+  }
+}
+
+/**
+ * Reset stock counts for all products to targetStock (default 0 or 10)
+ */
+export async function resetAllStockCounts(targetStock = 0) {
+  const inventory = getStoredInventory(true);
+  const updated = inventory.map(item => ({
+    ...item,
+    stock: targetStock,
+    lastUpdated: new Date().toISOString().split('T')[0]
+  }));
+
+  saveInventory(updated);
+
+  if (typeof window !== 'undefined') {
+    try {
+      const prodSnap = await getDocs(collection(db, 'products'));
+      const updatePromises = prodSnap.docs.map(docSnap =>
+        setDoc(doc(db, 'products', docSnap.id), {
+          stock: targetStock,
+          lastUpdated: new Date().toISOString().split('T')[0]
+        }, { merge: true })
+      );
+      await Promise.all(updatePromises);
+    } catch (e) {
+      console.warn('Error reiniciando conteos en Firestore:', e);
+    }
+  }
+  return updated;
+}
+
+/**
+ * Perform TOTAL system wipe:
+ * - Deletes ALL products, movements, and config docs in Firestore
+ * - Clears ALL keys from localStorage
+ * - Triggers events and optionally reloads the application
+ */
+export async function clearAllDatabaseAndLocalStorage() {
+  if (typeof window === 'undefined') return;
+
+  // 1. Wipe local storage items
+  localStorage.removeItem(STORE_KEY);
+  localStorage.removeItem(MOVEMENTS_KEY);
+  localStorage.removeItem(CATEGORIES_KEY);
+  localStorage.removeItem(CONFIG_KEY);
+  localStorage.removeItem(OPERATOR_KEY);
+  localStorage.removeItem(SHIFT_KEY);
+
+  // 2. Wipe Firestore collections
+  try {
+    const productsSnap = await getDocs(collection(db, 'products'));
+    const pDeletes = productsSnap.docs.map(d => deleteDoc(doc(db, 'products', d.id)));
+
+    const movsSnap = await getDocs(collection(db, 'movements'));
+    const mDeletes = movsSnap.docs.map(d => deleteDoc(doc(db, 'movements', d.id)));
+
+    const catDocRef = doc(db, 'config', 'categories');
+    const cDelete = deleteDoc(catDocRef).catch(() => {});
+
+    await Promise.all([...pDeletes, ...mDeletes, cDelete]);
+  } catch (err) {
+    console.warn('Error al borrar datos de Firestore durante limpieza total:', err);
+  }
+
+  // 3. Dispatch events to reset active UI states
+  window.dispatchEvent(new CustomEvent('inventory-updated', { detail: [] }));
+  window.dispatchEvent(new CustomEvent('movements-updated', { detail: [] }));
+  window.dispatchEvent(new CustomEvent('categories-updated', { detail: defaultCategories }));
+
+  // Reload window to ensure clean state
+  setTimeout(() => {
+    window.location.reload();
+  }, 300);
 }
 
 /**
@@ -579,7 +699,7 @@ export function isSameCalendarDay(d1, d2) {
     date1.getDate() === date2.getDate();
 }
 
-// Requirement 4: Same-day Reversal
+// Same-day Reversal
 export function revertirMovimiento(movimientoId) {
   const movements = getStoredMovements();
   const mov = movements.find(m => m.id === movimientoId);

@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Tu Cell Express - Reportes y Consulta de Movimientos">
+<Layout title="Tu Cell Express - Reportes y Mantenimiento">
   <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile">
     <div class="flex flex-col w-full pb-24 space-y-space-md">
       <!-- Encabezado Limpio y Bien Estructurado -->
@@ -12,8 +12,8 @@ import Layout from '../layouts/Layout.astro';
             <span class="material-symbols-outlined text-[20px]">arrow_back</span>
           </a>
           <div>
-            <h1 class="text-2xl font-bold text-on-surface tracking-tight leading-tight">Reportes de Inventario</h1>
-            <p class="text-sm text-secondary font-medium mt-0.5">Consulta de transacciones, salidas, entradas y auditoría por operador</p>
+            <h1 class="text-2xl font-bold text-on-surface tracking-tight leading-tight">Reportes & Mantenimiento</h1>
+            <p class="text-sm text-secondary font-medium mt-0.5">Consulta de transacciones, salidas, auditoría y reinicio/limpieza de datos</p>
           </div>
         </div>
         <!-- Botón Exportar CSV -->
@@ -25,13 +25,17 @@ import Layout from '../layouts/Layout.astro';
 
       <!-- Pestañas / Tabs Navegación Principal -->
       <nav class="w-full flex items-center gap-2 p-1.5 bg-surface-container-low rounded-2xl border border-surface-container shadow-xs">
-        <button id="tabBtnHistory" type="button" class="flex-1 py-3 px-4 rounded-xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 transition-all bg-surface-container-lowest text-primary shadow-sm border border-surface-container">
+        <button id="tabBtnHistory" type="button" class="flex-1 py-3 px-3 rounded-xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-1.5 transition-all bg-surface-container-lowest text-primary shadow-sm border border-surface-container">
           <span class="material-symbols-outlined text-[20px]">history</span>
           <span>Historial de Movimientos</span>
         </button>
-        <button id="tabBtnReconciliation" type="button" class="flex-1 py-3 px-4 rounded-xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 transition-all text-secondary hover:text-on-surface hover:bg-surface-container/50">
+        <button id="tabBtnReconciliation" type="button" class="flex-1 py-3 px-3 rounded-xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-1.5 transition-all text-secondary hover:text-on-surface hover:bg-surface-container/50">
           <span class="material-symbols-outlined text-[20px]">fact_check</span>
           <span>Conciliación Semanal</span>
+        </button>
+        <button id="tabBtnMaintenance" type="button" class="flex-1 py-3 px-3 rounded-xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-1.5 transition-all text-error hover:bg-error-container/40">
+          <span class="material-symbols-outlined text-[20px]">cleaning_services</span>
+          <span>Reiniciar & Limpieza (2FA)</span>
         </button>
       </nav>
 
@@ -54,7 +58,7 @@ import Layout from '../layouts/Layout.astro';
           <span class="text-[11px] font-medium text-blue-600">Total rebajado por ventas de piso</span>
         </div>
 
-        <!-- KPI 2: Unidades por Reponer (Ámbar Alerta Enmarcado - Cliqueable para ver detalle) -->
+        <!-- KPI 2: Unidades por Reponer (Ámbar Alerta Enmarcado) -->
         <div class="bg-amber-50/70 border-2 border-amber-200/80 hover:border-amber-400 hover:shadow-md active:scale-[0.99] transition-all rounded-2xl p-4 shadow-sm flex flex-col justify-between relative overflow-hidden cursor-pointer group" id="kpiToRestockCard" title="Haz clic para ver el desglose de unidades por reponer por accesorio">
           <div class="flex items-center justify-between mb-1">
             <span class="text-xs font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1">
@@ -78,7 +82,7 @@ import Layout from '../layouts/Layout.astro';
           </div>
         </div>
 
-        <!-- KPI 3: Stock Real en Piso (Existencias Activas - Verde Esmeralda Enmarcado) -->
+        <!-- KPI 3: Stock Real en Piso -->
         <div class="bg-emerald-50/70 border-2 border-emerald-200/80 rounded-2xl p-4 shadow-sm flex flex-col justify-between relative overflow-hidden">
           <div class="flex items-center justify-between mb-1">
             <span class="text-xs font-bold uppercase tracking-wider text-emerald-800">Stock Real en Piso</span>
@@ -132,7 +136,7 @@ import Layout from '../layouts/Layout.astro';
         </div>
       </div>
 
-      <!-- Tabla de Transacciones con Operador -->
+      <!-- Tabla de Transacciones con Operador y Acción de Borrado -->
       <div class="w-full bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden border border-surface-container">
         <div class="overflow-x-auto w-full">
           <table class="w-full min-w-[700px] border-collapse text-left" id="reportsTable">
@@ -142,8 +146,8 @@ import Layout from '../layouts/Layout.astro';
                 <th class="py-3 px-4">Fecha & Hora</th>
                 <th class="py-3 px-3 text-center">Operación</th>
                 <th class="py-3 px-3 text-center bg-surface-container font-bold text-on-surface">Unidades</th>
-                <th class="py-3 px-4">Responsable / Operador</th>
-                <th class="py-3 px-4 text-right">Observaciones</th>
+                <th class="py-3 px-4">Responsable</th>
+                <th class="py-3 px-4 text-right">Observaciones & Acciones</th>
               </tr>
             </thead>
             <tbody class="text-sm text-on-surface divide-y divide-surface-container-low" id="reportsTableBody">
@@ -156,7 +160,7 @@ import Layout from '../layouts/Layout.astro';
 
       <!-- SECCIÓN 2: VISTA CONCILIACIÓN SEMANAL -->
       <div id="viewReconciliationSection" class="hidden flex-col space-y-space-md w-full">
-        <!-- Barra de Filtro por Rango de Fechas (Desde / Hasta) -->
+        <!-- Barra de Filtro por Rango de Fechas -->
         <section class="w-full bg-surface-container-lowest rounded-2xl p-4 shadow-sm border border-surface-container">
           <div class="flex flex-col gap-3">
             <div class="flex flex-wrap items-center justify-between gap-2">
@@ -237,10 +241,88 @@ import Layout from '../layouts/Layout.astro';
         </div>
       </div>
 
+      <!-- SECCIÓN 3: VISTA DE MANTENIMIENTO, REINICIO Y LIMPIEZA TOTAL (2FA) -->
+      <div id="viewMaintenanceSection" class="hidden flex-col space-y-space-md w-full">
+        <!-- Banner Informativo de Mantenimiento con 2FA -->
+        <div class="p-4 rounded-2xl bg-error-container/30 border border-error-container/80 shadow-xs flex items-start gap-3">
+          <div class="w-10 h-10 rounded-xl bg-error text-on-error flex items-center justify-center shrink-0 font-bold">
+            <span class="material-symbols-outlined text-[24px]">verified_user</span>
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-on-surface">Zona de Mantenimiento y Reinicio de Datos</h2>
+            <p class="text-xs text-secondary leading-relaxed mt-0.5">
+              Todas las operaciones de esta sección son irreversibles y requieren autorizar con <strong>Doble Factor de Confirmación (2FA)</strong>, código numérico y verificación de contraseña con Firebase Auth.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Opción 1: Reiniciar Conteos de Stock a 0 o 10 -->
+          <div class="bg-surface-container-lowest rounded-2xl p-5 border border-surface-container shadow-sm flex flex-col justify-between space-y-4">
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-primary font-bold text-sm">
+                <span class="material-symbols-outlined text-[22px]">restart_alt</span>
+                <span>Reiniciar Conteos de Stock</span>
+              </div>
+              <p class="text-xs text-secondary leading-relaxed">
+                Reinicio masivo del stock de todos los productos del inventario a un valor objetivo (0 unidades o 10 unidades por defecto).
+              </p>
+            </div>
+            <div class="space-y-2 pt-2 border-t border-surface-container">
+              <button type="button" id="btnResetStockTo0" class="w-full h-11 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer">
+                <span class="material-symbols-outlined text-[18px]">exposure_zero</span>
+                <span>Reiniciar Stock de Todo a 0</span>
+              </button>
+              <button type="button" id="btnResetStockTo10" class="w-full h-11 rounded-xl bg-primary text-on-primary font-bold text-xs flex items-center justify-center gap-1.5 hover:opacity-95 transition-all shadow-sm cursor-pointer">
+                <span class="material-symbols-outlined text-[18px]">numbers</span>
+                <span>Reiniciar Stock de Todo a 10 (Tope)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Opción 2: Borrar Historial de Movimientos y Reportes -->
+          <div class="bg-surface-container-lowest rounded-2xl p-5 border border-surface-container shadow-sm flex flex-col justify-between space-y-4">
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-rose-700 font-bold text-sm">
+                <span class="material-symbols-outlined text-[22px]">delete_sweep</span>
+                <span>Limpiar Movimientos y Reportes</span>
+              </div>
+              <p class="text-xs text-secondary leading-relaxed">
+                Elimina permanentemente todo el historial de transacciones, salidas, entradas, auditorías y reportes acumulados en la base de datos.
+              </p>
+            </div>
+            <div class="pt-2 border-t border-surface-container">
+              <button type="button" id="btnClearMovementsReport" class="w-full h-11 rounded-xl bg-rose-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-rose-700 transition-all shadow-md cursor-pointer">
+                <span class="material-symbols-outlined text-[18px]">clear_all</span>
+                <span>Borrar Reportes y Movimientos</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Opción 3: Limpieza Absoluta y Reset Total del Sistema -->
+          <div class="bg-surface-container-lowest rounded-2xl p-5 border-2 border-error/40 shadow-sm flex flex-col justify-between space-y-4">
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-error font-extrabold text-sm">
+                <span class="material-symbols-outlined text-[22px]">auto_delete</span>
+                <span>Reiniciar Todo (Limpieza Total)</span>
+              </div>
+              <p class="text-xs text-secondary leading-relaxed">
+                Limpia y elimina absolutamente TODOS los productos, categorías, movimientos y configuraciones almacenados en LocalStorage y Firebase.
+              </p>
+            </div>
+            <div class="pt-2 border-t border-surface-container">
+              <button type="button" id="btnFullWipeSystem" class="w-full h-11 rounded-xl bg-error text-on-error font-extrabold text-xs flex items-center justify-center gap-1.5 hover:brightness-95 transition-all shadow-lg cursor-pointer">
+                <span class="material-symbols-outlined text-[18px]">power_settings_new</span>
+                <span>Limpieza Total y Autorrecarga</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Modal Detalle de Unidades por Reponer -->
       <div class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-on-surface/40 backdrop-blur-sm transition-all duration-200" id="restockDetailModal">
         <div class="w-full max-w-lg bg-surface-container-lowest rounded-t-2xl sm:rounded-2xl p-space-md sm:p-space-lg shadow-2xl flex flex-col gap-3 max-h-[88vh] overflow-hidden">
-          <!-- Cabecera del Modal -->
           <div class="flex items-center justify-between border-b border-surface-container pb-3">
             <div class="flex items-center gap-2.5">
               <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-sm">
@@ -256,7 +338,6 @@ import Layout from '../layouts/Layout.astro';
             </button>
           </div>
 
-          <!-- Totalizador & Indicador de Regla de Negocio -->
           <div class="flex items-center justify-between bg-amber-50/80 border border-amber-200/80 rounded-xl px-3.5 py-2.5">
             <div class="flex items-center gap-2">
               <span class="w-2 h-2 rounded-full bg-amber-600 animate-pulse"></span>
@@ -265,18 +346,15 @@ import Layout from '../layouts/Layout.astro';
             <span class="text-sm font-extrabold text-amber-900 px-2.5 py-0.5 rounded-lg bg-amber-200/70" id="restockModalTotalPill">+0 unid.</span>
           </div>
 
-          <!-- Buscador rápido dentro del modal -->
           <div class="relative flex items-center">
             <span class="material-symbols-outlined absolute left-3 text-secondary text-[18px] pointer-events-none">search</span>
             <input class="w-full h-10 pl-9 pr-3 rounded-xl bg-surface-container-low text-on-surface text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary border border-surface-container" id="restockSearchInput" placeholder="Buscar por accesorio, SKU o categoría..." type="text"/>
           </div>
 
-          <!-- Lista con scroll de accesorios y faltantes -->
           <div class="flex flex-col gap-2 overflow-y-auto max-h-[48vh] pr-1 py-1" id="restockModalList">
             <!-- Renderizado dinámicamente -->
           </div>
 
-          <!-- Pie del modal -->
           <div class="border-t border-surface-container pt-3 flex items-center justify-between gap-2">
             <button class="h-11 px-4 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md font-semibold cursor-pointer hover:bg-surface-container-high transition-colors" id="closeRestockModalFooterBtn" type="button">
               Cerrar
@@ -298,7 +376,17 @@ import Layout from '../layouts/Layout.astro';
   </main>
 
   <script>
-    import { getStoredInventory, getStoredMovements, recordMovement, getCurrentOperator } from '../utils/inventoryStore.js';
+    import {
+      getStoredInventory,
+      getStoredMovements,
+      recordMovement,
+      deleteMovement,
+      clearAllMovements,
+      resetAllStockCounts,
+      clearAllDatabaseAndLocalStorage,
+      getCurrentOperator
+    } from '../utils/inventoryStore.js';
+    import { request2FAConfirmation } from '../utils/securityModal.js';
     import type { Product, Movement } from '../types/inventory';
 
     interface ReconciliationRow {
@@ -316,7 +404,7 @@ import Layout from '../layouts/Layout.astro';
     let currentRestockItems: { product: Product, missing: number }[] = [];
     let totalRestockUnitsCount = 0;
     let reconciliationRows: ReconciliationRow[] = [];
-    let activeTab: 'history' | 'reconciliation' = 'history';
+    let activeTab: 'history' | 'reconciliation' | 'maintenance' = 'history';
 
     const toast = document.getElementById('reportToast');
     const toastText = document.getElementById('reportToastText');
@@ -325,8 +413,10 @@ import Layout from '../layouts/Layout.astro';
     // Elementos de Navegación por Pestañas
     const tabBtnHistory = document.getElementById('tabBtnHistory');
     const tabBtnReconciliation = document.getElementById('tabBtnReconciliation');
+    const tabBtnMaintenance = document.getElementById('tabBtnMaintenance');
     const viewHistorySection = document.getElementById('viewHistorySection');
     const viewReconciliationSection = document.getElementById('viewReconciliationSection');
+    const viewMaintenanceSection = document.getElementById('viewMaintenanceSection');
 
     // Elementos de Conciliación
     const reconDateFrom = document.getElementById('reconDateFrom') as HTMLInputElement | null;
@@ -357,36 +447,39 @@ import Layout from '../layouts/Layout.astro';
     }
 
     // --- MANEJO DE PESTAÑAS (TABS) ---
-    function switchTab(tab: 'history' | 'reconciliation') {
+    function switchTab(tab: 'history' | 'reconciliation' | 'maintenance') {
       activeTab = tab;
+
+      // Unselect all tabs
+      [tabBtnHistory, tabBtnReconciliation, tabBtnMaintenance].forEach(btn => {
+        btn?.classList.remove('bg-surface-container-lowest', 'text-primary', 'shadow-sm', 'border', 'border-surface-container', 'bg-error-container', 'text-error');
+      });
+
+      [viewHistorySection, viewReconciliationSection, viewMaintenanceSection].forEach(sec => {
+        sec?.classList.add('hidden');
+        sec?.classList.remove('flex');
+      });
+
       if (tab === 'history') {
         tabBtnHistory?.classList.add('bg-surface-container-lowest', 'text-primary', 'shadow-sm', 'border', 'border-surface-container');
-        tabBtnHistory?.classList.remove('text-secondary');
-        tabBtnReconciliation?.classList.remove('bg-surface-container-lowest', 'text-primary', 'shadow-sm', 'border', 'border-surface-container');
-        tabBtnReconciliation?.classList.add('text-secondary');
-
         viewHistorySection?.classList.remove('hidden');
         viewHistorySection?.classList.add('flex');
-        viewReconciliationSection?.classList.add('hidden');
-        viewReconciliationSection?.classList.remove('flex');
-      } else {
+      } else if (tab === 'reconciliation') {
         tabBtnReconciliation?.classList.add('bg-surface-container-lowest', 'text-primary', 'shadow-sm', 'border', 'border-surface-container');
-        tabBtnReconciliation?.classList.remove('text-secondary');
-        tabBtnHistory?.classList.remove('bg-surface-container-lowest', 'text-primary', 'shadow-sm', 'border', 'border-surface-container');
-        tabBtnHistory?.classList.add('text-secondary');
-
         viewReconciliationSection?.classList.remove('hidden');
         viewReconciliationSection?.classList.add('flex');
-        viewHistorySection?.classList.add('hidden');
-        viewHistorySection?.classList.remove('flex');
-
         initReconciliationDatesIfNeeded();
         calculateAndRenderReconciliation();
+      } else if (tab === 'maintenance') {
+        tabBtnMaintenance?.classList.add('bg-error-container', 'text-error', 'shadow-sm');
+        viewMaintenanceSection?.classList.remove('hidden');
+        viewMaintenanceSection?.classList.add('flex');
       }
     }
 
     tabBtnHistory?.addEventListener('click', () => switchTab('history'));
     tabBtnReconciliation?.addEventListener('click', () => switchTab('reconciliation'));
+    tabBtnMaintenance?.addEventListener('click', () => switchTab('maintenance'));
 
     function initReconciliationDatesIfNeeded() {
       if (!reconDateFrom || !reconDateTo) return;
@@ -499,7 +592,6 @@ import Layout from '../layouts/Layout.astro';
       allMovements = getStoredMovements();
       const inventory: Product[] = getStoredInventory(false);
 
-      // Calcular KPIs
       let salesCount = 0;
       allMovements.forEach(m => {
         if (m.tipo === 'salida' && !m.revertido) {
@@ -632,13 +724,41 @@ import Layout from '../layouts/Layout.astro';
             </div>
           </td>
 
-          <!-- Observaciones / Estado -->
+          <!-- Observaciones & Acciones -->
           <td class="py-3 px-4 text-right text-xs text-secondary">
-            ${m.revertido ? '<span class="px-2 py-0.5 rounded bg-error-container text-error font-bold mr-1">Revertido</span>' : ''}
-            <span>${m.nota || '-'}</span>
+            <div class="flex items-center justify-end gap-2">
+              ${m.revertido ? '<span class="px-2 py-0.5 rounded bg-error-container text-error font-bold">Revertido</span>' : ''}
+              <span class="truncate max-w-[140px]">${m.nota || '-'}</span>
+              <button class="btn-delete-report-mov p-1 rounded-lg text-secondary hover:text-error hover:bg-error-container transition-colors" data-id="${m.id}" title="Eliminar este movimiento (2FA)">
+                <span class="material-symbols-outlined text-[16px]">delete</span>
+              </button>
+            </div>
           </td>
         `;
         tbody.appendChild(tr);
+      });
+
+      // Individual deletion listener in table
+      tbody.querySelectorAll('.btn-delete-report-mov').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const id = (e.currentTarget as HTMLElement).getAttribute('data-id');
+          if (!id) return;
+          try {
+            await request2FAConfirmation({
+              title: 'Eliminar Registro de Movimiento',
+              description: 'Esta acción borrará este registro individual de la base de datos permanentemente.',
+              confirmText: 'Eliminar Registro',
+              danger: true
+            });
+            await deleteMovement(id);
+            refreshData();
+            showToast('Movimiento eliminado correctamente.');
+          } catch (err: any) {
+            if (err?.message !== 'Operación cancelada por el usuario') {
+              showToast(err.message || 'Error al eliminar movimiento', 'error');
+            }
+          }
+        });
       });
     }
 
@@ -697,7 +817,6 @@ import Layout from '../layouts/Layout.astro';
           .filter(m => m.sku === prod.sku && !m.revertido && m.tipo !== 'reversion')
           .sort((a, b) => new Date(a.fechaHora).getTime() - new Date(b.fechaHora).getTime());
 
-        // Entradas y salidas en el rango [startDate, endDate]
         let entriesInRange = 0;
         let exitsInRange = 0;
 
@@ -712,7 +831,6 @@ import Layout from '../layouts/Layout.astro';
           }
         });
 
-        // Stock al inicio del rango: retroceder desde el stock actual
         let stockAtStart = Number(prod.stock) || 0;
         const movsAfterStart = prodMovs
           .filter(m => new Date(m.fechaHora).getTime() >= startMs)
@@ -845,7 +963,6 @@ import Layout from '../layouts/Layout.astro';
         reconciliationTableBody.appendChild(tr);
       });
 
-      // Añadir event listeners a los inputs de stock físico
       const inputs = reconciliationTableBody.querySelectorAll('.recon-physical-input');
       inputs.forEach(input => {
         input.addEventListener('input', (e) => {
@@ -859,7 +976,6 @@ import Layout from '../layouts/Layout.astro';
           const diff = val - expected;
           reconciliationRows[idx].difference = diff;
 
-          // Actualizar insignia de diferencia dinámicamente
           const badgeEl = document.getElementById(`diffBadge-${idx}`);
           if (badgeEl) {
             if (diff !== 0) {
@@ -871,7 +987,6 @@ import Layout from '../layouts/Layout.astro';
             }
           }
 
-          // Actualizar resumen
           let totalDiffCount = 0;
           reconciliationRows.forEach(r => { if (r.difference !== 0) totalDiffCount++; });
           if (reconSummaryText) {
@@ -881,7 +996,6 @@ import Layout from '../layouts/Layout.astro';
       });
     }
 
-    // Botones presets de rango
     btnReconcilePreset7Days?.addEventListener('click', () => {
       if (!reconDateFrom || !reconDateTo) return;
       const now = new Date();
@@ -907,13 +1021,11 @@ import Layout from '../layouts/Layout.astro';
       showToast('Cálculo de conciliación actualizado', 'update');
     });
 
-    // Guardar y Aplicar Conciliación
     btnSaveReconciliation?.addEventListener('click', () => {
       const activeOp = getCurrentOperator();
       let adjustedCount = 0;
 
       reconciliationRows.forEach(row => {
-        // Solo registrar 'ajuste' para los productos con diferencia != 0 o cambio respecto a stock actual
         const currentStock = Number(row.product.stock) || 0;
         if (row.physicalStock !== currentStock) {
           recordMovement({
@@ -938,13 +1050,85 @@ import Layout from '../layouts/Layout.astro';
       }
     });
 
-    // --- EXPORTACIÓN CSV (Soporta Historial o Conciliación según la pestaña activa) ---
+    // --- ACCIONES DE MANTENIMIENTO CON 2FA ---
+    document.getElementById('btnResetStockTo0')?.addEventListener('click', async () => {
+      try {
+        await request2FAConfirmation({
+          title: 'Reiniciar Conteos de Stock a 0',
+          description: 'Esta acción fijará en 0 el stock disponible de TODOS los productos en LocalStorage y Firebase Firestore.',
+          confirmText: 'Reiniciar a 0',
+          danger: true
+        });
+        await resetAllStockCounts(0);
+        refreshData();
+        showToast('Stock de todos los productos reiniciado a 0 unidades.', 'exposure_zero');
+      } catch (err: any) {
+        if (err?.message !== 'Operación cancelada por el usuario') {
+          showToast(err.message || 'Error al reiniciar stock', 'error');
+        }
+      }
+    });
+
+    document.getElementById('btnResetStockTo10')?.addEventListener('click', async () => {
+      try {
+        await request2FAConfirmation({
+          title: 'Reiniciar Conteos de Stock a 10',
+          description: 'Esta acción fijará en 10 (capacidad tope) el stock de TODOS los productos en LocalStorage y Firebase Firestore.',
+          confirmText: 'Reiniciar a 10',
+          danger: false
+        });
+        await resetAllStockCounts(10);
+        refreshData();
+        showToast('Stock de todos los productos reestablecido a 10 unidades.', 'numbers');
+      } catch (err: any) {
+        if (err?.message !== 'Operación cancelada por el usuario') {
+          showToast(err.message || 'Error al reiniciar stock', 'error');
+        }
+      }
+    });
+
+    document.getElementById('btnClearMovementsReport')?.addEventListener('click', async () => {
+      try {
+        await request2FAConfirmation({
+          title: 'Borrar Reportes y Movimientos',
+          description: 'Esta acción eliminará de forma permanente TODO el historial de movimientos y transacciones registradas.',
+          confirmText: 'Borrar Reportes',
+          danger: true
+        });
+        await clearAllMovements();
+        refreshData();
+        showToast('Historial de movimientos y reportes borrado completamente.', 'clear_all');
+      } catch (err: any) {
+        if (err?.message !== 'Operación cancelada por el usuario') {
+          showToast(err.message || 'Error al borrar reportes', 'error');
+        }
+      }
+    });
+
+    document.getElementById('btnFullWipeSystem')?.addEventListener('click', async () => {
+      try {
+        await request2FAConfirmation({
+          title: 'REINICIO TOTAL Y LIMPIEZA ABSOLUTA DEL SISTEMA',
+          description: '¡ATENCIÓN! Se eliminarán PERMANENTEMENTE todos los productos, categorías, movimientos, datos de LocalStorage y registros de Firebase Firestore.',
+          confirmText: 'DESTRUIR DATOS Y REINICIAR',
+          danger: true
+        });
+        showToast('Ejecutando limpieza total...', 'auto_delete');
+        await clearAllDatabaseAndLocalStorage();
+      } catch (err: any) {
+        if (err?.message !== 'Operación cancelada por el usuario') {
+          showToast(err.message || 'Error al ejecutar limpieza total', 'error');
+        }
+      }
+    });
+
+    // --- EXPORTACIÓN CSV ---
     document.getElementById('btn-export-csv')?.addEventListener('click', function() {
       const btn = this as HTMLButtonElement;
       const originalText = btn.innerHTML;
       btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[18px]">sync</span><span>Generando...</span>';
 
-      if (activeTab === 'history') {
+      if (activeTab === 'history' || activeTab === 'maintenance') {
         const csvRows = [
           ['ID Movimiento', 'Fecha y Hora', 'SKU', 'Producto', 'Operacion', 'Cantidad (Unidades)', 'Stock Resultante', 'Operador Responsable', 'Observaciones', 'Revertido']
         ];
@@ -973,7 +1157,6 @@ import Layout from '../layouts/Layout.astro';
         link.click();
         document.body.removeChild(link);
       } else {
-        // Exportación CSV de Conciliación Semanal
         const dateRangeStr = `${reconDateFrom?.value || ''} a ${reconDateTo?.value || ''}`;
         const activeOp = getCurrentOperator();
 
