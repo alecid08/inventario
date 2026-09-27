@@ -671,9 +671,9 @@ import Layout from "../layouts/Layout.astro";
       const container = document.getElementById("inventoryList");
       if (!container) return;
 
-      const subtitle = document.getElementById("productCountSubtitle");
-      const emptyState = document.getElementById("emptyInventoryState");
       const loadingState = document.getElementById("loadingInventoryState");
+      const emptyState = document.getElementById("emptyInventoryState");
+      const subtitle = document.getElementById("productCountSubtitle");
 
       if (isInventoryLoading()) {
         container.innerHTML = `
@@ -813,14 +813,15 @@ import Layout from "../layouts/Layout.astro";
       });
 
       document.querySelectorAll(".btn-deactivate").forEach((btn) => {
-        btn.addEventListener("click", (e) => {
+        btn.addEventListener("click", async (e) => {
           e.stopPropagation();
           const sku = btn.getAttribute("data-sku");
           if (
             sku &&
             confirm(`¿Deseas desactivar este accesorio del catálogo activo?`)
           ) {
-            deactivateProduct(sku);
+            await deactivateProduct(sku);
+            inventory = getStoredInventory(false);
             renderInventoryList();
             showToast("Accesorio desactivado.");
           }

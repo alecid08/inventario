@@ -156,6 +156,36 @@ export function isInventoryLoading() {
 }
 
 /**
+ * Sanitiza y valida un producto de inventario.
+ * Filtra ítems corruptos o con campos 'undefined'.
+ */
+export function sanitizeProduct(item) {
+  if (!item || typeof item !== 'object') return null;
+  const name = item.name != null ? String(item.name).trim() : '';
+  const sku = item.sku != null ? String(item.sku).trim() : '';
+
+  if (!name || name.toLowerCase() === 'undefined' || name.toLowerCase() === 'null') return null;
+  if (!sku || sku.toLowerCase() === 'undefined' || sku.toLowerCase() === 'null') return null;
+
+  const defaultImg = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww';
+
+  return {
+    ...item,
+    id: String(item.id || sku),
+    sku: sku,
+    name: name,
+    category: item.category && String(item.category).toLowerCase() !== 'undefined' ? String(item.category) : 'Otros',
+    stock: Number(item.stock) || 0,
+    minStock: Number(item.minStock) || 5,
+    maxStock: Number(item.maxStock) || 10,
+    location: item.location || 'Estante Principal',
+    activo: item.activo !== false,
+    lastUpdated: item.lastUpdated || new Date().toISOString().split('T')[0],
+    img: item.img || defaultImg
+  };
+}
+
+/**
  * Normaliza cualquier valor de fecha (Timestamp de Firestore, string ISO, objeto Date, etc.)
  * a una instancia válida de JavaScript Date.
  */
@@ -251,6 +281,36 @@ export function initFirestoreSync() {
       const mergedProducts = Array.from(mapBySku.values());
       localStorage.setItem(STORE_KEY, JSON.stringify(mergedProducts));
       window.dispatchEvent(new CustomEvent('inventory-updated', { detail: mergedProducts }));
+        const firestoreItems = snapshot.docs.map(doc => {
+          return sanitizeProduct({
+            id: doc.id,
+            ...doc.data(),
+            activo: doc.data().activo !== false,
+            stock: Number(doc.data().stock) || 0,
+            minStock: Number(doc.data().minStock) || 5,
+            maxStock: Number(doc.data().maxStock) || 10,
+            location: doc.data().location || 'Estante Principal',
+            lastUpdated: doc.data().lastUpdated || '2026-09-03'
+          });
+        }).filter(Boolean);
+
+        // Fusión por SKU priorizando datos actualizados de Firestore
+        const currentLocal = getStoredInventory(true);
+        const mapBySku = new Map();
+        currentLocal.forEach(item => {
+          if (item && item.sku) mapBySku.set(item.sku, item);
+        });
+        firestoreItems.forEach(item => {
+          if (item && item.sku) mapBySku.set(item.sku, item);
+        });
+        mergedProducts = Array.from(mapBySku.values());
+      } else {
+        mergedProducts = getStoredInventory(true);
+      }
+
+      const cleanMerged = mergedProducts.map(sanitizeProduct).filter(Boolean);
+      localStorage.setItem(STORE_KEY, JSON.stringify(cleanMerged));
+      window.dispatchEvent(new CustomEvent('inventory-updated', { detail: cleanMerged }));
       isFirstSnapshotCompleted = true;
     }, (err) => {
       isFirstSnapshotCompleted = true;
@@ -329,15 +389,16 @@ export function getStoredInventory(includeInactive = false) {
   } else {
     items = fallbackInventory;
   }
-  items = items.map(item => ({
-    ...item,
-    activo: item.activo !== false,
-    location: item.location || 'Estante Principal',
-    lastUpdated: item.lastUpdated || '2026-09-03',
-    img: item.img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'
-  }));
-  if (includeInactive) return items;
-  return items.filter(item => item.activo !== false);
+
+  const sanitizedItems = items.map(sanitizeProduct).filter(Boolean);
+
+  // Si había productos corruptos eliminados, actualizar localStorage de inmediato
+  if (raw && sanitizedItems.length !== items.length) {
+    localStorage.setItem(STORE_KEY, JSON.stringify(sanitizedItems));
+  }
+
+  if (includeInactive) return sanitizedItems;
+  return sanitizedItems.filter(item => item.activo !== false);
 }
 
 // Save local & sync changes to Firestore
@@ -372,15 +433,20 @@ export function saveInventory(items) {
 
 // Soft Delete (Firestore synced)
 export async function deactivateProduct(sku) {
+  if (!sku) return;
+  const cleanSku = String(sku).trim().toLowerCase();
   const allItems = getStoredInventory(true);
   let targetItem = null;
+
   const updated = allItems.map(item => {
-    if (item.sku === sku || item.id === sku) {
+    if ((item.sku && String(item.sku).trim().toLowerCase() === cleanSku) ||
+        (item.id && String(item.id).trim().toLowerCase() === cleanSku)) {
       targetItem = item;
       return { ...item, activo: false };
     }
     return item;
   });
+
   saveInventory(updated);
 
   if (targetItem && targetItem.id && !targetItem.id.startsWith('sku-temp-')) {
@@ -405,6 +471,50 @@ export async function deactivateProduct(sku) {
     });
   } catch (e) {
     console.warn('No se pudo registrar auditoría de desactivación:', e);
+  // Registrar auditoría de desactivación
+  if (targetItem) {
+    try {
+      recordMovement({
+        sku: targetItem.sku,
+        tipo: 'ajuste',
+        cantidad: targetItem.stock || 0,
+        nota: `Desactivación de accesorio del catálogo activo`,
+        operador: getCurrentOperator()
+      });
+    } catch (e) {
+      console.warn('No se pudo registrar auditoría de desactivación:', e);
+    }
+  }
+}
+
+/**
+ * Hard Delete: Elimina físicamente un producto de localStorage y Firestore.
+ */
+export async function deleteProduct(skuOrId) {
+  if (!skuOrId) return;
+  const cleanKey = String(skuOrId).trim().toLowerCase();
+  const allItems = getStoredInventory(true);
+
+  const targetItem = allItems.find(item =>
+    (item.sku && String(item.sku).trim().toLowerCase() === cleanKey) ||
+    (item.id && String(item.id).trim().toLowerCase() === cleanKey)
+  );
+
+  const updated = allItems.filter(item =>
+    item !== targetItem &&
+    String(item.sku || '').trim().toLowerCase() !== cleanKey &&
+    String(item.id || '').trim().toLowerCase() !== cleanKey
+  );
+
+  saveInventory(updated);
+
+  if (targetItem && targetItem.id && !targetItem.id.startsWith('sku-temp-')) {
+    try {
+      const docRef = doc(db, 'products', targetItem.id);
+      await deleteDoc(docRef);
+    } catch (err) {
+      console.error('Error al eliminar producto en Firestore:', err);
+    }
   }
 }
 
@@ -438,6 +548,42 @@ export function createProduct(prodData) {
   const newProduct = {
     id: definitiveId,
     sku: (prodData.sku || ('SKU-' + Math.floor(100 + Math.random() * 900))).toUpperCase(),
+
+  let finalSku = '';
+  if (prodData.sku && prodData.sku.trim()) {
+    finalSku = prodData.sku.trim().toUpperCase();
+    const exists = allItems.some(
+      item => item.sku && item.sku.trim().toUpperCase() === finalSku
+    );
+    if (exists) {
+      throw new Error("Ese SKU ya existe, usa otro");
+    }
+  } else {
+    let attempts = 0;
+    let generated = '';
+    let isUnique = false;
+    while (attempts < 5 && !isUnique) {
+      attempts++;
+      generated = 'SKU-' + Math.floor(100 + Math.random() * 900);
+      const exists = allItems.some(
+        item => item.sku && item.sku.trim().toUpperCase() === generated
+      );
+      if (!exists) {
+        isUnique = true;
+      }
+    }
+    if (!isUnique) {
+      throw new Error("No se pudo generar un SKU único automáticamente tras 5 intentos. Por favor, especifica un SKU manualmente.");
+    }
+    finalSku = generated;
+  }
+
+  const productDocRef = doc(collection(db, 'products'));
+  const definitiveId = productDocRef.id;
+
+  const newProduct = {
+    id: definitiveId,
+    sku: finalSku,
     name: prodData.name,
     category: prodData.category || 'Otros',
     stock: 10,
@@ -450,8 +596,10 @@ export function createProduct(prodData) {
   };
 
   allItems.unshift(newProduct);
-  localStorage.setItem(STORE_KEY, JSON.stringify(allItems));
-  window.dispatchEvent(new CustomEvent('inventory-updated', { detail: allItems }));
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(STORE_KEY, JSON.stringify(allItems));
+    window.dispatchEvent(new CustomEvent('inventory-updated', { detail: allItems }));
+  }
 
   const activeOp = getCurrentOperator();
   const initMov = {
