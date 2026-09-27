@@ -222,7 +222,7 @@ import Layout from '../layouts/Layout.astro';
         </div>
         <span class="px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-error-container text-on-error-container font-semibold flex items-center gap-1 shadow-sm" id="topAlertPill">
           <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-          <span id="topAlertText">0 Alertas</span>
+          <span class="hidden" id="topAlertText"></span>
         </span>
       </div>
 
@@ -744,7 +744,10 @@ import Layout from '../layouts/Layout.astro';
 
       const totalAlerts = inventory.filter(i => i.stock < (i.minStock || 5)).length;
       const topAlertText = document.getElementById('topAlertText');
-      if (topAlertText) topAlertText.textContent = `${totalAlerts} Alertas`;
+      if (topAlertText) {
+        topAlertText.textContent = `${totalAlerts} Alertas`;
+        topAlertText.classList.remove('hidden');
+      }
 
       const badgeCountAll = document.getElementById('badgeCountAll');
       if (badgeCountAll) badgeCountAll.textContent = inventory.length.toString();
