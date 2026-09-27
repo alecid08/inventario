@@ -627,18 +627,22 @@ import Layout from '../layouts/Layout.astro';
 
       if (!name) return;
 
-      const newItem = createProduct({
-        name,
-        sku,
-        category,
-        location,
-        img
-      });
+      try {
+        const newItem = createProduct({
+          name,
+          sku,
+          category,
+          location,
+          img
+        });
 
-      closeNewModal();
-      inventory = getStoredInventory(false);
-      renderInventoryList();
-      showToast(`¡Accesorio ${newItem.sku} creado con stock estándar de 10 unid.!`);
+        closeNewModal();
+        inventory = getStoredInventory(false);
+        renderInventoryList();
+        showToast(`¡Accesorio ${newItem.sku} creado con stock estándar de 10 unid.!`);
+      } catch (err: any) {
+        showToast(err?.message || 'Error al crear accesorio', true);
+      }
     });
 
     // --- MODAL NUEVA CATEGORÍA ---
