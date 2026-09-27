@@ -241,7 +241,7 @@ export function initFirestoreSync() {
 
       // Eliminar productos sembrados por defaultInventory si no existen en Firestore
       const filteredLocal = currentLocal.filter(item => {
-        if (DEFAULT_INVENTORY_SKUS.has(item.sku) && !firestoreSkus.has(item.sku)) {
+        if ((item._seeded || DEFAULT_INVENTORY_SKUS.has(item.sku)) && !firestoreSkus.has(item.sku)) {
           return false;
         }
         return true;
@@ -323,11 +323,7 @@ if (typeof window !== 'undefined') {
 }
 
 export function getStoredInventory(includeInactive = false) {
-  const fallbackInventory = (typeof import.meta !== 'undefined' && import.meta.env?.DEV) ? defaultInventory : [];
-  if (typeof window === 'undefined') return fallbackInventory;
-  const raw = localStorage.getItem(STORE_KEY);
-  let items = fallbackInventory;
-  const fallback = import.meta.env?.DEV ? defaultInventory : [];
+  const fallback = (typeof import.meta !== 'undefined' && import.meta.env?.DEV) ? defaultInventory : [];
   if (typeof window === 'undefined') return fallback;
   const raw = localStorage.getItem(STORE_KEY);
   let items;
@@ -335,10 +331,6 @@ export function getStoredInventory(includeInactive = false) {
     try {
       items = JSON.parse(raw);
     } catch (e) {
-      items = fallbackInventory;
-    }
-  } else {
-    localStorage.setItem(STORE_KEY, JSON.stringify(fallbackInventory));
       items = fallback;
     }
   } else {
