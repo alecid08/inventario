@@ -77,6 +77,8 @@ export const defaultInventory = [
   { id: 'nhoXtymGrJuiK4gHUBNd', sku: 'AUD-TWS-PRO', name: 'Audífonos Bluetooth Inalámbricos TWS-5', category: 'Audio y Audífonos', stock: 0, minStock: 3, maxStock: 10, location: 'Cajón A-4', activo: true, lastUpdated: '2026-09-01', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBEddAYibZMjqLmVbQYfK77Qtk_GR18aEIxR3iZD-Z2oh2vBwMBHO4f5rmtUUOpsECq0Ki6-5kKq2rrbOwb5qTeegm3mwiaDth6G9WXs1pYgShhoy9AIo62Yi2tPtSAwuB9NT8Xg1cpDcF-6cJyQ2S_WpLWIWQIu2INbGpBjXUA7YtOlsTuVV3M7ipH2vBUeAEuuoP8SCLpb0_EussBUxFkyspxVV1X9GEiyd9dr9O0HJLNk35vxy8HOA' }
 ];
 
+export const DEFAULT_INVENTORY_SKUS = new Set(defaultInventory.map(item => item.sku));
+
 // --- CATEGORIES MANAGEMENT ---
 export function getCategories() {
   if (typeof window === 'undefined') return defaultCategories;
@@ -141,8 +143,14 @@ export function saveConfig(cfg) {
   localStorage.setItem(CONFIG_KEY, JSON.stringify(updated));
 }
 
-// Memory cache for active listener
+// Memory cache for active listener and snapshot status
 let isFirestoreListening = false;
+let isFirstSnapshotCompleted = false;
+
+export function isInventoryLoading() {
+  if (import.meta.env?.DEV) return false;
+  return !isFirstSnapshotCompleted;
+}
 
 /**
  * Normaliza cualquier valor de fecha (Timestamp de Firestore, string ISO, objeto Date, etc.)
@@ -216,31 +224,41 @@ export function initFirestoreSync() {
     // 1. Listener de productos en tiempo real
     const productsRef = collection(db, 'products');
     onSnapshot(productsRef, (snapshot) => {
-      if (!snapshot.empty) {
-        const firestoreItems = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          activo: doc.data().activo !== false,
-          stock: Number(doc.data().stock) || 0,
-          minStock: Number(doc.data().minStock) || 5,
-          maxStock: Number(doc.data().maxStock) || 10,
-          location: doc.data().location || 'Estante Principal',
-          lastUpdated: doc.data().lastUpdated || '2026-09-03',
-          img: doc.data().img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'
-        }));
+      const firestoreItems = !snapshot.empty ? snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        activo: doc.data().activo !== false,
+        stock: Number(doc.data().stock) || 0,
+        minStock: Number(doc.data().minStock) || 5,
+        maxStock: Number(doc.data().maxStock) || 10,
+        location: doc.data().location || 'Estante Principal',
+        lastUpdated: doc.data().lastUpdated || '2026-09-03',
+        img: doc.data().img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'
+      })) : [];
 
-        // Fusión por SKU priorizando datos actualizados de Firestore
-        const currentLocal = getStoredInventory(true);
-        const mapBySku = new Map();
-        currentLocal.forEach(item => mapBySku.set(item.sku, item));
-        firestoreItems.forEach(item => mapBySku.set(item.sku, item));
-        const mergedProducts = Array.from(mapBySku.values());
+      const firestoreSkus = new Set(firestoreItems.map(item => item.sku));
+      const currentLocal = getStoredInventory(true);
 
-        localStorage.setItem(STORE_KEY, JSON.stringify(mergedProducts));
-        window.dispatchEvent(new CustomEvent('inventory-updated', { detail: mergedProducts }));
-      }
+      // Eliminar productos sembrados por defaultInventory si no existen en Firestore
+      const filteredLocal = currentLocal.filter(item => {
+        if (DEFAULT_INVENTORY_SKUS.has(item.sku) && !firestoreSkus.has(item.sku)) {
+          return false;
+        }
+        return true;
+      });
+
+      const mapBySku = new Map();
+      filteredLocal.forEach(item => mapBySku.set(item.sku, item));
+      firestoreItems.forEach(item => mapBySku.set(item.sku, item));
+      const mergedProducts = Array.from(mapBySku.values());
+
+      localStorage.setItem(STORE_KEY, JSON.stringify(mergedProducts));
+      isFirstSnapshotCompleted = true;
+      window.dispatchEvent(new CustomEvent('inventory-updated', { detail: mergedProducts }));
     }, (err) => {
       console.warn('Advertencia en sincronización en tiempo real de Firestore:', err);
+      isFirstSnapshotCompleted = true;
+      window.dispatchEvent(new CustomEvent('inventory-updated', { detail: getStoredInventory(false) }));
     });
 
     // 2. Listener de movimientos en tiempo real
@@ -305,17 +323,18 @@ if (typeof window !== 'undefined') {
 }
 
 export function getStoredInventory(includeInactive = false) {
-  if (typeof window === 'undefined') return defaultInventory;
+  const fallback = import.meta.env?.DEV ? defaultInventory : [];
+  if (typeof window === 'undefined') return fallback;
   const raw = localStorage.getItem(STORE_KEY);
-  let items = defaultInventory;
+  let items;
   if (raw) {
     try {
       items = JSON.parse(raw);
     } catch (e) {
-      items = defaultInventory;
+      items = fallback;
     }
   } else {
-    localStorage.setItem(STORE_KEY, JSON.stringify(defaultInventory));
+    items = fallback;
   }
   items = items.map(item => ({
     ...item,
