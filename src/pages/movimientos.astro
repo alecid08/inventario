@@ -165,14 +165,17 @@ import Layout from '../layouts/Layout.astro';
         </button>
       </div>
 
-      <!-- SECCIÓN 4: Historial de Movimientos de Hoy -->
+      <!-- SECCIÓN 4: Historial de Movimientos de Hoy con Opción de Eliminación / Limpieza -->
       <section class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm border border-surface-container space-y-space-sm">
         <div class="flex items-center justify-between border-b border-surface-container pb-2">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-primary text-[20px]">history</span>
             <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Movimientos de Hoy</h3>
           </div>
-          <span class="font-label-sm text-label-sm text-secondary">Registro del Turno</span>
+          <button type="button" id="btnClearAllMovementsBtn" class="text-xs text-error font-bold hover:underline flex items-center gap-1 cursor-pointer">
+            <span class="material-symbols-outlined text-[16px]">delete_sweep</span>
+            <span>Limpiar Historial (2FA)</span>
+          </button>
         </div>
         <div class="flex flex-col space-y-2 mt-2" id="movementsHistoryContainer">
           <!-- Renderizado dinámicamente -->
@@ -182,7 +185,8 @@ import Layout from '../layouts/Layout.astro';
   </main>
 
   <script>
-    import { getStoredInventory, recordMovement, revertirMovimiento, getStoredMovements, isSameCalendarDay, getCurrentOperator, isInventoryLoading } from '../utils/inventoryStore.js';
+    import { getStoredInventory, recordMovement, revertirMovimiento, deleteMovement, clearAllMovements, getStoredMovements, isSameCalendarDay, getCurrentOperator, isInventoryLoading } from '../utils/inventoryStore.js';
+    import { request2FAConfirmation } from '../utils/securityModal.js';
     import type { Product, Movement } from '../types/inventory';
 
     let inventory: Product[] = getStoredInventory(true);
@@ -201,6 +205,7 @@ import Layout from '../layouts/Layout.astro';
     const notesTextarea = document.getElementById('text-notes') as HTMLTextAreaElement | null;
     const charCounter = document.getElementById('char-count');
     const btnSubmit = document.getElementById('btn-submit');
+    const btnClearAllMovs = document.getElementById('btnClearAllMovementsBtn');
     const toast = document.getElementById('actionToast');
     const toastText = document.getElementById('toastText');
     const toastIcon = document.getElementById('toastIcon');
@@ -232,7 +237,7 @@ import Layout from '../layouts/Layout.astro';
     function populateDropdown() {
       if (!dropdown) return;
       dropdown.innerHTML = '';
-      inventory = getStoredInventory(true); // Incluye todos los registrados
+      inventory = getStoredInventory(true);
 
       const emptyCard = document.getElementById('emptySelectedProductCard');
       const productCard = document.getElementById('selectedProductCard');
@@ -268,7 +273,7 @@ import Layout from '../layouts/Layout.astro';
       });
 
       if (!selectedSku || !inventory.some(i => i.sku === selectedSku)) {
-        selectedSku = inventory[0].sku;
+        selectedSku = inventory[0]?.sku || '';
       }
       dropdown.value = selectedSku;
     }
@@ -310,7 +315,6 @@ import Layout from '../layouts/Layout.astro';
       renderMovementsHistory();
     }
 
-    // Muestra ÚNICAMENTE el resultado final proyectado (sin fórmulas intermedias)
     function updateStockCalculation() {
       const item = inventory.find(i => i.sku === selectedSku);
       if (!item || !inputQty || !calcPreview) return;
@@ -321,7 +325,6 @@ import Layout from '../layouts/Layout.astro';
       const maxAllowed = item.maxStock || 10;
 
       if (currentFactor === -1) {
-        // Rebajar / Salida
         const finalStock = currentStock - selectedQty;
         if (finalStock < 0) {
           calcPreview.innerHTML = `<span class="text-error font-extrabold">${finalStock} unid. (¡Insuficiente!)</span>`;
@@ -329,7 +332,6 @@ import Layout from '../layouts/Layout.astro';
           calcPreview.innerHTML = `<span class="text-primary font-extrabold">${finalStock} unid.</span>`;
         }
       } else {
-        // Agregar / Entrada
         const finalStock = currentStock + selectedQty;
         if (finalStock > maxAllowed) {
           calcPreview.innerHTML = `<span class="text-error font-extrabold">${finalStock} unid. (Excede tope ${maxAllowed})</span>`;
@@ -339,13 +341,11 @@ import Layout from '../layouts/Layout.astro';
       }
     }
 
-    // Listener para cambiar de producto
     dropdown?.addEventListener('change', (e) => {
       selectedSku = (e.target as HTMLSelectElement).value;
       updateSelectedCardDisplay();
     });
 
-    // Control de unidades (+ y -)
     btnInc?.addEventListener('click', () => {
       if (!inputQty) return;
       let val = parseInt(inputQty.value) || 1;
@@ -375,7 +375,6 @@ import Layout from '../layouts/Layout.astro';
       });
     });
 
-    // Selección de Tipo de Movimiento (Solo Salida o Entrada)
     movementCards.forEach(card => {
       card.addEventListener('click', () => {
         movementCards.forEach(c => {
@@ -401,14 +400,12 @@ import Layout from '../layouts/Layout.astro';
       });
     });
 
-    // Contador de caracteres de notas (Permite guardar en blanco)
     notesTextarea?.addEventListener('input', () => {
       if (charCounter && notesTextarea) {
         charCounter.textContent = `${notesTextarea.value.length} / 250`;
       }
     });
 
-    // Guardar Movimiento al presionar el Botón Esencial
     btnSubmit?.addEventListener('click', () => {
       const item = inventory.find(i => i.sku === selectedSku);
       if (!item) {
@@ -425,7 +422,6 @@ import Layout from '../layouts/Layout.astro';
       const tipoMov = currentFactor === -1 ? 'salida' : 'entrada';
       const nota = notesTextarea?.value.trim() || '';
 
-      // Validación preventiva de límites
       if (tipoMov === 'salida' && item.stock - qty < 0) {
         showToast(`Stock insuficiente. Solo hay ${item.stock} unidades disponibles.`, true);
         return;
@@ -446,12 +442,10 @@ import Layout from '../layouts/Layout.astro';
           operador: activeOp
         });
 
-        // Limpiar nota y restablecer cantidad
         if (notesTextarea) notesTextarea.value = '';
         if (charCounter) charCounter.textContent = '0 / 250';
         if (inputQty) inputQty.value = '1';
 
-        // Actualizar vistas
         populateDropdown();
         updateSelectedCardDisplay();
         renderMovementsHistory();
@@ -466,7 +460,25 @@ import Layout from '../layouts/Layout.astro';
       }
     });
 
-    // Renderizar Historial de Hoy y Recientes
+    // Clear all movements with 2FA
+    btnClearAllMovs?.addEventListener('click', async () => {
+      try {
+        await request2FAConfirmation({
+          title: 'Limpiar Todo el Historial de Movimientos',
+          description: 'Esta acción borrará PERMANENTEMENTE el historial de movimientos de LocalStorage y Cloud Firestore.',
+          confirmText: 'Limpiar Historial',
+          danger: true
+        });
+        await clearAllMovements();
+        renderMovementsHistory();
+        showToast('Historial de movimientos borrado completamente.');
+      } catch (err: any) {
+        if (err?.message !== 'Operación cancelada por el usuario') {
+          showToast(err.message || 'Error al borrar historial', true);
+        }
+      }
+    });
+
     function renderMovementsHistory() {
       const container = document.getElementById('movementsHistoryContainer');
       if (!container) return;
@@ -508,19 +520,21 @@ import Layout from '../layouts/Layout.astro';
               <p class="text-[11px] text-secondary truncate">${timeStr} · Resultante: ${m.stockResultante} unid. ${m.nota ? '· ' + m.nota : ''}</p>
             </div>
           </div>
-          <div class="flex items-center gap-2 shrink-0">
-            <span class="font-data-tabular font-bold ${isEntry ? 'text-emerald-700' : (isAjuste ? 'text-blue-700' : 'text-rose-700')} text-sm">${sign}${isAjuste ? m.stockResultante : m.cantidad}</span>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <span class="font-data-tabular font-bold ${isEntry ? 'text-emerald-700' : (isAjuste ? 'text-blue-700' : 'text-rose-700')} text-sm mr-1">${sign}${isAjuste ? m.stockResultante : m.cantidad}</span>
             ${!m.revertido && !isReversion && !isAjuste ? `
               <button class="btn-revert px-2 py-1 rounded-lg bg-surface-container text-[11px] font-semibold text-secondary hover:text-error hover:bg-error-container transition-colors" data-id="${m.id}" title="Revertir este movimiento">
                 Revertir
               </button>
             ` : (m.revertido ? '<span class="text-[10px] text-outline font-semibold">Revertido</span>' : '')}
+            <button class="btn-delete-mov p-1 rounded-lg text-secondary hover:text-error hover:bg-error-container transition-colors" data-id="${m.id}" title="Eliminar registro de movimiento">
+              <span class="material-symbols-outlined text-[16px]">delete</span>
+            </button>
           </div>
         `;
         container.appendChild(div);
       });
 
-      // Listeners de reversión
       container.querySelectorAll('.btn-revert').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const id = (e.currentTarget as HTMLElement).getAttribute('data-id');
@@ -538,9 +552,30 @@ import Layout from '../layouts/Layout.astro';
           }
         });
       });
+
+      container.querySelectorAll('.btn-delete-mov').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const id = (e.currentTarget as HTMLElement).getAttribute('data-id');
+          if (!id) return;
+          try {
+            await request2FAConfirmation({
+              title: 'Eliminar Registro de Movimiento',
+              description: 'Esta acción borrará este registro individual de movimiento permanentemente.',
+              confirmText: 'Eliminar Movimiento',
+              danger: true
+            });
+            await deleteMovement(id);
+            renderMovementsHistory();
+            showToast('Movimiento eliminado correctamente.');
+          } catch (err: any) {
+            if (err?.message !== 'Operación cancelada por el usuario') {
+              showToast(err.message || 'Error al eliminar movimiento', true);
+            }
+          }
+        });
+      });
     }
 
-    // Inicialización
     populateDropdown();
     updateSelectedCardDisplay();
     renderMovementsHistory();

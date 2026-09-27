@@ -573,6 +573,7 @@ import Layout from "../layouts/Layout.astro";
     import {
       getStoredInventory,
       deactivateProduct,
+      deleteProduct,
       createProduct,
       getCategories,
       addCategory,
@@ -581,6 +582,7 @@ import Layout from "../layouts/Layout.astro";
       compressImageFile,
       isInventoryLoading,
     } from "../utils/inventoryStore.js";
+    import { request2FAConfirmation } from "../utils/securityModal.js";
     import type { Product } from "../types/inventory";
 
     const baseEditUrl = import.meta.env.BASE_URL.endsWith("/")
@@ -736,9 +738,14 @@ import Layout from "../layouts/Layout.astro";
             <div class="flex-1 min-w-0">
               <div class="flex items-start justify-between gap-1">
                 <h4 class="font-label-lg text-label-lg text-on-surface font-bold truncate leading-snug">${item.name}</h4>
-                <button class="btn-deactivate p-1 rounded-lg text-secondary hover:bg-error-container hover:text-error transition-colors" data-sku="${item.sku}" title="Desactivar accesorio" type="button">
-                  <span class="material-symbols-outlined text-[18px]">visibility_off</span>
-                </button>
+                <div class="flex items-center gap-0.5">
+                  <button class="btn-deactivate p-1 rounded-lg text-secondary hover:bg-error-container hover:text-error transition-colors" data-sku="${item.sku}" title="Desactivar accesorio" type="button">
+                    <span class="material-symbols-outlined text-[18px]">visibility_off</span>
+                  </button>
+                  <button class="btn-delete-prod p-1 rounded-lg text-secondary hover:bg-error-container hover:text-error transition-colors" data-sku="${item.sku}" data-name="${item.name}" title="Eliminar producto con 2FA" type="button">
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
+                </div>
               </div>
               <div class="flex items-center gap-2 mt-0.5">
                 <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-surface-container text-secondary">${item.category}</span>
@@ -817,6 +824,32 @@ import Layout from "../layouts/Layout.astro";
             inventory = getStoredInventory(false);
             renderInventoryList();
             showToast("Accesorio desactivado.");
+          }
+        });
+      });
+
+      document.querySelectorAll(".btn-delete-prod").forEach((btn) => {
+        btn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const sku = btn.getAttribute("data-sku");
+          const name = btn.getAttribute("data-name") || sku;
+          if (!sku) return;
+
+          try {
+            await request2FAConfirmation({
+              title: "Eliminar Producto Definitivamente",
+              description: `Esta acción eliminará de forma permanente "${name}" (SKU: ${sku}) tanto de tu LocalStorage como de Firebase Firestore.`,
+              confirmText: "Eliminar Producto",
+              danger: true,
+            });
+            await deleteProduct(sku);
+            inventory = getStoredInventory(false);
+            renderInventoryList();
+            showToast(`Producto "${name}" eliminado definitivamente.`);
+          } catch (err: any) {
+            if (err?.message !== "Operación cancelada por el usuario") {
+              showToast(err.message || "Error al eliminar producto", true);
+            }
           }
         });
       });
