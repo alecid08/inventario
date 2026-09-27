@@ -672,6 +672,9 @@ import Layout from "../layouts/Layout.astro";
       const loadingState = document.getElementById("loadingInventoryState");
       const emptyState = document.getElementById("emptyInventoryState");
       const subtitle = document.getElementById("productCountSubtitle");
+      const subtitle = document.getElementById("productCountSubtitle");
+      const emptyState = document.getElementById("emptyInventoryState");
+      const loadingState = document.getElementById("loadingInventoryState");
 
       if (isInventoryLoading()) {
         container.innerHTML = `
@@ -700,7 +703,6 @@ import Layout from "../layouts/Layout.astro";
           emptyState.classList.add("hidden");
           emptyState.classList.remove("flex");
         }
-        const subtitle = document.getElementById("productCountSubtitle");
         if (subtitle)
           subtitle.textContent = "Sincronizando inventario con el servidor...";
         return;
