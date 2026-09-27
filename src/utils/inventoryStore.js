@@ -327,10 +327,6 @@ export function getStoredInventory(includeInactive = false) {
   if (typeof window === 'undefined') return fallbackInventory;
   const raw = localStorage.getItem(STORE_KEY);
   let items = fallbackInventory;
-  const fallback = import.meta.env?.DEV ? defaultInventory : [];
-  if (typeof window === 'undefined') return fallback;
-  const raw = localStorage.getItem(STORE_KEY);
-  let items;
   if (raw) {
     try {
       items = JSON.parse(raw);
@@ -339,10 +335,7 @@ export function getStoredInventory(includeInactive = false) {
     }
   } else {
     localStorage.setItem(STORE_KEY, JSON.stringify(fallbackInventory));
-      items = fallback;
-    }
-  } else {
-    items = fallback;
+    items = fallbackInventory;
   }
   items = items.map(item => ({
     ...item,
