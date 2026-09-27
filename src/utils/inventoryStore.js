@@ -1,12 +1,15 @@
 import { db } from './firebase.js';
-import { 
-  collection, 
-  doc, 
-  onSnapshot, 
-  addDoc, 
+import {
+  collection,
+  doc,
+  onSnapshot,
+  addDoc,
   setDoc,
-  serverTimestamp 
+  serverTimestamp
 } from 'firebase/firestore';
+
+const env = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env : {};
+const isDev = Boolean(env.DEV);
 
 // Store keys for physical inventory, movements, categories and configuration
 const STORE_KEY = 'stock_movil_inventory_v1';
@@ -30,7 +33,7 @@ export function getCurrentOperator() {
     try {
       const s = JSON.parse(authSession);
       if (s?.displayName) return s.displayName;
-    } catch (e) {}
+    } catch (e) { }
   }
   return 'Alejandro (Admin)';
 }
@@ -76,8 +79,6 @@ export const defaultInventory = [
   { id: 'kLX8MNqSi9VYf42MmErG', sku: 'CRST-9H-SAM', name: 'Mica Cristal Templado 9H Samsung S24', category: 'Protección de Pantalla', stock: 8, minStock: 5, maxStock: 10, location: 'Estante M-3', activo: true, lastUpdated: '2026-09-02', _seeded: true, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDArc9PQMZMX60YZdL2HuhroEsYV6UgzSH87z-kJS4ARnnmSqmNSHgA9qBp7g6F6dHgZFFqTSVgq2gdJp58wHONkBxTxsO8hE0qtwatBHzLpB31H6chYL2O8S5CJSDi-z88o0vFq5sZcG3tsWBWISuppZf-tVqo03v5gno6pOC0TkrrhFGhyhCHAt7jP4NM9ZHobv-4beNobhEKe-UBtNC0__DBtmC90qfTOgVDh-SgPW_fPqxi2Q1q1g' },
   { id: 'nhoXtymGrJuiK4gHUBNd', sku: 'AUD-TWS-PRO', name: 'Audífonos Bluetooth Inalámbricos TWS-5', category: 'Audio y Audífonos', stock: 0, minStock: 3, maxStock: 10, location: 'Cajón A-4', activo: true, lastUpdated: '2026-09-01', _seeded: true, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBEddAYibZMjqLmVbQYfK77Qtk_GR18aEIxR3iZD-Z2oh2vBwMBHO4f5rmtUUOpsECq0Ki6-5kKq2rrbOwb5qTeegm3mwiaDth6G9WXs1pYgShhoy9AIo62Yi2tPtSAwuB9NT8Xg1cpDcF-6cJyQ2S_WpLWIWQIu2INbGpBjXUA7YtOlsTuVV3M7ipH2vBUeAEuuoP8SCLpb0_EussBUxFkyspxVV1X9GEiyd9dr9O0HJLNk35vxy8HOA' }
 ];
-
-export const DEFAULT_INVENTORY_SKUS = new Set(defaultInventory.map(item => item.sku));
 
 // --- CATEGORIES MANAGEMENT ---
 export function getCategories() {
@@ -224,41 +225,32 @@ export function initFirestoreSync() {
     // 1. Listener de productos en tiempo real
     const productsRef = collection(db, 'products');
     onSnapshot(productsRef, (snapshot) => {
-      const firestoreItems = !snapshot.empty ? snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        activo: doc.data().activo !== false,
-        stock: Number(doc.data().stock) || 0,
-        minStock: Number(doc.data().minStock) || 5,
-        maxStock: Number(doc.data().maxStock) || 10,
-        location: doc.data().location || 'Estante Principal',
-        lastUpdated: doc.data().lastUpdated || '2026-09-03',
-        img: doc.data().img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'
-      })) : [];
+      if (!snapshot.empty) {
+        const firestoreItems = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+          activo: doc.data().activo !== false,
+          stock: Number(doc.data().stock) || 0,
+          minStock: Number(doc.data().minStock) || 5,
+          maxStock: Number(doc.data().maxStock) || 10,
+          location: doc.data().location || 'Estante Principal',
+          lastUpdated: doc.data().lastUpdated || '2026-09-03',
+          img: doc.data().img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'
+        }));
 
-      const firestoreSkus = new Set(firestoreItems.map(item => item.sku));
-      const currentLocal = getStoredInventory(true);
+        // Fusión por SKU priorizando datos actualizados de Firestore
+        const currentLocal = getStoredInventory(true);
+        const mapBySku = new Map();
+        currentLocal.forEach(item => mapBySku.set(item.sku, item));
+        firestoreItems.forEach(item => mapBySku.set(item.sku, item));
+        const mergedProducts = Array.from(mapBySku.values());
 
-      // Eliminar productos sembrados por defaultInventory si no existen en Firestore
-      const filteredLocal = currentLocal.filter(item => {
-        if (DEFAULT_INVENTORY_SKUS.has(item.sku) && !firestoreSkus.has(item.sku)) {
-          return false;
-        }
-        return true;
-      });
-
-      const mapBySku = new Map();
-      filteredLocal.forEach(item => mapBySku.set(item.sku, item));
-      firestoreItems.forEach(item => mapBySku.set(item.sku, item));
-      const mergedProducts = Array.from(mapBySku.values());
-
-      localStorage.setItem(STORE_KEY, JSON.stringify(mergedProducts));
-      isFirstSnapshotCompleted = true;
-      window.dispatchEvent(new CustomEvent('inventory-updated', { detail: mergedProducts }));
+        localStorage.setItem(STORE_KEY, JSON.stringify(mergedProducts));
+        window.dispatchEvent(new CustomEvent('inventory-updated', { detail: mergedProducts }));
+      }
     }, (err) => {
+      isInitialFirestoreSyncDone = true;
       console.warn('Advertencia en sincronización en tiempo real de Firestore:', err);
-      isFirstSnapshotCompleted = true;
-      window.dispatchEvent(new CustomEvent('inventory-updated', { detail: getStoredInventory(false) }));
     });
 
     // 2. Listener de movimientos en tiempo real
@@ -329,7 +321,12 @@ export function getStoredInventory(includeInactive = false) {
   let items;
   if (raw) {
     try {
-      items = JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        items = parsed;
+      } else {
+        items = isDev ? defaultInventory : [];
+      }
     } catch (e) {
       items = fallbackInventory;
     }
@@ -394,9 +391,9 @@ export async function deactivateProduct(sku) {
   if (targetItem && targetItem.id && !targetItem.id.startsWith('sku-temp-')) {
     try {
       const docRef = doc(db, 'products', targetItem.id);
-      await setDoc(docRef, { 
-        activo: false, 
-        lastUpdated: new Date().toISOString().split('T')[0] 
+      await setDoc(docRef, {
+        activo: false,
+        lastUpdated: new Date().toISOString().split('T')[0]
       }, { merge: true });
     } catch (err) {
       console.error('Error al desactivar en Firestore:', err);
@@ -420,45 +417,10 @@ export async function deactivateProduct(sku) {
 // Requirement 2 & 3: Create product with default stock = 10, max stock = 10 (Firestore synced)
 export function createProduct(prodData) {
   const allItems = getStoredInventory(true);
-
-  const isSkuTaken = (candidateSku) => {
-    if (!candidateSku) return false;
-    const norm = candidateSku.trim().toUpperCase();
-    return allItems.some(item => item.sku && item.sku.trim().toUpperCase() === norm);
-  };
-
-  const manualInput = prodData.sku && typeof prodData.sku === 'string' ? prodData.sku.trim() : '';
-  let finalSku = '';
-
-  if (manualInput) {
-    if (isSkuTaken(manualInput)) {
-      throw new Error("Ese SKU ya existe, usa otro");
-    }
-    finalSku = manualInput.toUpperCase();
-  } else {
-    let attempts = 0;
-    let generatedSku = '';
-    let foundUnique = false;
-
-    while (attempts < 5) {
-      attempts++;
-      generatedSku = 'SKU-' + Math.floor(100 + Math.random() * 900);
-      if (!isSkuTaken(generatedSku)) {
-        foundUnique = true;
-        break;
-      }
-    }
-
-    if (!foundUnique) {
-      throw new Error("No se pudo generar un SKU único automáticamente después de 5 intentos. Es posible que el catálogo esté muy saturado en este rango de SKU.");
-    }
-    finalSku = generatedSku.toUpperCase();
-  }
-
   const tempId = 'sku-temp-' + Date.now();
   const newProduct = {
     id: tempId,
-    sku: finalSku,
+    sku: (prodData.sku || ('SKU-' + Math.floor(100 + Math.random() * 900))).toUpperCase(),
     name: prodData.name,
     category: prodData.category || 'Otros',
     stock: 10, // Stock inicial estándar de 10 unidades
@@ -479,7 +441,7 @@ export function createProduct(prodData) {
   const activeOp = getCurrentOperator();
   const initMov = {
     id: 'mov-' + Date.now(),
-    productoId: tempId,
+    productoId: definitiveId,
     sku: newProduct.sku,
     productName: newProduct.name,
     tipo: 'entrada',
@@ -495,9 +457,9 @@ export function createProduct(prodData) {
   movements.unshift(initMov);
   saveMovements(movements);
 
-  // Save to Firestore asynchronously
-  if (typeof window !== 'undefined') {
-    addDoc(collection(db, 'products'), {
+  // Save to Firestore asynchronously with native offline persistence
+  if (typeof window !== 'undefined' && productDocRef) {
+    setDoc(productDocRef, {
       sku: newProduct.sku,
       name: newProduct.name,
       category: newProduct.category,
@@ -509,21 +471,16 @@ export function createProduct(prodData) {
       img: newProduct.img,
       lastUpdated: newProduct.lastUpdated,
       createdAt: serverTimestamp()
-    }).then(docRef => {
-      newProduct.id = docRef.id;
-      initMov.productoId = docRef.id;
-      localStorage.setItem(STORE_KEY, JSON.stringify(allItems));
-      saveMovements(movements);
-
-      // Registrar también el movimiento inicial en Firestore
-      addDoc(collection(db, 'movements'), {
-        ...initMov,
-        productoId: docRef.id,
-        createdAt: serverTimestamp()
-      }).catch(err => console.warn('Error guardando movimiento inicial en Firestore:', err));
     }).catch(err => {
       console.error('Error guardando nuevo producto en Firestore:', err);
     });
+
+    // Registrar también el movimiento inicial en Firestore
+    addDoc(collection(db, 'movements'), {
+      ...initMov,
+      productoId: definitiveId,
+      createdAt: serverTimestamp()
+    }).catch(err => console.warn('Error guardando movimiento inicial en Firestore:', err));
   }
 
   return newProduct;
@@ -616,8 +573,8 @@ export function isSameCalendarDay(d1, d2) {
   const date1 = normalizeDate(d1);
   const date2 = normalizeDate(d2);
   return date1.getFullYear() === date2.getFullYear() &&
-         date1.getMonth() === date2.getMonth() &&
-         date1.getDate() === date2.getDate();
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate();
 }
 
 // Requirement 4: Same-day Reversal

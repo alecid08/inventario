@@ -180,7 +180,7 @@ import Layout from '../layouts/Layout.astro';
   </main>
 
   <script>
-    import { getStoredInventory, recordMovement, revertirMovimiento, getStoredMovements, isSameCalendarDay, getCurrentOperator } from '../utils/inventoryStore.js';
+    import { getStoredInventory, recordMovement, revertirMovimiento, getStoredMovements, isSameCalendarDay, getCurrentOperator, isInventoryLoading } from '../utils/inventoryStore.js';
     import type { Product, Movement } from '../types/inventory';
 
     let inventory: Product[] = getStoredInventory(true);
@@ -235,7 +235,9 @@ import Layout from '../layouts/Layout.astro';
       if (inventory.length === 0) {
         const opt = document.createElement('option');
         opt.value = '';
-        opt.textContent = 'No hay productos registrados en el inventario';
+        opt.textContent = isInventoryLoading() 
+          ? 'Sincronizando productos de inventario...' 
+          : 'No hay productos registrados en el inventario';
         dropdown.appendChild(opt);
         return;
       }

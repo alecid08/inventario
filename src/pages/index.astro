@@ -1,53 +1,102 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Tu Cell Express - Gestión de Inventario">
-  <button 
-    slot="header-actions" 
-    aria-label="Añadir producto" 
-    class="h-8 px-2.5 bg-primary text-on-primary rounded-xl font-label-sm text-xs font-bold flex items-center gap-1 shadow-xs hover:opacity-95 active:scale-95 transition-all cursor-pointer" 
-    id="btnHeaderAddProd" 
+  <button
+    slot="header-actions"
+    aria-label="Añadir producto"
+    class="h-8 px-2.5 bg-primary text-on-primary rounded-xl font-label-sm text-xs font-bold flex items-center gap-1 shadow-xs hover:opacity-95 active:scale-95 transition-all cursor-pointer"
+    id="btnHeaderAddProd"
     type="button"
   >
     <span class="material-symbols-outlined text-[16px]">add</span>
     <span>Nuevo</span>
   </button>
 
-  <main class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile pt-3 pb-20">
+  <main
+    class="flex-1 flex flex-col relative w-full bg-surface px-gutter-mobile pt-3 pb-20"
+  >
     <div class="flex flex-col w-full pb-24">
-
       <!-- Modal Rápido de Conteo / Ajuste -->
-      <div class="hidden fixed inset-0 z-50 flex items-end justify-center bg-on-surface/40 backdrop-blur-sm transition-all duration-200" id="quickAdjustModal">
-        <div class="w-full max-w-lg bg-surface-container-lowest rounded-t-2xl p-space-lg shadow-2xl flex flex-col gap-space-md animate-in slide-in-from-bottom duration-200">
-          <div class="w-10 h-1.5 bg-outline-variant/60 rounded-full self-center mb-1"></div>
+      <div
+        class="hidden fixed inset-0 z-50 flex items-end justify-center bg-on-surface/40 backdrop-blur-sm transition-all duration-200"
+        id="quickAdjustModal"
+      >
+        <div
+          class="w-full max-w-lg bg-surface-container-lowest rounded-t-2xl p-space-lg shadow-2xl flex flex-col gap-space-md animate-in slide-in-from-bottom duration-200"
+        >
+          <div
+            class="w-10 h-1.5 bg-outline-variant/60 rounded-full self-center mb-1"
+          >
+          </div>
           <div class="flex items-center justify-between">
             <div>
-              <span class="font-label-sm text-label-sm text-primary uppercase tracking-wider font-semibold">Conteo Rápido</span>
-              <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold" id="modalProductName">Nombre del Producto</h3>
-              <p class="font-body-sm text-body-sm text-on-surface-variant" id="modalProductSku">SKU-000</p>
+              <span
+                class="font-label-sm text-label-sm text-primary uppercase tracking-wider font-semibold"
+                >Conteo Rápido</span
+              >
+              <h3
+                class="font-headline-sm text-headline-sm text-on-surface font-bold"
+                id="modalProductName"
+              >
+                Nombre del Producto
+              </h3>
+              <p
+                class="font-body-sm text-body-sm text-on-surface-variant"
+                id="modalProductSku"
+              >
+                SKU-000
+              </p>
             </div>
-            <button class="w-10 h-10 flex items-center justify-center rounded-full text-secondary hover:bg-surface-container-low transition-colors" id="closeModalBtn" type="button">
+            <button
+              class="w-10 h-10 flex items-center justify-center rounded-full text-secondary hover:bg-surface-container-low transition-colors"
+              id="closeModalBtn"
+              type="button"
+            >
               <span class="material-symbols-outlined">close</span>
             </button>
           </div>
-          <div class="flex items-center justify-center gap-space-lg py-space-md bg-surface-container-low rounded-xl">
-            <button class="w-14 h-14 rounded-xl bg-surface-container-lowest text-primary shadow-sm flex items-center justify-center active:scale-95 transition-transform" id="modalDecBtn" type="button">
+          <div
+            class="flex items-center justify-center gap-space-lg py-space-md bg-surface-container-low rounded-xl"
+          >
+            <button
+              class="w-14 h-14 rounded-xl bg-surface-container-lowest text-primary shadow-sm flex items-center justify-center active:scale-95 transition-transform"
+              id="modalDecBtn"
+              type="button"
+            >
               <span class="material-symbols-outlined text-[28px]">remove</span>
             </button>
             <div class="flex flex-col items-center">
-              <span class="font-display text-display text-on-surface font-bold" id="modalStockDisplay">3</span>
-              <span class="font-label-sm text-label-sm text-on-surface-variant">de 10 max.</span>
+              <span
+                class="font-display text-display text-on-surface font-bold"
+                id="modalStockDisplay">3</span
+              >
+              <span class="font-label-sm text-label-sm text-on-surface-variant"
+                >de 10 max.</span
+              >
             </div>
-            <button class="w-14 h-14 rounded-xl bg-primary text-on-primary shadow-sm flex items-center justify-center active:scale-95 transition-transform" id="modalIncBtn" type="button">
+            <button
+              class="w-14 h-14 rounded-xl bg-primary text-on-primary shadow-sm flex items-center justify-center active:scale-95 transition-transform"
+              id="modalIncBtn"
+              type="button"
+            >
               <span class="material-symbols-outlined text-[28px]">add</span>
             </button>
           </div>
           <div class="flex gap-space-sm pt-2">
-            <button class="flex-1 h-touch-min rounded-xl bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center" id="cancelModalBtn" type="button">
+            <button
+              class="flex-1 h-touch-min rounded-xl bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center"
+              id="cancelModalBtn"
+              type="button"
+            >
               Cancelar
             </button>
-            <button class="flex-1 h-touch-min rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-md flex items-center justify-center gap-1.5" id="saveModalBtn" type="button">
+            <button
+              class="flex-1 h-touch-min rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-md flex items-center justify-center gap-1.5"
+              id="saveModalBtn"
+              type="button"
+            >
               <span class="material-symbols-outlined text-[20px]">check</span>
               Confirmar Conteo
             </button>
@@ -56,30 +105,68 @@ import Layout from '../layouts/Layout.astro';
       </div>
 
       <!-- Modal de Nueva Categoría -->
-      <div class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-on-surface/40 backdrop-blur-sm transition-all duration-200" id="newCategoryModal">
-        <div class="w-full max-w-md bg-surface-container-lowest rounded-t-2xl sm:rounded-2xl p-space-lg shadow-2xl flex flex-col gap-space-md">
-          <div class="flex items-center justify-between border-b border-surface-container pb-3">
+      <div
+        class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-on-surface/40 backdrop-blur-sm transition-all duration-200"
+        id="newCategoryModal"
+      >
+        <div
+          class="w-full max-w-md bg-surface-container-lowest rounded-t-2xl sm:rounded-2xl p-space-lg shadow-2xl flex flex-col gap-space-md"
+        >
+          <div
+            class="flex items-center justify-between border-b border-surface-container pb-3"
+          >
             <div class="flex items-center gap-2">
-              <div class="w-9 h-9 rounded-xl bg-primary-container text-on-primary flex items-center justify-center">
-                <span class="material-symbols-outlined text-[20px]">category</span>
+              <div
+                class="w-9 h-9 rounded-xl bg-primary-container text-on-primary flex items-center justify-center"
+              >
+                <span class="material-symbols-outlined text-[20px]"
+                  >category</span
+                >
               </div>
-              <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Nueva Categoría</h3>
+              <h3
+                class="font-headline-sm text-headline-sm text-on-surface font-bold"
+              >
+                Nueva Categoría
+              </h3>
             </div>
-            <button class="w-9 h-9 flex items-center justify-center rounded-full text-secondary hover:bg-surface-container transition-colors" id="closeCatModalBtn" type="button">
+            <button
+              class="w-9 h-9 flex items-center justify-center rounded-full text-secondary hover:bg-surface-container transition-colors"
+              id="closeCatModalBtn"
+              type="button"
+            >
               <span class="material-symbols-outlined">close</span>
             </button>
           </div>
           <form class="flex flex-col gap-space-sm" id="newCategoryForm">
             <div>
-              <label class="block font-label-sm text-label-sm text-on-surface mb-1" for="newCategoryName">Nombre de la Categoría <span class="text-error">*</span></label>
-              <input class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="newCategoryName" placeholder="Ej. Smartwatches &amp; Correas" required type="text"/>
+              <label
+                class="block font-label-sm text-label-sm text-on-surface mb-1"
+                for="newCategoryName"
+                >Nombre de la Categoría <span class="text-error">*</span></label
+              >
+              <input
+                class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                id="newCategoryName"
+                placeholder="Ej. Smartwatches & Correas"
+                required
+                type="text"
+              />
             </div>
             <div class="flex gap-space-sm pt-2">
-              <button class="flex-1 h-11 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md" id="cancelCatModalBtn" type="button">
+              <button
+                class="flex-1 h-11 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md"
+                id="cancelCatModalBtn"
+                type="button"
+              >
                 Cancelar
               </button>
-              <button class="flex-1 h-11 rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-md flex items-center justify-center gap-1.5" type="submit">
-                <span class="material-symbols-outlined text-[18px]">add_circle</span>
+              <button
+                class="flex-1 h-11 rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-md flex items-center justify-center gap-1.5"
+                type="submit"
+              >
+                <span class="material-symbols-outlined text-[18px]"
+                  >add_circle</span
+                >
                 <span>Crear Categoría</span>
               </button>
             </div>
@@ -88,36 +175,83 @@ import Layout from '../layouts/Layout.astro';
       </div>
 
       <!-- Modal de Añadir Producto (Sin Ubicación de Vitrina, con Imagen) -->
-      <div class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-on-surface/40 backdrop-blur-sm transition-all duration-200" id="newProductModal">
-        <div class="w-full max-w-lg bg-surface-container-lowest rounded-t-2xl sm:rounded-2xl p-space-lg shadow-2xl flex flex-col gap-space-md max-h-[92vh] overflow-y-auto">
-          <div class="flex items-center justify-between border-b border-surface-container pb-3">
+      <div
+        class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-on-surface/40 backdrop-blur-sm transition-all duration-200"
+        id="newProductModal"
+      >
+        <div
+          class="w-full max-w-lg bg-surface-container-lowest rounded-t-2xl sm:rounded-2xl p-space-lg shadow-2xl flex flex-col gap-space-md max-h-[92vh] overflow-y-auto"
+        >
+          <div
+            class="flex items-center justify-between border-b border-surface-container pb-3"
+          >
             <div class="flex items-center gap-2">
-              <div class="w-9 h-9 rounded-xl bg-primary-container text-on-primary flex items-center justify-center">
-                <span class="material-symbols-outlined text-[20px]">add_box</span>
+              <div
+                class="w-9 h-9 rounded-xl bg-primary-container text-on-primary flex items-center justify-center"
+              >
+                <span class="material-symbols-outlined text-[20px]"
+                  >add_box</span
+                >
               </div>
-              <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Añadir Accesorio al Inventario</h3>
+              <h3
+                class="font-headline-sm text-headline-sm text-on-surface font-bold"
+              >
+                Añadir Accesorio al Inventario
+              </h3>
             </div>
-            <button class="w-9 h-9 flex items-center justify-center rounded-full text-secondary hover:bg-surface-container transition-colors" id="closeNewModalBtn" type="button">
+            <button
+              class="w-9 h-9 flex items-center justify-center rounded-full text-secondary hover:bg-surface-container transition-colors"
+              id="closeNewModalBtn"
+              type="button"
+            >
               <span class="material-symbols-outlined">close</span>
             </button>
           </div>
           <form class="flex flex-col gap-space-sm" id="newProductForm">
             <div>
-              <label class="block font-label-sm text-label-sm text-on-surface mb-1" for="newProdName">Nombre del accesorio <span class="text-error">*</span></label>
-              <input class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="newProdName" placeholder="Ej. Funda MagSafe Silicona iPhone 16" required type="text"/>
+              <label
+                class="block font-label-sm text-label-sm text-on-surface mb-1"
+                for="newProdName"
+                >Nombre del accesorio <span class="text-error">*</span></label
+              >
+              <input
+                class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                id="newProdName"
+                placeholder="Ej. Funda MagSafe Silicona iPhone 16"
+                required
+                type="text"
+              />
             </div>
-            
+
             <div class="grid grid-cols-2 gap-space-sm">
               <div>
-                <label class="block font-label-sm text-label-sm text-on-surface mb-1" for="newProdSku">Código SKU</label>
-                <input class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-sku-code text-sku-code focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all uppercase" id="newProdSku" placeholder="Opcional (Ej. FND-IP16)" type="text"/>
+                <label
+                  class="block font-label-sm text-label-sm text-on-surface mb-1"
+                  for="newProdSku">Código SKU</label
+                >
+                <input
+                  class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-sku-code text-sku-code focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all uppercase"
+                  id="newProdSku"
+                  placeholder="Opcional (Ej. FND-IP16)"
+                  type="text"
+                />
               </div>
               <div>
                 <div class="flex items-center justify-between mb-1">
-                  <label class="block font-label-sm text-label-sm text-on-surface" for="newProdCat">Categoría</label>
-                  <button type="button" class="text-primary text-[11px] font-semibold hover:underline" id="btnOpenCatModalFromProd">+ Crear</button>
+                  <label
+                    class="block font-label-sm text-label-sm text-on-surface"
+                    for="newProdCat">Categoría</label
+                  >
+                  <button
+                    type="button"
+                    class="text-primary text-[11px] font-semibold hover:underline"
+                    id="btnOpenCatModalFromProd">+ Crear</button
+                  >
                 </div>
-                <select class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:outline-none" id="newProdCat">
+                <select
+                  class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:outline-none"
+                  id="newProdCat"
+                >
                   <!-- Llenado dinámicamente con las categorías -->
                 </select>
               </div>
@@ -126,56 +260,157 @@ import Layout from '../layouts/Layout.astro';
             <!-- Campo de Imagen con Previsualización, Subida Local y Presets Rápidos -->
             <div class="space-y-1.5 pt-1">
               <div class="flex items-center justify-between">
-                <label class="block font-label-sm text-label-sm text-on-surface font-semibold" for="newProdImg">Fotografía del Producto</label>
-                <button type="button" class="text-xs text-primary font-bold hover:underline flex items-center gap-1 cursor-pointer" id="btnUploadNewProdImg">
-                  <span class="material-symbols-outlined text-[16px]">upload_file</span>
+                <label
+                  class="block font-label-sm text-label-sm text-on-surface font-semibold"
+                  for="newProdImg">Fotografía del Producto</label
+                >
+                <button
+                  type="button"
+                  class="text-xs text-primary font-bold hover:underline flex items-center gap-1 cursor-pointer"
+                  id="btnUploadNewProdImg"
+                >
+                  <span class="material-symbols-outlined text-[16px]"
+                    >upload_file</span
+                  >
                   <span>Subir desde dispositivo</span>
                 </button>
               </div>
-              <input type="file" id="newProdFileInput" accept="image/*" class="hidden" />
+              <input
+                type="file"
+                id="newProdFileInput"
+                accept="image/*"
+                class="hidden"
+              />
               <div class="flex items-center gap-2">
-                <div class="relative w-14 h-14 rounded-xl bg-surface-container-low border border-surface-container overflow-hidden flex items-center justify-center shrink-0 cursor-pointer group shadow-xs" id="newProdImgContainer" title="Haz clic para seleccionar una foto de tu dispositivo">
-                  <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww" alt="Preview" class="w-full h-full object-cover" id="newProdImgPreview" />
-                  <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity">
-                    <span class="material-symbols-outlined text-[18px]">photo_camera</span>
+                <div
+                  class="relative w-14 h-14 rounded-xl bg-surface-container-low border border-surface-container overflow-hidden flex items-center justify-center shrink-0 cursor-pointer group shadow-xs"
+                  id="newProdImgContainer"
+                  title="Haz clic para seleccionar una foto de tu dispositivo"
+                >
+                  <img
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww"
+                    alt="Preview"
+                    class="w-full h-full object-cover"
+                    id="newProdImgPreview"
+                  />
+                  <div
+                    class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity"
+                  >
+                    <span class="material-symbols-outlined text-[18px]"
+                      >photo_camera</span
+                    >
                   </div>
                 </div>
-                <input class="flex-1 h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="newProdImg" placeholder="https://ejemplo.com/imagen.jpg o sube archivo" type="text" value="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww"/>
+                <input
+                  class="flex-1 h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                  id="newProdImg"
+                  placeholder="https://ejemplo.com/imagen.jpg o sube archivo"
+                  type="text"
+                  value="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww"
+                />
               </div>
               <!-- Presets Rápidos de Accesorios -->
-              <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1">
-                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0 cursor-pointer" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww">Funda</button>
-                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0 cursor-pointer" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuDwBW1Tnz4ox8TJimQ2nNWfY6o33DXFVI_9hnHGKzzl3XJhpYMd92sEX1p-M2182e_5P1T9-E8ueXBhioGF4oy264i2UoGbNDW_wFjgwrSNzAJjJhAlRcLwnmRjbP3lOMSy1dM0qSLvxcPA4Wzeciz7TUTmcvBPhWTMLu9gKEJNK5yXbrAMIG8EdaCNX49rw4X2MbQ7za9LNvHHrL-orE8zBLnoZbp1y9YNu2Jb_lniNxeofy9PERKBGA">Cable</button>
-                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0 cursor-pointer" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuBrfDhd7aPs8GoEZkbA-xzj03A0JGJv23NKGhczYuRs8EJYYf_q4gvPULwdu7W8msYzasXSZ5CRFCaiereQb0MBGmy_2rZyX803yRgihTlaUjdsvBhZ43BV5z9VhWzAtBp5NCT6sMqRZH17UfXJqbpvnnAVKBFI_dqtFRl2c6VUhREY7ilvtDMv5-2DsAZhazqG9qhIVZnFgDAxPizJb5ovXT5omGmRTXTgZYwc5QvkWW6J76B2YiQrvw">Cargador</button>
-                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0 cursor-pointer" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuDArc9PQMZMX60YZdL2HuhroEsYV6UgzSH87z-kJS4ARnnmSqmNSHgA9qBp7g6F6dHgZFFqTSVgq2gdJp58wHONkBxTxsO8hE0qtwatBHzLpB31H6chYL2O8S5CJSDi-z88o0vFq5sZcG3tsWBWISuppZf-tVqo03v5gno6pOC0TkrrhFGhyhCHAt7jP4NM9ZHobv-4beNobhEKe-UBtNC0__DBtmC90qfTOgVDh-SgPW_fPqxi2Q1q1g">Mica</button>
-                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0 cursor-pointer" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuBEddAYibZMjqLmVbQYfK77Qtk_GR18aEIxR3iZD-Z2oh2vBwMBHO4f5rmtUUOpsECq0Ki6-5kKq2rrbOwb5qTeegm3mwiaDth6G9WXs1pYgShhoy9AIo62Yi2tPtSAwuB9NT8Xg1cpDcF-6cJyQ2S_WpLWIWQIu2INbGpBjXUA7YtOlsTuVV3M7ipH2vBUeAEuuoP8SCLpb0_EussBUxFkyspxVV1X9GEiyd9dr9O0HJLNk35vxy8HOA">Audio</button>
-                <button type="button" class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0 cursor-pointer" data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuCoO16TT-tR-wlBrTApCGHxTpxWYKIILFh-fa-B9ONyuxDC7S0ZXI1xdRds3NS2MAjynS8X2uxtjbBTZFQOx3cu80HN_IChP6er-zID8eNdtHMdl2IaINz3QBd6WqP7XAeWK_-CkFA6KuSLUQ3uYW8aLVdzLA0HU-wJ4SV3_opoxIxnm0ropW05_gKwnufdKjkZCa6ege8rRfS1fIRvvjUVG7PXm7gqADoptCJ87melL-SZW9KfqE8rfw">Soporte</button>
+              <div
+                class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1"
+              >
+                <button
+                  type="button"
+                  class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0 cursor-pointer"
+                  data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww"
+                  >Funda</button
+                >
+                <button
+                  type="button"
+                  class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0 cursor-pointer"
+                  data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuDwBW1Tnz4ox8TJimQ2nNWfY6o33DXFVI_9hnHGKzzl3XJhpYMd92sEX1p-M2182e_5P1T9-E8ueXBhioGF4oy264i2UoGbNDW_wFjgwrSNzAJjJhAlRcLwnmRjbP3lOMSy1dM0qSLvxcPA4Wzeciz7TUTmcvBPhWTMLu9gKEJNK5yXbrAMIG8EdaCNX49rw4X2MbQ7za9LNvHHrL-orE8zBLnoZbp1y9YNu2Jb_lniNxeofy9PERKBGA"
+                  >Cable</button
+                >
+                <button
+                  type="button"
+                  class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0 cursor-pointer"
+                  data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuBrfDhd7aPs8GoEZkbA-xzj03A0JGJv23NKGhczYuRs8EJYYf_q4gvPULwdu7W8msYzasXSZ5CRFCaiereQb0MBGmy_2rZyX803yRgihTlaUjdsvBhZ43BV5z9VhWzAtBp5NCT6sMqRZH17UfXJqbpvnnAVKBFI_dqtFRl2c6VUhREY7ilvtDMv5-2DsAZhazqG9qhIVZnFgDAxPizJb5ovXT5omGmRTXTgZYwc5QvkWW6J76B2YiQrvw"
+                  >Cargador</button
+                >
+                <button
+                  type="button"
+                  class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0 cursor-pointer"
+                  data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuDArc9PQMZMX60YZdL2HuhroEsYV6UgzSH87z-kJS4ARnnmSqmNSHgA9qBp7g6F6dHgZFFqTSVgq2gdJp58wHONkBxTxsO8hE0qtwatBHzLpB31H6chYL2O8S5CJSDi-z88o0vFq5sZcG3tsWBWISuppZf-tVqo03v5gno6pOC0TkrrhFGhyhCHAt7jP4NM9ZHobv-4beNobhEKe-UBtNC0__DBtmC90qfTOgVDh-SgPW_fPqxi2Q1q1g"
+                  >Mica</button
+                >
+                <button
+                  type="button"
+                  class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0 cursor-pointer"
+                  data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuBEddAYibZMjqLmVbQYfK77Qtk_GR18aEIxR3iZD-Z2oh2vBwMBHO4f5rmtUUOpsECq0Ki6-5kKq2rrbOwb5qTeegm3mwiaDth6G9WXs1pYgShhoy9AIo62Yi2tPtSAwuB9NT8Xg1cpDcF-6cJyQ2S_WpLWIWQIu2INbGpBjXUA7YtOlsTuVV3M7ipH2vBUeAEuuoP8SCLpb0_EussBUxFkyspxVV1X9GEiyd9dr9O0HJLNk35vxy8HOA"
+                  >Audio</button
+                >
+                <button
+                  type="button"
+                  class="btn-preset-img px-2.5 py-1 rounded-lg bg-surface-container-low text-[11px] font-medium hover:bg-surface-container text-on-surface shrink-0 cursor-pointer"
+                  data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuCoO16TT-tR-wlBrTApCGHxTpxWYKIILFh-fa-B9ONyuxDC7S0ZXI1xdRds3NS2MAjynS8X2uxtjbBTZFQOx3cu80HN_IChP6er-zID8eNdtHMdl2IaINz3QBd6WqP7XAeWK_-CkFA6KuSLUQ3uYW8aLVdzLA0HU-wJ4SV3_opoxIxnm0ropW05_gKwnufdKjkZCa6ege8rRfS1fIRvvjUVG7PXm7gqADoptCJ87melL-SZW9KfqE8rfw"
+                  >Soporte</button
+                >
               </div>
             </div>
 
             <!-- Ubicación física en tienda / Estante / Vitrina -->
             <div>
-              <label class="block font-label-sm text-label-sm text-on-surface mb-1" for="newProdLocation">Ubicación / Estante / Lugar de exhibición</label>
-              <input class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="newProdLocation" placeholder="Ej. Estante C-2, Vitrina A-1, Mostrador" type="text" value="Estante Principal"/>
+              <label
+                class="block font-label-sm text-label-sm text-on-surface mb-1"
+                for="newProdLocation"
+                >Ubicación / Estante / Lugar de exhibición</label
+              >
+              <input
+                class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                id="newProdLocation"
+                placeholder="Ej. Estante C-2, Vitrina A-1, Mostrador"
+                type="text"
+                value="Estante Principal"
+              />
             </div>
 
             <!-- Stock Inicial Estándar -->
             <div class="grid grid-cols-2 gap-space-sm">
               <div>
-                <label class="block font-label-sm text-label-sm text-on-surface mb-1" for="newProdStock">Stock Inicial</label>
-                <input class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none opacity-90 font-bold" id="newProdStock" readonly type="number" value="10"/>
+                <label
+                  class="block font-label-sm text-label-sm text-on-surface mb-1"
+                  for="newProdStock">Stock Inicial</label
+                >
+                <input
+                  class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none opacity-90 font-bold"
+                  id="newProdStock"
+                  readonly
+                  type="number"
+                  value="10"
+                />
               </div>
               <div>
-                <label class="block font-label-sm text-label-sm text-on-surface mb-1" for="newProdMinStock">Umbral Alerta Stock</label>
-                <input class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none" id="newProdMinStock" type="number" value="5" min="1" max="10"/>
+                <label
+                  class="block font-label-sm text-label-sm text-on-surface mb-1"
+                  for="newProdMinStock">Umbral Alerta Stock</label
+                >
+                <input
+                  class="w-full h-11 px-3 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none"
+                  id="newProdMinStock"
+                  type="number"
+                  value="5"
+                  min="1"
+                  max="10"
+                />
               </div>
             </div>
 
             <div class="flex gap-space-sm pt-3">
-              <button class="flex-1 h-12 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md" id="cancelNewModalBtn" type="button">
+              <button
+                class="flex-1 h-12 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md"
+                id="cancelNewModalBtn"
+                type="button"
+              >
                 Cancelar
               </button>
-              <button class="flex-1 h-12 rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-md flex items-center justify-center gap-1.5 hover:opacity-95" type="submit">
+              <button
+                class="flex-1 h-12 rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-md flex items-center justify-center gap-1.5 hover:opacity-95"
+                type="submit"
+              >
                 <span class="material-symbols-outlined text-[20px]">save</span>
                 <span>Guardar Producto</span>
               </button>
@@ -188,9 +423,21 @@ import Layout from '../layouts/Layout.astro';
       <div class="flex flex-col gap-space-sm mb-space-md">
         <div class="flex items-center gap-space-xs">
           <div class="relative flex-1 flex items-center">
-            <span class="material-symbols-outlined absolute left-3.5 text-secondary text-[22px] pointer-events-none">search</span>
-            <input class="w-full h-touch-min pl-11 pr-10 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-md text-body-md shadow-sm focus:outline-none focus:bg-surface-container-low transition-all" id="inventorySearchInput" placeholder="Buscar por accesorio, modelo o SKU..." type="text"/>
-            <button class="hidden absolute right-3 w-7 h-7 flex items-center justify-center rounded-full text-secondary hover:bg-surface-container" id="clearSearchBtn" type="button">
+            <span
+              class="material-symbols-outlined absolute left-3.5 text-secondary text-[22px] pointer-events-none"
+              >search</span
+            >
+            <input
+              class="w-full h-touch-min pl-11 pr-10 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-md text-body-md shadow-sm focus:outline-none focus:bg-surface-container-low transition-all"
+              id="inventorySearchInput"
+              placeholder="Buscar por accesorio, modelo o SKU..."
+              type="text"
+            />
+            <button
+              class="hidden absolute right-3 w-7 h-7 flex items-center justify-center rounded-full text-secondary hover:bg-surface-container"
+              id="clearSearchBtn"
+              type="button"
+            >
               <span class="material-symbols-outlined text-[18px]">cancel</span>
             </button>
           </div>
@@ -202,7 +449,12 @@ import Layout from '../layouts/Layout.astro';
             <!-- Chips renderizados dinámicamente -->
           </div>
           <!-- Botón Agregar Nueva Categoría -->
-          <button class="px-3.5 py-1.5 rounded-full font-label-sm text-label-sm bg-primary-container text-on-primary shadow-sm flex items-center gap-1.5 flex-shrink-0 hover:opacity-95 active:scale-95 transition-all font-semibold" id="btnOpenAddCategory" type="button" title="Crear nueva categoría">
+          <button
+            class="px-3.5 py-1.5 rounded-full font-label-sm text-label-sm bg-primary-container text-on-primary shadow-sm flex items-center gap-1.5 flex-shrink-0 hover:opacity-95 active:scale-95 transition-all font-semibold"
+            id="btnOpenAddCategory"
+            type="button"
+            title="Crear nueva categoría"
+          >
             <span class="material-symbols-outlined text-[16px]">add</span>
             <span>+ Categoría</span>
           </button>
@@ -210,17 +462,30 @@ import Layout from '../layouts/Layout.astro';
       </div>
 
       <!-- Resumen Operativo -->
-      <div class="bg-surface-container-low rounded-xl p-space-sm mb-space-md flex items-center justify-between shadow-sm">
+      <div
+        class="bg-surface-container-low rounded-xl p-space-sm mb-space-md flex items-center justify-between shadow-sm"
+      >
         <div class="flex items-center gap-space-xs">
-          <div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+          <div
+            class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary"
+          >
             <span class="material-symbols-outlined text-[20px]">layers</span>
           </div>
           <div class="flex flex-col">
-            <span class="font-label-md text-label-md text-on-surface font-semibold leading-snug">Inventario de Piso</span>
-            <span class="font-body-sm text-body-sm text-on-surface-variant" id="productCountSubtitle">Cargando productos...</span>
+            <span
+              class="font-label-md text-label-md text-on-surface font-semibold leading-snug"
+              >Inventario de Piso</span
+            >
+            <span
+              class="font-body-sm text-body-sm text-on-surface-variant"
+              id="productCountSubtitle">Cargando productos...</span
+            >
           </div>
         </div>
-        <span class="px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-error-container text-on-error-container font-semibold flex items-center gap-1 shadow-sm" id="topAlertPill">
+        <span
+          class="px-2.5 py-1 rounded-full font-label-sm text-label-sm bg-error-container text-on-error-container font-semibold flex items-center gap-1 shadow-sm"
+          id="topAlertPill"
+        >
           <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
           <span class="hidden" id="topAlertText"></span>
         </span>
@@ -232,110 +497,167 @@ import Layout from '../layouts/Layout.astro';
       </div>
 
       <!-- Estado de Carga -->
-      <div class="hidden flex-col items-center justify-center py-space-2xl text-center" id="loadingInventoryState">
-        <div class="w-10 h-10 rounded-full border-4 border-primary border-t-transparent animate-spin mb-space-sm"></div>
-        <h4 class="font-headline-sm text-headline-sm text-on-surface mb-1">Cargando inventario...</h4>
-        <p class="font-body-sm text-body-sm text-on-surface-variant max-w-[260px]">Sincronizando el catálogo actualizado desde el servidor.</p>
+      <div
+        class="hidden flex-col items-center justify-center py-space-2xl text-center"
+        id="loadingInventoryState"
+      >
+        <div
+          class="w-10 h-10 rounded-full border-4 border-primary border-t-transparent animate-spin mb-space-sm"
+        >
+        </div>
+        <h4 class="font-headline-sm text-headline-sm text-on-surface mb-1">
+          Cargando inventario...
+        </h4>
+        <p
+          class="font-body-sm text-body-sm text-on-surface-variant max-w-[260px]"
+        >
+          Sincronizando el catálogo actualizado desde el servidor.
+        </p>
       </div>
 
       <!-- Estado Vacío -->
-      <div class="hidden flex-col items-center justify-center py-space-2xl text-center" id="emptyInventoryState">
-        <div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center text-secondary mb-space-sm">
+      <div
+        class="hidden flex-col items-center justify-center py-space-2xl text-center"
+        id="emptyInventoryState"
+      >
+        <div
+          class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center text-secondary mb-space-sm"
+        >
           <span class="material-symbols-outlined text-[32px]">inventory_2</span>
         </div>
-        <h4 class="font-headline-sm text-headline-sm text-on-surface mb-1">Sin coincidencias</h4>
-        <p class="font-body-sm text-body-sm text-on-surface-variant max-w-[240px]">No se encontraron accesorios que coincidan con la búsqueda actual.</p>
-        <button class="mt-space-md px-4 py-2 bg-primary text-on-primary rounded-xl font-label-sm text-label-sm shadow-sm" id="resetFiltersBtn" type="button">
+        <h4 class="font-headline-sm text-headline-sm text-on-surface mb-1">
+          Sin coincidencias
+        </h4>
+        <p
+          class="font-body-sm text-body-sm text-on-surface-variant max-w-[240px]"
+        >
+          No se encontraron accesorios que coincidan con la búsqueda actual.
+        </p>
+        <button
+          class="mt-space-md px-4 py-2 bg-primary text-on-primary rounded-xl font-label-sm text-label-sm shadow-sm"
+          id="resetFiltersBtn"
+          type="button"
+        >
           Restablecer lista
         </button>
       </div>
 
       <!-- Botón Flotante (FAB) -->
       <div class="fixed right-4 bottom-20 z-40">
-        <button aria-label="Añadir producto" class="w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-lg active:scale-95 transition-transform hover:shadow-xl focus:outline-none" id="fabBtn" title="Añadir producto" type="button">
+        <button
+          aria-label="Añadir producto"
+          class="w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-lg active:scale-95 transition-transform hover:shadow-xl focus:outline-none"
+          id="fabBtn"
+          title="Añadir producto"
+          type="button"
+        >
           <span class="material-symbols-outlined text-[30px]">add</span>
         </button>
       </div>
 
       <!-- Toast de Retroalimentación -->
-      <div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-on-surface text-surface px-4 py-2.5 rounded-full shadow-lg font-label-sm text-label-sm flex items-center gap-2 opacity-0 pointer-events-none transition-opacity duration-200" id="stockToast">
-        <span class="material-symbols-outlined text-tertiary-fixed text-[18px]" id="stockToastIcon">check_circle</span>
+      <div
+        class="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-on-surface text-surface px-4 py-2.5 rounded-full shadow-lg font-label-sm text-label-sm flex items-center gap-2 opacity-0 pointer-events-none transition-opacity duration-200"
+        id="stockToast"
+      >
+        <span
+          class="material-symbols-outlined text-tertiary-fixed text-[18px]"
+          id="stockToastIcon">check_circle</span
+        >
         <span id="stockToastText">Stock actualizado correctamente</span>
       </div>
     </div>
   </main>
 
   <script>
-    import { getStoredInventory, deactivateProduct, createProduct, getCategories, addCategory, getCurrentOperator, recordMovement, compressImageFile, isInventoryLoading } from '../utils/inventoryStore.js';
-    import type { Product } from '../types/inventory';
+    import {
+      getStoredInventory,
+      deactivateProduct,
+      createProduct,
+      getCategories,
+      addCategory,
+      getCurrentOperator,
+      recordMovement,
+      compressImageFile,
+      isInventoryLoading,
+    } from "../utils/inventoryStore.js";
+    import type { Product } from "../types/inventory";
 
-    const baseEditUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/';
+    const baseEditUrl = import.meta.env.BASE_URL.endsWith("/")
+      ? import.meta.env.BASE_URL
+      : import.meta.env.BASE_URL + "/";
 
     function updateHeaderOperator() {
       const currentOp = getCurrentOperator();
-      const nameEl = document.getElementById('headerOperatorName');
-      const initialEl = document.getElementById('headerOperatorInitial');
+      const nameEl = document.getElementById("headerOperatorName");
+      const initialEl = document.getElementById("headerOperatorInitial");
       if (nameEl) nameEl.textContent = currentOp;
-      if (initialEl) initialEl.textContent = (currentOp || 'A').charAt(0).toUpperCase();
+      if (initialEl)
+        initialEl.textContent = (currentOp || "A").charAt(0).toUpperCase();
     }
 
     updateHeaderOperator();
-    window.addEventListener('operator-changed', updateHeaderOperator);
+    window.addEventListener("operator-changed", updateHeaderOperator);
 
     let inventory: Product[] = getStoredInventory(false);
     let activeCardSku: string | null = null;
     let currentModalStock = 0;
-    let currentCategory = 'all';
+    let currentCategory = "all";
 
     function showToast(text: string, isError = false) {
-      const toast = document.getElementById('stockToast');
-      const toastText = document.getElementById('stockToastText');
-      const toastIcon = document.getElementById('stockToastIcon');
+      const toast = document.getElementById("stockToast");
+      const toastText = document.getElementById("stockToastText");
+      const toastIcon = document.getElementById("stockToastIcon");
       if (!toast || !toastText) return;
       toastText.textContent = text;
-      if (toastIcon) toastIcon.textContent = isError ? 'error' : 'check_circle';
-      toast.className = `fixed top-20 left-1/2 -translate-x-1/2 z-50 ${isError ? 'bg-error-container text-on-error-container' : 'bg-on-surface text-surface'} px-4 py-2.5 rounded-full shadow-lg font-label-sm text-label-sm flex items-center gap-2 opacity-100 transition-opacity duration-200`;
+      if (toastIcon) toastIcon.textContent = isError ? "error" : "check_circle";
+      toast.className = `fixed top-20 left-1/2 -translate-x-1/2 z-50 ${isError ? "bg-error-container text-on-error-container" : "bg-on-surface text-surface"} px-4 py-2.5 rounded-full shadow-lg font-label-sm text-label-sm flex items-center gap-2 opacity-100 transition-opacity duration-200`;
       setTimeout(() => {
-        toast.className = 'fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-on-surface text-surface px-4 py-2.5 rounded-full shadow-lg font-label-sm text-label-sm flex items-center gap-2 opacity-0 pointer-events-none transition-opacity duration-200';
+        toast.className =
+          "fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-on-surface text-surface px-4 py-2.5 rounded-full shadow-lg font-label-sm text-label-sm flex items-center gap-2 opacity-0 pointer-events-none transition-opacity duration-200";
       }, 2600);
     }
 
     // --- CATEGORÍAS DINÁMICAS ---
     function renderCategoryChips() {
-      const container = document.getElementById('categoryChips');
-      const selectModal = document.getElementById('newProdCat') as HTMLSelectElement | null;
+      const container = document.getElementById("categoryChips");
+      const selectModal = document.getElementById(
+        "newProdCat",
+      ) as HTMLSelectElement | null;
       if (!container) return;
 
       const categories = getCategories();
 
       // Render chips
       container.innerHTML = `
-        <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm ${currentCategory === 'all' ? 'bg-on-surface text-surface-container-lowest' : 'bg-surface-container-lowest text-secondary hover:text-on-surface'} shadow-sm flex items-center gap-1.5 flex-shrink-0 transition-colors font-medium" data-category="all" type="button">
+        <button class="chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm ${currentCategory === "all" ? "bg-on-surface text-surface-container-lowest" : "bg-surface-container-lowest text-secondary hover:text-on-surface"} shadow-sm flex items-center gap-1.5 flex-shrink-0 transition-colors font-medium" data-category="all" type="button">
           <span>Todos</span>
           <span class="px-1.5 py-0.2 rounded-full bg-surface-container/60 text-[11px] font-bold" id="badgeCountAll">${inventory.length}</span>
         </button>
       `;
 
-      categories.forEach(cat => {
+      categories.forEach((cat) => {
         const isSelected = currentCategory === cat;
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.setAttribute('data-category', cat);
-        btn.className = `chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm ${isSelected ? 'bg-on-surface text-surface-container-lowest' : 'bg-surface-container-lowest text-secondary hover:text-on-surface'} shadow-sm flex items-center gap-1 flex-shrink-0 transition-colors font-medium`;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.setAttribute("data-category", cat);
+        btn.className = `chip-btn px-4 py-2 rounded-full font-label-sm text-label-sm ${isSelected ? "bg-on-surface text-surface-container-lowest" : "bg-surface-container-lowest text-secondary hover:text-on-surface"} shadow-sm flex items-center gap-1 flex-shrink-0 transition-colors font-medium`;
         btn.innerHTML = `<span>${cat}</span>`;
         container.appendChild(btn);
       });
 
       // Update Modal Select Options
       if (selectModal) {
-        selectModal.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+        selectModal.innerHTML = categories
+          .map((cat) => `<option value="${cat}">${cat}</option>`)
+          .join("");
       }
 
       // Attach chip click listeners
-      container.querySelectorAll('.chip-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+      container.querySelectorAll(".chip-btn").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
           const target = e.currentTarget as HTMLElement;
-          currentCategory = target.getAttribute('data-category') || 'all';
+          currentCategory = target.getAttribute("data-category") || "all";
           renderCategoryChips();
           applyFilters();
         });
@@ -344,47 +666,64 @@ import Layout from '../layouts/Layout.astro';
 
     // --- RENDER LISTA DE PRODUCTOS ---
     function renderInventoryList() {
-      inventory = getStoredInventory(false);
-      const container = document.getElementById('inventoryList');
-      const loadingState = document.getElementById('loadingInventoryState');
-      const emptyState = document.getElementById('emptyInventoryState');
+      const container = document.getElementById("inventoryList");
       if (!container) return;
-      container.innerHTML = '';
+
+      if (isInventoryLoading()) {
+        container.innerHTML = `
+          <div id="inventoryLoadingSpinner" class="flex flex-col items-center justify-center py-12 text-center text-secondary">
+            <div class="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin mb-3"></div>
+            <p class="font-body-sm text-on-surface-variant">Sincronizando inventario con la nube...</p>
+          </div>
+        `;
+        if (subtitle) subtitle.textContent = "Sincronizando productos...";
+        if (emptyState) {
+          emptyState.classList.add("hidden");
+          emptyState.classList.remove("flex");
+        }
+        return;
+      }
+
+      inventory = getStoredInventory(false);
+      container.innerHTML = "";
 
       if (isInventoryLoading() && inventory.length === 0) {
         if (loadingState) {
-          loadingState.classList.remove('hidden');
-          loadingState.classList.add('flex');
+          loadingState.classList.remove("hidden");
+          loadingState.classList.add("flex");
         }
         if (emptyState) {
-          emptyState.classList.add('hidden');
-          emptyState.classList.remove('flex');
+          emptyState.classList.add("hidden");
+          emptyState.classList.remove("flex");
         }
-        const subtitle = document.getElementById('productCountSubtitle');
-        if (subtitle) subtitle.textContent = 'Sincronizando inventario con el servidor...';
+        const subtitle = document.getElementById("productCountSubtitle");
+        if (subtitle)
+          subtitle.textContent = "Sincronizando inventario con el servidor...";
         return;
       } else {
         if (loadingState) {
-          loadingState.classList.add('hidden');
-          loadingState.classList.remove('flex');
+          loadingState.classList.add("hidden");
+          loadingState.classList.remove("flex");
         }
       }
 
-      inventory.forEach(item => {
+      inventory.forEach((item) => {
         const isLow = item.stock < (item.minStock || 5);
-        const card = document.createElement('div');
-        card.className = 'inventory-card bg-surface-container-lowest rounded-2xl p-3 sm:p-4 shadow-sm border border-surface-container/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative overflow-hidden transition-all duration-150 hover:shadow-md';
-        card.setAttribute('data-id', item.id);
-        card.setAttribute('data-sku', item.sku);
-        card.setAttribute('data-name', item.name);
-        card.setAttribute('data-category', item.category);
-        card.setAttribute('data-stock', item.stock.toString());
+        const card = document.createElement("div");
+        card.className =
+          "inventory-card bg-surface-container-lowest rounded-2xl p-3 sm:p-4 shadow-sm border border-surface-container/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative overflow-hidden transition-all duration-150 hover:shadow-md";
+        card.setAttribute("data-id", item.id);
+        card.setAttribute("data-sku", item.sku);
+        card.setAttribute("data-name", item.name);
+        card.setAttribute("data-category", item.category);
+        card.setAttribute("data-stock", item.stock.toString());
 
-        const defaultFallbackImg = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww';
+        const defaultFallbackImg =
+          "https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww";
 
         card.innerHTML = `
           <!-- Indicador de estado lateral -->
-          <div class="absolute top-0 left-0 bottom-0 w-1.5 ${isLow ? 'bg-error' : 'bg-tertiary'}"></div>
+          <div class="absolute top-0 left-0 bottom-0 w-1.5 ${isLow ? "bg-error" : "bg-tertiary"}"></div>
           
           <!-- Información Principal (Imagen + Nombre + Categoría) -->
           <div class="flex items-center gap-3 pl-2 min-w-0 flex-1">
@@ -409,14 +748,14 @@ import Layout from '../layouts/Layout.astro';
           <div class="flex items-center justify-between sm:justify-end gap-3 pl-2 sm:pl-0 border-t sm:border-t-0 border-surface-container/60 pt-2 sm:pt-0">
             <div class="flex flex-col items-start sm:items-end">
               <div class="flex items-center gap-1.5">
-                <span class="font-display text-headline-sm font-bold ${isLow ? 'text-error' : 'text-on-surface'}">${item.stock}</span>
+                <span class="font-display text-headline-sm font-bold ${isLow ? "text-error" : "text-on-surface"}">${item.stock}</span>
                 <span class="text-[12px] text-on-surface-variant font-medium">/ ${item.maxStock || 10} unid.</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${isLow ? 'bg-error-container text-on-error-container' : 'bg-emerald-100 text-emerald-800'}">
-                  ${isLow ? 'Revisable' : 'OK'}
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${isLow ? "bg-error-container text-on-error-container" : "bg-emerald-100 text-emerald-800"}">
+                  ${isLow ? "Revisable" : "OK"}
                 </span>
               </div>
               <div class="w-24 h-1.5 bg-surface-container rounded-full overflow-hidden mt-1">
-                <div class="h-full ${isLow ? 'bg-error' : 'bg-tertiary'} rounded-full" style="width: ${Math.min(100, item.stock * 10)}%"></div>
+                <div class="h-full ${isLow ? "bg-error" : "bg-tertiary"} rounded-full" style="width: ${Math.min(100, item.stock * 10)}%"></div>
               </div>
             </div>
 
@@ -447,62 +786,68 @@ import Layout from '../layouts/Layout.astro';
     }
 
     function attachCardEventListeners() {
-      document.querySelectorAll('.btn-card-inc').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+      document.querySelectorAll(".btn-card-inc").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
           e.stopPropagation();
-          const sku = btn.getAttribute('data-sku');
+          const sku = btn.getAttribute("data-sku");
           if (sku) updateProductStock(sku, 1);
         });
       });
 
-      document.querySelectorAll('.btn-card-dec').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+      document.querySelectorAll(".btn-card-dec").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
           e.stopPropagation();
-          const sku = btn.getAttribute('data-sku');
+          const sku = btn.getAttribute("data-sku");
           if (sku) updateProductStock(sku, -1);
         });
       });
 
-      document.querySelectorAll('.btn-deactivate').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+      document.querySelectorAll(".btn-deactivate").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
           e.stopPropagation();
-          const sku = btn.getAttribute('data-sku');
-          if (sku && confirm(`¿Deseas desactivar este accesorio del catálogo activo?`)) {
+          const sku = btn.getAttribute("data-sku");
+          if (
+            sku &&
+            confirm(`¿Deseas desactivar este accesorio del catálogo activo?`)
+          ) {
             deactivateProduct(sku);
             renderInventoryList();
-            showToast('Accesorio desactivado.');
+            showToast("Accesorio desactivado.");
           }
         });
       });
 
-      document.querySelectorAll('.btn-adjust').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+      document.querySelectorAll(".btn-adjust").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
           e.stopPropagation();
-          const sku = btn.getAttribute('data-sku');
-          const item = inventory.find(i => i.sku === sku);
+          const sku = btn.getAttribute("data-sku");
+          const item = inventory.find((i) => i.sku === sku);
           if (!item) return;
 
           activeCardSku = item.sku;
           currentModalStock = item.stock;
 
-          const modalName = document.getElementById('modalProductName');
-          const modalSku = document.getElementById('modalProductSku');
-          const modalDisplay = document.getElementById('modalStockDisplay');
+          const modalName = document.getElementById("modalProductName");
+          const modalSku = document.getElementById("modalProductSku");
+          const modalDisplay = document.getElementById("modalStockDisplay");
 
           if (modalName) modalName.textContent = item.name;
           if (modalSku) modalSku.textContent = `${item.category} · ${item.sku}`;
-          if (modalDisplay) modalDisplay.textContent = currentModalStock.toString();
+          if (modalDisplay)
+            modalDisplay.textContent = currentModalStock.toString();
 
-          document.getElementById('quickAdjustModal')?.classList.remove('hidden');
+          document
+            .getElementById("quickAdjustModal")
+            ?.classList.remove("hidden");
         });
       });
     }
 
     function updateProductStock(sku: string, delta: number) {
-      const item = inventory.find(i => i.sku === sku);
+      const item = inventory.find((i) => i.sku === sku);
       if (!item) return;
 
-      const tipo = delta > 0 ? 'entrada' : 'salida';
+      const tipo = delta > 0 ? "entrada" : "salida";
       const qty = Math.abs(delta);
 
       try {
@@ -510,134 +855,165 @@ import Layout from '../layouts/Layout.astro';
           sku: item.sku,
           tipo: tipo,
           cantidad: qty,
-          nota: delta > 0 ? 'Incremento rápido (+1) desde Inicio' : 'Descuento rápido (-1) desde Inicio',
-          operador: getCurrentOperator()
+          nota:
+            delta > 0
+              ? "Incremento rápido (+1) desde Inicio"
+              : "Descuento rápido (-1) desde Inicio",
+          operador: getCurrentOperator(),
         });
         inventory = getStoredInventory(false);
         renderInventoryList();
-        
+
         const newStock = newMov.stockResultante;
         if (newStock < (item.minStock || 5)) {
-          showToast(`⚠️ Alerta: ${item.name} en nivel crítico (${newStock} unid.)`, false);
+          showToast(
+            `⚠️ Alerta: ${item.name} en nivel crítico (${newStock} unid.)`,
+            false,
+          );
         } else {
           showToast(`${item.name}: Stock actualizado a ${newStock} unid.`);
         }
       } catch (err: any) {
-        showToast(err.message || 'Error al actualizar stock', true);
+        showToast(err.message || "Error al actualizar stock", true);
       }
     }
 
     function closeModal() {
-      document.getElementById('quickAdjustModal')?.classList.add('hidden');
+      document.getElementById("quickAdjustModal")?.classList.add("hidden");
       activeCardSku = null;
     }
 
-    document.getElementById('closeModalBtn')?.addEventListener('click', closeModal);
-    document.getElementById('cancelModalBtn')?.addEventListener('click', closeModal);
+    document
+      .getElementById("closeModalBtn")
+      ?.addEventListener("click", closeModal);
+    document
+      .getElementById("cancelModalBtn")
+      ?.addEventListener("click", closeModal);
 
-    document.getElementById('modalIncBtn')?.addEventListener('click', () => {
-      const modalDisplay = document.getElementById('modalStockDisplay');
+    document.getElementById("modalIncBtn")?.addEventListener("click", () => {
+      const modalDisplay = document.getElementById("modalStockDisplay");
       if (currentModalStock < 10) {
         currentModalStock++;
-        if (modalDisplay) modalDisplay.textContent = currentModalStock.toString();
+        if (modalDisplay)
+          modalDisplay.textContent = currentModalStock.toString();
       } else {
-        showToast('Bloqueo: No es posible superar 10 unidades.', true);
+        showToast("Bloqueo: No es posible superar 10 unidades.", true);
       }
     });
 
-    document.getElementById('modalDecBtn')?.addEventListener('click', () => {
-      const modalDisplay = document.getElementById('modalStockDisplay');
+    document.getElementById("modalDecBtn")?.addEventListener("click", () => {
+      const modalDisplay = document.getElementById("modalStockDisplay");
       if (currentModalStock > 0) {
         currentModalStock--;
-        if (modalDisplay) modalDisplay.textContent = currentModalStock.toString();
+        if (modalDisplay)
+          modalDisplay.textContent = currentModalStock.toString();
       }
     });
 
-    document.getElementById('saveModalBtn')?.addEventListener('click', () => {
+    document.getElementById("saveModalBtn")?.addEventListener("click", () => {
       if (!activeCardSku) return;
-      const item = inventory.find(i => i.sku === activeCardSku);
+      const item = inventory.find((i) => i.sku === activeCardSku);
       if (item) {
         const diff = currentModalStock - item.stock;
         if (diff !== 0) {
           try {
             recordMovement({
               sku: item.sku,
-              tipo: diff > 0 ? 'entrada' : 'salida',
+              tipo: diff > 0 ? "entrada" : "salida",
               cantidad: Math.abs(diff),
               nota: `Conteo rápido verificado en piso (${currentModalStock} unid.)`,
-              operador: getCurrentOperator()
+              operador: getCurrentOperator(),
             });
             inventory = getStoredInventory(false);
             renderInventoryList();
-            showToast(`${item.name}: Conteo confirmado a ${currentModalStock} unid.`);
+            showToast(
+              `${item.name}: Conteo confirmado a ${currentModalStock} unid.`,
+            );
           } catch (err: any) {
-            showToast(err.message || 'Error al guardar conteo', true);
+            showToast(err.message || "Error al guardar conteo", true);
           }
         } else {
-          showToast(`${item.name}: Stock confirmado sin variaciones (${currentModalStock} unid.)`);
+          showToast(
+            `${item.name}: Stock confirmado sin variaciones (${currentModalStock} unid.)`,
+          );
         }
       }
       closeModal();
     });
 
     // --- MODAL NUEVO PRODUCTO ---
-    const fabBtn = document.getElementById('fabBtn');
-    const btnHeaderAddProd = document.getElementById('btnHeaderAddProd');
-    const newProductModal = document.getElementById('newProductModal');
-    const closeNewModalBtn = document.getElementById('closeNewModalBtn');
-    const cancelNewModalBtn = document.getElementById('cancelNewModalBtn');
-    const newProductForm = document.getElementById('newProductForm') as HTMLFormElement | null;
-    const newProdImgInput = document.getElementById('newProdImg') as HTMLInputElement | null;
-    const newProdImgPreview = document.getElementById('newProdImgPreview') as HTMLImageElement | null;
+    const fabBtn = document.getElementById("fabBtn");
+    const btnHeaderAddProd = document.getElementById("btnHeaderAddProd");
+    const newProductModal = document.getElementById("newProductModal");
+    const closeNewModalBtn = document.getElementById("closeNewModalBtn");
+    const cancelNewModalBtn = document.getElementById("cancelNewModalBtn");
+    const newProductForm = document.getElementById(
+      "newProductForm",
+    ) as HTMLFormElement | null;
+    const newProdImgInput = document.getElementById(
+      "newProdImg",
+    ) as HTMLInputElement | null;
+    const newProdImgPreview = document.getElementById(
+      "newProdImgPreview",
+    ) as HTMLImageElement | null;
 
     function openNewModal() {
-      newProductModal?.classList.remove('hidden');
+      newProductModal?.classList.remove("hidden");
     }
 
-    fabBtn?.addEventListener('click', openNewModal);
-    btnHeaderAddProd?.addEventListener('click', openNewModal);
+    fabBtn?.addEventListener("click", openNewModal);
+    btnHeaderAddProd?.addEventListener("click", openNewModal);
 
     function closeNewModal() {
-      newProductModal?.classList.add('hidden');
+      newProductModal?.classList.add("hidden");
       newProductForm?.reset();
     }
 
-    closeNewModalBtn?.addEventListener('click', closeNewModal);
-    cancelNewModalBtn?.addEventListener('click', closeNewModal);
+    closeNewModalBtn?.addEventListener("click", closeNewModal);
+    cancelNewModalBtn?.addEventListener("click", closeNewModal);
 
     // Subida de imagen local desde el dispositivo
-    const newProdFileInput = document.getElementById('newProdFileInput') as HTMLInputElement | null;
-    const btnUploadNewProdImg = document.getElementById('btnUploadNewProdImg');
-    const newProdImgContainer = document.getElementById('newProdImgContainer');
+    const newProdFileInput = document.getElementById(
+      "newProdFileInput",
+    ) as HTMLInputElement | null;
+    const btnUploadNewProdImg = document.getElementById("btnUploadNewProdImg");
+    const newProdImgContainer = document.getElementById("newProdImgContainer");
 
-    btnUploadNewProdImg?.addEventListener('click', () => newProdFileInput?.click());
-    newProdImgContainer?.addEventListener('click', () => newProdFileInput?.click());
+    btnUploadNewProdImg?.addEventListener("click", () =>
+      newProdFileInput?.click(),
+    );
+    newProdImgContainer?.addEventListener("click", () =>
+      newProdFileInput?.click(),
+    );
 
-    newProdFileInput?.addEventListener('change', async (e) => {
+    newProdFileInput?.addEventListener("change", async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
       try {
-        showToast('Procesando imagen del dispositivo...');
+        showToast("Procesando imagen del dispositivo...");
         const compressedDataUrl = await compressImageFile(file, 480, 0.8);
         if (newProdImgInput) newProdImgInput.value = compressedDataUrl;
         if (newProdImgPreview) newProdImgPreview.src = compressedDataUrl;
-        showToast('Foto cargada y lista para guardar');
+        showToast("Foto cargada y lista para guardar");
       } catch (err: any) {
-        showToast(err.message || 'Error al procesar la imagen seleccionada.', true);
+        showToast(
+          err.message || "Error al procesar la imagen seleccionada.",
+          true,
+        );
       }
     });
 
     // Live image preview
-    newProdImgInput?.addEventListener('input', (e) => {
+    newProdImgInput?.addEventListener("input", (e) => {
       if (newProdImgPreview) {
-        newProdImgPreview.src = (e.target as HTMLInputElement).value || '';
+        newProdImgPreview.src = (e.target as HTMLInputElement).value || "";
       }
     });
 
     // Image presets
-    document.querySelectorAll('.btn-preset-img').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const imgUrl = btn.getAttribute('data-img');
+    document.querySelectorAll(".btn-preset-img").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const imgUrl = btn.getAttribute("data-img");
         if (imgUrl && newProdImgInput && newProdImgPreview) {
           newProdImgInput.value = imgUrl;
           newProdImgPreview.src = imgUrl;
@@ -645,13 +1021,24 @@ import Layout from '../layouts/Layout.astro';
       });
     });
 
-    newProductForm?.addEventListener('submit', (e) => {
+    newProductForm?.addEventListener("submit", (e) => {
       e.preventDefault();
-      const name = (document.getElementById('newProdName') as HTMLInputElement | null)?.value.trim();
-      let sku = (document.getElementById('newProdSku') as HTMLInputElement | null)?.value.trim();
-      const category = (document.getElementById('newProdCat') as HTMLSelectElement | null)?.value || 'Otros';
-      const location = (document.getElementById('newProdLocation') as HTMLInputElement | null)?.value.trim() || 'Estante Principal';
-      const img = newProdImgInput?.value.trim() || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww';
+      const name = (
+        document.getElementById("newProdName") as HTMLInputElement | null
+      )?.value.trim();
+      let sku = (
+        document.getElementById("newProdSku") as HTMLInputElement | null
+      )?.value.trim();
+      const category =
+        (document.getElementById("newProdCat") as HTMLSelectElement | null)
+          ?.value || "Otros";
+      const location =
+        (
+          document.getElementById("newProdLocation") as HTMLInputElement | null
+        )?.value.trim() || "Estante Principal";
+      const img =
+        newProdImgInput?.value.trim() ||
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww";
 
       if (!name) return;
 
@@ -661,43 +1048,51 @@ import Layout from '../layouts/Layout.astro';
           sku,
           category,
           location,
-          img
+          img,
         });
 
         closeNewModal();
         inventory = getStoredInventory(false);
         renderInventoryList();
-        showToast(`¡Accesorio ${newItem.sku} creado con stock estándar de 10 unid.!`);
+        showToast(
+          `¡Accesorio ${newItem.sku} creado con stock estándar de 10 unid.!`,
+        );
       } catch (err: any) {
-        showToast(err?.message || 'Error al crear accesorio', true);
+        showToast(err?.message || "Error al crear accesorio", true);
       }
     });
 
     // --- MODAL NUEVA CATEGORÍA ---
-    const newCategoryModal = document.getElementById('newCategoryModal');
-    const btnOpenAddCategory = document.getElementById('btnOpenAddCategory');
-    const btnOpenCatModalFromProd = document.getElementById('btnOpenCatModalFromProd');
-    const closeCatModalBtn = document.getElementById('closeCatModalBtn');
-    const cancelCatModalBtn = document.getElementById('cancelCatModalBtn');
-    const newCategoryForm = document.getElementById('newCategoryForm') as HTMLFormElement | null;
-    const newCategoryNameInput = document.getElementById('newCategoryName') as HTMLInputElement | null;
+    const newCategoryModal = document.getElementById("newCategoryModal");
+    const btnOpenAddCategory = document.getElementById("btnOpenAddCategory");
+    const btnOpenCatModalFromProd = document.getElementById(
+      "btnOpenCatModalFromProd",
+    );
+    const closeCatModalBtn = document.getElementById("closeCatModalBtn");
+    const cancelCatModalBtn = document.getElementById("cancelCatModalBtn");
+    const newCategoryForm = document.getElementById(
+      "newCategoryForm",
+    ) as HTMLFormElement | null;
+    const newCategoryNameInput = document.getElementById(
+      "newCategoryName",
+    ) as HTMLInputElement | null;
 
     function openCatModal() {
-      newCategoryModal?.classList.remove('hidden');
+      newCategoryModal?.classList.remove("hidden");
       newCategoryNameInput?.focus();
     }
 
     function closeCatModal() {
-      newCategoryModal?.classList.add('hidden');
+      newCategoryModal?.classList.add("hidden");
       newCategoryForm?.reset();
     }
 
-    btnOpenAddCategory?.addEventListener('click', openCatModal);
-    btnOpenCatModalFromProd?.addEventListener('click', openCatModal);
-    closeCatModalBtn?.addEventListener('click', closeCatModal);
-    cancelCatModalBtn?.addEventListener('click', closeCatModal);
+    btnOpenAddCategory?.addEventListener("click", openCatModal);
+    btnOpenCatModalFromProd?.addEventListener("click", openCatModal);
+    closeCatModalBtn?.addEventListener("click", closeCatModal);
+    cancelCatModalBtn?.addEventListener("click", closeCatModal);
 
-    newCategoryForm?.addEventListener('submit', (e) => {
+    newCategoryForm?.addEventListener("submit", (e) => {
       e.preventDefault();
       const catName = newCategoryNameInput?.value.trim();
       if (!catName) return;
@@ -710,104 +1105,121 @@ import Layout from '../layouts/Layout.astro';
 
     // --- FILTROS Y BÚSQUEDA ---
     function applyFilters() {
-      const searchInput = document.getElementById('inventorySearchInput') as HTMLInputElement | null;
-      const query = (searchInput?.value || '').toLowerCase().trim();
-      const cards = document.querySelectorAll('.inventory-card');
+      if (isInventoryLoading()) return;
+
+      const searchInput = document.getElementById(
+        "inventorySearchInput",
+      ) as HTMLInputElement | null;
+      const query = (searchInput?.value || "").toLowerCase().trim();
+      const cards = document.querySelectorAll(".inventory-card");
 
       let visibleCount = 0;
       let revisableCount = 0;
 
-      cards.forEach(card => {
-        const name = (card.getAttribute('data-name') || '').toLowerCase();
-        const sku = (card.getAttribute('data-sku') || '').toLowerCase();
-        const category = card.getAttribute('data-category') || '';
-        const stock = parseInt(card.getAttribute('data-stock') || '0', 10);
+      cards.forEach((card) => {
+        const name = (card.getAttribute("data-name") || "").toLowerCase();
+        const sku = (card.getAttribute("data-sku") || "").toLowerCase();
+        const category = card.getAttribute("data-category") || "";
+        const stock = parseInt(card.getAttribute("data-stock") || "0", 10);
 
-        const matchesCat = (currentCategory === 'all') || (category === currentCategory);
-        const matchesSearch = !query || name.includes(query) || sku.includes(query);
+        const matchesCat =
+          currentCategory === "all" || category === currentCategory;
+        const matchesSearch =
+          !query || name.includes(query) || sku.includes(query);
 
         if (matchesCat && matchesSearch) {
-          card.classList.remove('hidden');
-          card.classList.add('flex');
+          card.classList.remove("hidden");
+          card.classList.add("flex");
           visibleCount++;
           if (stock < 5) revisableCount++;
         } else {
-          card.classList.add('hidden');
-          card.classList.remove('flex');
+          card.classList.add("hidden");
+          card.classList.remove("flex");
         }
       });
 
-      const subtitle = document.getElementById('productCountSubtitle');
+      const subtitle = document.getElementById("productCountSubtitle");
       if (subtitle) {
         subtitle.textContent = `Mostrando ${visibleCount} productos · ${revisableCount} en estado revisable`;
       }
 
-      const totalAlerts = inventory.filter(i => i.stock < (i.minStock || 5)).length;
-      const topAlertText = document.getElementById('topAlertText');
+      const totalAlerts = inventory.filter(
+        (i) => i.stock < (i.minStock || 5),
+      ).length;
+      const topAlertText = document.getElementById("topAlertText");
       if (topAlertText) {
         topAlertText.textContent = `${totalAlerts} Alertas`;
-        topAlertText.classList.remove('hidden');
+        topAlertText.classList.remove("hidden");
       }
 
-      const badgeCountAll = document.getElementById('badgeCountAll');
-      if (badgeCountAll) badgeCountAll.textContent = inventory.length.toString();
+      const badgeCountAll = document.getElementById("badgeCountAll");
+      if (badgeCountAll)
+        badgeCountAll.textContent = inventory.length.toString();
 
-      const emptyState = document.getElementById('emptyInventoryState');
+      const emptyState = document.getElementById("emptyInventoryState");
       if (emptyState) {
         if (visibleCount === 0) {
-          emptyState.classList.remove('hidden');
-          emptyState.classList.add('flex');
+          emptyState.classList.remove("hidden");
+          emptyState.classList.add("flex");
         } else {
-          emptyState.classList.add('hidden');
-          emptyState.classList.remove('flex');
+          emptyState.classList.add("hidden");
+          emptyState.classList.remove("flex");
         }
       }
     }
 
-    const searchInput = document.getElementById('inventorySearchInput') as HTMLInputElement | null;
-    const clearBtn = document.getElementById('clearSearchBtn');
+    const searchInput = document.getElementById(
+      "inventorySearchInput",
+    ) as HTMLInputElement | null;
+    const clearBtn = document.getElementById("clearSearchBtn");
 
-    searchInput?.addEventListener('input', (e) => {
+    searchInput?.addEventListener("input", (e) => {
       const val = (e.target as HTMLInputElement).value;
       if (clearBtn) {
         if (val.length > 0) {
-          clearBtn.classList.remove('hidden');
+          clearBtn.classList.remove("hidden");
         } else {
-          clearBtn.classList.add('hidden');
+          clearBtn.classList.add("hidden");
         }
       }
       applyFilters();
     });
 
-    clearBtn?.addEventListener('click', () => {
+    clearBtn?.addEventListener("click", () => {
       if (searchInput) {
-        searchInput.value = '';
-        clearBtn.classList.add('hidden');
+        searchInput.value = "";
+        clearBtn.classList.add("hidden");
         applyFilters();
       }
     });
 
-    document.getElementById('resetFiltersBtn')?.addEventListener('click', () => {
-      if (searchInput) {
-        searchInput.value = '';
-        clearBtn?.classList.add('hidden');
-      }
-      currentCategory = 'all';
+    document
+      .getElementById("resetFiltersBtn")
+      ?.addEventListener("click", () => {
+        if (searchInput) {
+          searchInput.value = "";
+          clearBtn?.classList.add("hidden");
+        }
+        currentCategory = "all";
+        renderCategoryChips();
+        applyFilters();
+      });
+
+    window.addEventListener("inventory-updated", () => {
       renderCategoryChips();
+      renderInventoryList();
       applyFilters();
     });
 
-    window.addEventListener('inventory-updated', () => {
-      renderCategoryChips();
-      renderInventoryList();
-    });
-
-    window.addEventListener('categories-updated', () => {
+    window.addEventListener("categories-updated", () => {
       renderCategoryChips();
     });
 
     // Initial render
     renderCategoryChips();
     renderInventoryList();
+    if (!isInventoryLoading()) {
+      applyFilters();
+    }
   </script>
 </Layout>
