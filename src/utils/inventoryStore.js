@@ -26,6 +26,36 @@ export const defaultOperators = [
   'Dueño (Propietario)'
 ];
 
+/**
+ * Safe LocalStorage setter wrapper to catch QuotaExceededError
+ */
+export function safeLocalStorageSet(key, value) {
+  if (typeof window === 'undefined') return;
+  try {
+    const stringVal = typeof value === 'string' ? value : JSON.stringify(value);
+    localStorage.setItem(key, stringVal);
+  } catch (e) {
+    console.warn(`[localStorage] Error guardando ${key}:`, e);
+    // If quota exceeded, sanitize images or truncate movements
+    if (e.name === 'QuotaExceededError' || e.code === 22) {
+      try {
+        if (key === MOVEMENTS_KEY && Array.isArray(value)) {
+          const trimmed = value.slice(0, 50);
+          localStorage.setItem(key, JSON.stringify(trimmed));
+        } else if (key === STORE_KEY && Array.isArray(value)) {
+          const sanitized = value.map(item => ({
+            ...item,
+            img: (item.img && item.img.length > 500) ? '' : item.img
+          }));
+          localStorage.setItem(key, JSON.stringify(sanitized));
+        }
+      } catch (innerErr) {
+        console.error('[localStorage] No se pudo recuperar de QuotaExceededError:', innerErr);
+      }
+    }
+  }
+}
+
 export function getCurrentOperator() {
   if (typeof window === 'undefined') return 'Alejandro (Admin)';
   const explicit = localStorage.getItem(OPERATOR_KEY);
@@ -48,8 +78,8 @@ export function getCurrentShift() {
 export function setCurrentOperator(operator, shift = 'mañana') {
   if (typeof window === 'undefined') return;
   const cleanOperator = (operator || 'Alejandro (Admin)').trim();
-  localStorage.setItem(OPERATOR_KEY, cleanOperator);
-  localStorage.setItem(SHIFT_KEY, shift || 'mañana');
+  safeLocalStorageSet(OPERATOR_KEY, cleanOperator);
+  safeLocalStorageSet(SHIFT_KEY, shift || 'mañana');
   window.dispatchEvent(new CustomEvent('operator-changed', { detail: { operator: cleanOperator, shift } }));
 }
 
@@ -87,7 +117,7 @@ export function getCategories() {
   if (typeof window === 'undefined') return defaultCategories;
   const raw = localStorage.getItem(CATEGORIES_KEY);
   if (!raw) {
-    localStorage.setItem(CATEGORIES_KEY, JSON.stringify(defaultCategories));
+    safeLocalStorageSet(CATEGORIES_KEY, defaultCategories);
     return defaultCategories;
   }
   try {
@@ -100,7 +130,7 @@ export function getCategories() {
 
 export function saveCategories(categories) {
   if (typeof window === 'undefined') return;
-  localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
+  safeLocalStorageSet(CATEGORIES_KEY, categories);
   window.dispatchEvent(new CustomEvent('categories-updated', { detail: categories }));
 
   // Sincronizar categorías en Firestore
@@ -130,7 +160,7 @@ export function getConfig() {
   if (typeof window === 'undefined') return defaultConfig;
   const raw = localStorage.getItem(CONFIG_KEY);
   if (!raw) {
-    localStorage.setItem(CONFIG_KEY, JSON.stringify(defaultConfig));
+    safeLocalStorageSet(CONFIG_KEY, defaultConfig);
     return defaultConfig;
   }
   try {
@@ -143,7 +173,7 @@ export function getConfig() {
 export function saveConfig(cfg) {
   if (typeof window === 'undefined') return;
   const updated = { ...getConfig(), ...cfg };
-  localStorage.setItem(CONFIG_KEY, JSON.stringify(updated));
+  safeLocalStorageSet(CONFIG_KEY, updated);
 }
 
 // Memory cache for active listener and snapshot status
@@ -153,36 +183,6 @@ let isFirstSnapshotCompleted = false;
 export function isInventoryLoading() {
   if (import.meta.env?.DEV) return false;
   return !isFirstSnapshotCompleted;
-}
-
-/**
- * Sanitiza y valida un producto de inventario.
- * Filtra ítems corruptos o con campos 'undefined'.
- */
-export function sanitizeProduct(item) {
-  if (!item || typeof item !== 'object') return null;
-  const name = item.name != null ? String(item.name).trim() : '';
-  const sku = item.sku != null ? String(item.sku).trim() : '';
-
-  if (!name || name.toLowerCase() === 'undefined' || name.toLowerCase() === 'null') return null;
-  if (!sku || sku.toLowerCase() === 'undefined' || sku.toLowerCase() === 'null') return null;
-
-  const defaultImg = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww';
-
-  return {
-    ...item,
-    id: String(item.id || sku),
-    sku: sku,
-    name: name,
-    category: item.category && String(item.category).toLowerCase() !== 'undefined' ? String(item.category) : 'Otros',
-    stock: Number(item.stock) || 0,
-    minStock: Number(item.minStock) || 5,
-    maxStock: Number(item.maxStock) || 10,
-    location: item.location || 'Estante Principal',
-    activo: item.activo !== false,
-    lastUpdated: item.lastUpdated || new Date().toISOString().split('T')[0],
-    img: item.img || defaultImg
-  };
 }
 
 /**
@@ -203,7 +203,6 @@ export function normalizeDate(dateVal) {
 
 /**
  * Comprime un archivo de imagen a Base64 ligero (DataURL) usando Canvas HTML5.
- * Reduce el tamaño de 5-10MB a unos 25-35KB ideales para Firestore y localStorage.
  */
 export function compressImageFile(file, maxWidth = 480, quality = 0.8) {
   return new Promise((resolve, reject) => {
@@ -268,8 +267,6 @@ export function initFirestoreSync() {
         }));
       }
 
-      // Si Firestore tiene datos, actualizar directamente localStorage respetando el estado en Firestore.
-      // Incluir solo elementos temporales un-synced si existieran.
       const currentLocal = getStoredInventory(true);
       const tempLocal = currentLocal.filter(item => item.id && item.id.startsWith('sku-temp-'));
       const mapBySku = new Map();
@@ -279,38 +276,8 @@ export function initFirestoreSync() {
       });
 
       const mergedProducts = Array.from(mapBySku.values());
-      localStorage.setItem(STORE_KEY, JSON.stringify(mergedProducts));
+      safeLocalStorageSet(STORE_KEY, mergedProducts);
       window.dispatchEvent(new CustomEvent('inventory-updated', { detail: mergedProducts }));
-        const firestoreItems = snapshot.docs.map(doc => {
-          return sanitizeProduct({
-            id: doc.id,
-            ...doc.data(),
-            activo: doc.data().activo !== false,
-            stock: Number(doc.data().stock) || 0,
-            minStock: Number(doc.data().minStock) || 5,
-            maxStock: Number(doc.data().maxStock) || 10,
-            location: doc.data().location || 'Estante Principal',
-            lastUpdated: doc.data().lastUpdated || '2026-09-03'
-          });
-        }).filter(Boolean);
-
-        // Fusión por SKU priorizando datos actualizados de Firestore
-        const currentLocal = getStoredInventory(true);
-        const mapBySku = new Map();
-        currentLocal.forEach(item => {
-          if (item && item.sku) mapBySku.set(item.sku, item);
-        });
-        firestoreItems.forEach(item => {
-          if (item && item.sku) mapBySku.set(item.sku, item);
-        });
-        mergedProducts = Array.from(mapBySku.values());
-      } else {
-        mergedProducts = getStoredInventory(true);
-      }
-
-      const cleanMerged = mergedProducts.map(sanitizeProduct).filter(Boolean);
-      localStorage.setItem(STORE_KEY, JSON.stringify(cleanMerged));
-      window.dispatchEvent(new CustomEvent('inventory-updated', { detail: cleanMerged }));
       isFirstSnapshotCompleted = true;
     }, (err) => {
       isFirstSnapshotCompleted = true;
@@ -343,7 +310,7 @@ export function initFirestoreSync() {
       }
 
       firestoreMovs.sort((a, b) => new Date(b.fechaHora).getTime() - new Date(a.fechaHora).getTime());
-      localStorage.setItem(MOVEMENTS_KEY, JSON.stringify(firestoreMovs));
+      safeLocalStorageSet(MOVEMENTS_KEY, firestoreMovs);
       window.dispatchEvent(new CustomEvent('movements-updated', { detail: firestoreMovs }));
     }, (err) => {
       console.warn('Advertencia en sincronización de movimientos Firestore:', err);
@@ -354,7 +321,7 @@ export function initFirestoreSync() {
     onSnapshot(catDocRef, (snap) => {
       if (snap.exists() && Array.isArray(snap.data()?.list)) {
         const firestoreCats = snap.data().list;
-        localStorage.setItem(CATEGORIES_KEY, JSON.stringify(firestoreCats));
+        safeLocalStorageSet(CATEGORIES_KEY, firestoreCats);
         window.dispatchEvent(new CustomEvent('categories-updated', { detail: firestoreCats }));
       }
     }, (err) => {
@@ -389,22 +356,21 @@ export function getStoredInventory(includeInactive = false) {
   } else {
     items = fallbackInventory;
   }
-
-  const sanitizedItems = items.map(sanitizeProduct).filter(Boolean);
-
-  // Si había productos corruptos eliminados, actualizar localStorage de inmediato
-  if (raw && sanitizedItems.length !== items.length) {
-    localStorage.setItem(STORE_KEY, JSON.stringify(sanitizedItems));
-  }
-
-  if (includeInactive) return sanitizedItems;
-  return sanitizedItems.filter(item => item.activo !== false);
+  items = items.map(item => ({
+    ...item,
+    activo: item.activo !== false,
+    location: item.location || 'Estante Principal',
+    lastUpdated: item.lastUpdated || '2026-09-03',
+    img: item.img || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww'
+  }));
+  if (includeInactive) return items;
+  return items.filter(item => item.activo !== false);
 }
 
 // Save local & sync changes to Firestore
 export function saveInventory(items) {
   if (typeof window === 'undefined') return;
-  localStorage.setItem(STORE_KEY, JSON.stringify(items));
+  safeLocalStorageSet(STORE_KEY, items);
   window.dispatchEvent(new CustomEvent('inventory-updated', { detail: items }));
 
   // Background sync for updated items
@@ -433,20 +399,15 @@ export function saveInventory(items) {
 
 // Soft Delete (Firestore synced)
 export async function deactivateProduct(sku) {
-  if (!sku) return;
-  const cleanSku = String(sku).trim().toLowerCase();
   const allItems = getStoredInventory(true);
   let targetItem = null;
-
   const updated = allItems.map(item => {
-    if ((item.sku && String(item.sku).trim().toLowerCase() === cleanSku) ||
-        (item.id && String(item.id).trim().toLowerCase() === cleanSku)) {
+    if (item.sku === sku || item.id === sku) {
       targetItem = item;
       return { ...item, activo: false };
     }
     return item;
   });
-
   saveInventory(updated);
 
   if (targetItem && targetItem.id && !targetItem.id.startsWith('sku-temp-')) {
@@ -471,50 +432,6 @@ export async function deactivateProduct(sku) {
     });
   } catch (e) {
     console.warn('No se pudo registrar auditoría de desactivación:', e);
-  // Registrar auditoría de desactivación
-  if (targetItem) {
-    try {
-      recordMovement({
-        sku: targetItem.sku,
-        tipo: 'ajuste',
-        cantidad: targetItem.stock || 0,
-        nota: `Desactivación de accesorio del catálogo activo`,
-        operador: getCurrentOperator()
-      });
-    } catch (e) {
-      console.warn('No se pudo registrar auditoría de desactivación:', e);
-    }
-  }
-}
-
-/**
- * Hard Delete: Elimina físicamente un producto de localStorage y Firestore.
- */
-export async function deleteProduct(skuOrId) {
-  if (!skuOrId) return;
-  const cleanKey = String(skuOrId).trim().toLowerCase();
-  const allItems = getStoredInventory(true);
-
-  const targetItem = allItems.find(item =>
-    (item.sku && String(item.sku).trim().toLowerCase() === cleanKey) ||
-    (item.id && String(item.id).trim().toLowerCase() === cleanKey)
-  );
-
-  const updated = allItems.filter(item =>
-    item !== targetItem &&
-    String(item.sku || '').trim().toLowerCase() !== cleanKey &&
-    String(item.id || '').trim().toLowerCase() !== cleanKey
-  );
-
-  saveInventory(updated);
-
-  if (targetItem && targetItem.id && !targetItem.id.startsWith('sku-temp-')) {
-    try {
-      const docRef = doc(db, 'products', targetItem.id);
-      await deleteDoc(docRef);
-    } catch (err) {
-      console.error('Error al eliminar producto en Firestore:', err);
-    }
   }
 }
 
@@ -524,7 +441,7 @@ export async function deleteProduct(skuOrId) {
   const targetItem = allItems.find(i => i.sku === skuOrId || i.id === skuOrId);
   const updatedItems = allItems.filter(i => i.sku !== skuOrId && i.id !== skuOrId);
 
-  localStorage.setItem(STORE_KEY, JSON.stringify(updatedItems));
+  safeLocalStorageSet(STORE_KEY, updatedItems);
   window.dispatchEvent(new CustomEvent('inventory-updated', { detail: updatedItems }));
 
   if (targetItem && targetItem.id && !targetItem.id.startsWith('sku-temp-')) {
@@ -538,52 +455,35 @@ export async function deleteProduct(skuOrId) {
   return targetItem;
 }
 
-// Create product with default stock = 10, max stock = 10 (Firestore synced)
+// Create product with unique SKU enforcement (Firestore synced)
 export function createProduct(prodData) {
   const allItems = getStoredInventory(true);
-  const tempId = 'sku-temp-' + Date.now();
+
+  let skuToUse = (prodData.sku || '').trim().toUpperCase();
+  const isManualSku = Boolean(skuToUse);
+
+  if (isManualSku) {
+    const existing = allItems.find(i => (i.sku || '').toUpperCase() === skuToUse);
+    if (existing) {
+      throw new Error(`Ese SKU ya existe, usa otro (${skuToUse}).`);
+    }
+  } else {
+    let attempts = 0;
+    let autoSku = '';
+    do {
+      autoSku = 'SKU-' + Math.floor(100 + Math.random() * 900);
+      attempts++;
+    } while (allItems.some(i => (i.sku || '').toUpperCase() === autoSku) && attempts < 5);
+
+    skuToUse = autoSku;
+  }
+
   const definitiveId = doc(collection(db, 'products')).id;
   const productDocRef = doc(db, 'products', definitiveId);
 
   const newProduct = {
     id: definitiveId,
-    sku: (prodData.sku || ('SKU-' + Math.floor(100 + Math.random() * 900))).toUpperCase(),
-
-  let finalSku = '';
-  if (prodData.sku && prodData.sku.trim()) {
-    finalSku = prodData.sku.trim().toUpperCase();
-    const exists = allItems.some(
-      item => item.sku && item.sku.trim().toUpperCase() === finalSku
-    );
-    if (exists) {
-      throw new Error("Ese SKU ya existe, usa otro");
-    }
-  } else {
-    let attempts = 0;
-    let generated = '';
-    let isUnique = false;
-    while (attempts < 5 && !isUnique) {
-      attempts++;
-      generated = 'SKU-' + Math.floor(100 + Math.random() * 900);
-      const exists = allItems.some(
-        item => item.sku && item.sku.trim().toUpperCase() === generated
-      );
-      if (!exists) {
-        isUnique = true;
-      }
-    }
-    if (!isUnique) {
-      throw new Error("No se pudo generar un SKU único automáticamente tras 5 intentos. Por favor, especifica un SKU manualmente.");
-    }
-    finalSku = generated;
-  }
-
-  const productDocRef = doc(collection(db, 'products'));
-  const definitiveId = productDocRef.id;
-
-  const newProduct = {
-    id: definitiveId,
-    sku: finalSku,
+    sku: skuToUse,
     name: prodData.name,
     category: prodData.category || 'Otros',
     stock: 10,
@@ -596,10 +496,8 @@ export function createProduct(prodData) {
   };
 
   allItems.unshift(newProduct);
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(STORE_KEY, JSON.stringify(allItems));
-    window.dispatchEvent(new CustomEvent('inventory-updated', { detail: allItems }));
-  }
+  safeLocalStorageSet(STORE_KEY, allItems);
+  window.dispatchEvent(new CustomEvent('inventory-updated', { detail: allItems }));
 
   const activeOp = getCurrentOperator();
   const initMov = {
@@ -670,7 +568,7 @@ export function getStoredMovements() {
 
 export function saveMovements(movs) {
   if (typeof window === 'undefined') return;
-  localStorage.setItem(MOVEMENTS_KEY, JSON.stringify(movs));
+  safeLocalStorageSet(MOVEMENTS_KEY, movs);
   window.dispatchEvent(new CustomEvent('movements-updated', { detail: movs }));
 }
 

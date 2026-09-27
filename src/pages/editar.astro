@@ -24,10 +24,6 @@ import Layout from '../layouts/Layout.astro';
             <span class="material-symbols-outlined text-[16px]" id="deactivateIcon">visibility_off</span>
             <span id="deactivateText">Desactivar</span>
           </button>
-          <button class="px-3 py-1.5 rounded-xl bg-error text-on-error font-label-sm text-label-sm flex items-center gap-1.5 hover:brightness-95 active:scale-95 transition-all cursor-pointer font-bold shadow-xs" id="deleteProductBtn" type="button" title="Eliminar permanentemente de la base de datos">
-            <span class="material-symbols-outlined text-[16px]">delete</span>
-            <span>Eliminar</span>
-          </button>
         </div>
       </div>
 
@@ -178,7 +174,6 @@ import Layout from '../layouts/Layout.astro';
   <script>
     import { getStoredInventory, saveInventory, deleteProduct, getCategories, recordMovement, getCurrentOperator, compressImageFile } from '../utils/inventoryStore.js';
     import { request2FAConfirmation } from '../utils/securityModal.js';
-    import { getStoredInventory, saveInventory, getCategories, recordMovement, getCurrentOperator, compressImageFile, deleteProduct } from '../utils/inventoryStore.js';
     import type { Product } from '../types/inventory';
 
     const defaultFallbackImg = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBjt0Mcxje9x7R-yf0Dy2Zd3GFEUEWMUqYbIlnMNgDVTMomF2L7egungbCgUVR6NNoXWfQdHOiQexwlGgmG2JCKak9H9Sl-K1wYznsoCxZkx5uWFxpuM41HyWtVQVt65UV3QsSrtr8m9YdOvkc3N3v0M2o0tD4aeQ-y7MK_fiQbYFUlx_6_ruApS_lYg1lJvveAaEm8dHd9FA-sVRdTBnE5yL3hqk56PHZ8jJvX2O4y15iGeTNLBLCOww';
@@ -274,19 +269,6 @@ import Layout from '../layouts/Layout.astro';
     } else {
       showToastMsg('No se encontró ningún producto para editar.', 'warning', true);
     }
-
-    const deleteBtn = document.getElementById('deleteProductBtn');
-    deleteBtn?.addEventListener('click', async () => {
-      if (!product) return;
-      if (confirm(`¿Estás seguro de eliminar permanentemente "${product.name}" (${product.sku}) del inventario y de la base de datos? Esta acción no se puede deshacer.`)) {
-        await deleteProduct(product.sku || product.id);
-        showToastMsg('Producto eliminado permanentemente', 'delete');
-        setTimeout(() => {
-          const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/';
-          window.location.href = baseUrl;
-        }, 700);
-      }
-    });
 
     function updateDeactivateBtnState() {
       if (!product || !deactivateText || !deactivateIcon || !deactivateBtn) return;
