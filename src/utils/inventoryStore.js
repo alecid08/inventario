@@ -225,6 +225,7 @@ export function initFirestoreSync() {
     // 1. Listener de productos en tiempo real
     const productsRef = collection(db, 'products');
     onSnapshot(productsRef, (snapshot) => {
+      let mergedProducts = [];
       if (!snapshot.empty) {
         const firestoreItems = snapshot.docs.map(doc => ({
           id: doc.id,
@@ -243,13 +244,14 @@ export function initFirestoreSync() {
         const mapBySku = new Map();
         currentLocal.forEach(item => mapBySku.set(item.sku, item));
         firestoreItems.forEach(item => mapBySku.set(item.sku, item));
-        const mergedProducts = Array.from(mapBySku.values());
-
-        localStorage.setItem(STORE_KEY, JSON.stringify(mergedProducts));
-        window.dispatchEvent(new CustomEvent('inventory-updated', { detail: mergedProducts }));
+        mergedProducts = Array.from(mapBySku.values());
       }
+
+      localStorage.setItem(STORE_KEY, JSON.stringify(mergedProducts));
+      window.dispatchEvent(new CustomEvent('inventory-updated', { detail: mergedProducts }));
+      isFirstSnapshotCompleted = true;
     }, (err) => {
-      isInitialFirestoreSyncDone = true;
+      isFirstSnapshotCompleted = true;
       console.warn('Advertencia en sincronización en tiempo real de Firestore:', err);
     });
 
