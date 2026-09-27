@@ -231,6 +231,13 @@ import Layout from '../layouts/Layout.astro';
         <!-- Renderizado dinámicamente -->
       </div>
 
+      <!-- Estado de Carga -->
+      <div class="hidden flex-col items-center justify-center py-space-2xl text-center" id="loadingInventoryState">
+        <div class="w-10 h-10 rounded-full border-4 border-primary border-t-transparent animate-spin mb-space-sm"></div>
+        <h4 class="font-headline-sm text-headline-sm text-on-surface mb-1">Cargando inventario...</h4>
+        <p class="font-body-sm text-body-sm text-on-surface-variant max-w-[260px]">Sincronizando el catálogo actualizado desde el servidor.</p>
+      </div>
+
       <!-- Estado Vacío -->
       <div class="hidden flex-col items-center justify-center py-space-2xl text-center" id="emptyInventoryState">
         <div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center text-secondary mb-space-sm">
@@ -259,7 +266,7 @@ import Layout from '../layouts/Layout.astro';
   </main>
 
   <script>
-    import { getStoredInventory, deactivateProduct, createProduct, getCategories, addCategory, getCurrentOperator, recordMovement, compressImageFile } from '../utils/inventoryStore.js';
+    import { getStoredInventory, deactivateProduct, createProduct, getCategories, addCategory, getCurrentOperator, recordMovement, compressImageFile, isInventoryLoading } from '../utils/inventoryStore.js';
     import type { Product } from '../types/inventory';
 
     const baseEditUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/';
@@ -339,8 +346,29 @@ import Layout from '../layouts/Layout.astro';
     function renderInventoryList() {
       inventory = getStoredInventory(false);
       const container = document.getElementById('inventoryList');
+      const loadingState = document.getElementById('loadingInventoryState');
+      const emptyState = document.getElementById('emptyInventoryState');
       if (!container) return;
       container.innerHTML = '';
+
+      if (isInventoryLoading() && inventory.length === 0) {
+        if (loadingState) {
+          loadingState.classList.remove('hidden');
+          loadingState.classList.add('flex');
+        }
+        if (emptyState) {
+          emptyState.classList.add('hidden');
+          emptyState.classList.remove('flex');
+        }
+        const subtitle = document.getElementById('productCountSubtitle');
+        if (subtitle) subtitle.textContent = 'Sincronizando inventario con el servidor...';
+        return;
+      } else {
+        if (loadingState) {
+          loadingState.classList.add('hidden');
+          loadingState.classList.remove('flex');
+        }
+      }
 
       inventory.forEach(item => {
         const isLow = item.stock < (item.minStock || 5);
@@ -750,6 +778,16 @@ import Layout from '../layouts/Layout.astro';
         clearBtn.classList.add('hidden');
         applyFilters();
       }
+    });
+
+    document.getElementById('resetFiltersBtn')?.addEventListener('click', () => {
+      if (searchInput) {
+        searchInput.value = '';
+        clearBtn?.classList.add('hidden');
+      }
+      currentCategory = 'all';
+      renderCategoryChips();
+      applyFilters();
     });
 
     window.addEventListener('inventory-updated', () => {
